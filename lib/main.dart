@@ -21,7 +21,37 @@ final List<Troquel> _listTroquel = [
   Troquel(567, 3566, 'Agro', 18375001, 'WARD'),
   Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
   Troquel(907, 3566, 'Agro', 18375001, 'WARD'),
-  Troquel(324, 3587, 'Bivien', 18375001, 'WARD')
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(432, 3566, 'Agro', 18476301, 'WARD'),
+  Troquel(434, 3587, 'Bivien', 18547701, 'WARD'),
+  Troquel(567, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(907, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(432, 3566, 'Agro', 18476301, 'WARD'),
+  Troquel(434, 3587, 'Bivien', 18547701, 'WARD'),
+  Troquel(567, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(907, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(432, 3566, 'Agro', 18476301, 'WARD'),
+  Troquel(434, 3587, 'Bivien', 18547701, 'WARD'),
+  Troquel(567, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(907, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(432, 3566, 'Agro', 18476301, 'WARD'),
+  Troquel(434, 3587, 'Bivien', 18547701, 'WARD'),
+  Troquel(567, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(907, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(432, 3566, 'Agro', 18476301, 'WARD'),
+  Troquel(434, 3587, 'Bivien', 18547701, 'WARD'),
+  Troquel(567, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
+  Troquel(907, 3566, 'Agro', 18375001, 'WARD'),
+  Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
 ];
 
 Widget _buildTable({bool sortAsscending = true}) {
@@ -92,17 +122,17 @@ class _MyhomeWidgetState extends State<MyhomeWidget> {
             child: Column(children: [
               ListTile(
                 leading: Icon(Icons.book_rounded) ,
-                trailing: Icon(Icons.arrow_circle_right_outlined),
+                trailing: Icon(Icons.arrow_forward_ios_outlined),
 
                   title: Text('Bibliaco Troqueles'),
                   onTap: (){}
 
               ),
               ListTile(
-                leading: Icon(Icons.book_rounded) ,
-                trailing: Icon(Icons.arrow_circle_right_outlined),
+                leading: Icon(Icons.autorenew) ,
+                trailing: Icon(Icons.arrow_forward_ios_outlined),
 
-                  title: Text('Bibliaco Troqueles'),
+                  title: Text('Troqueles en proceso'),
                   onTap: (){}
 
               ),
