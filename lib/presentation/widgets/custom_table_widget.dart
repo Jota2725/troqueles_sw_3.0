@@ -39,57 +39,52 @@ class _TroquelTableState extends State<TroquelTable> {
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
-          const SizedBox(
-            height: 60,
-            width: double.infinity,
-            child: Padding(
-              padding: EdgeInsets.all(6.0),
-              child: CustomSearchBar(),
-            ),
-          ),
+          
           SizedBox(
             width: double.infinity,
-            child: DataTable(
-              sortColumnIndex: 0,
-              sortAscending: sortAscending,
-              columns: const <DataColumn>[
-                DataColumn(
-                    label: DataColums(
-                  icon: Icons.location_on,
-                  text: 'Ubicacion',
-                )),
-                DataColumn(
-                    label: DataColums(
-                  icon: Icons.numbers_sharp,
-                  text: 'Gico',
-                )),
-                DataColumn(
-                    label: DataColums(
-                  icon: Icons.factory_rounded,
-                  text: 'Cliente',
-                )),
-                DataColumn(
-                    label: DataColums(
-                  icon: Icons.onetwothree_rounded,
-                  text: 'Referencia',
-                )),
-                DataColumn(
-                    label: DataColums(
-                  icon: Icons.adf_scanner_rounded,
-                  text: 'Maquina',
-                )),
-              ],
-              rows: _listTroquel.map<DataRow>((Troquel troquel) {
-                return DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('${troquel.ubicacion}'), onTap: () {}),
-                    DataCell(Text('${troquel.gico}'), onTap: () {}),
-                    DataCell(Text(troquel.cliente), onTap: () {}),
-                    DataCell(Text('${troquel.referencia}'), onTap: () {}),
-                    DataCell(Text(troquel.maquina), onTap: () {}),
-                  ],
-                );
-              }).toList(),
+            child: Material(
+              child: DataTable(
+                sortColumnIndex: 0,
+                sortAscending: sortAscending,
+                columns: const <DataColumn>[
+                  DataColumn(
+                      label: DataColums(
+                    icon: Icons.location_on,
+                    text: 'Ubicacion',
+                  )),
+                  DataColumn(
+                      label: DataColums(
+                    icon: Icons.numbers_sharp,
+                    text: 'Gico',
+                  )),
+                  DataColumn(
+                      label: DataColums(
+                    icon: Icons.factory_rounded,
+                    text: 'Cliente',
+                  )),
+                  DataColumn(
+                      label: DataColums(
+                    icon: Icons.onetwothree_rounded,
+                    text: 'Referencia',
+                  )),
+                  DataColumn(
+                      label: DataColums(
+                    icon: Icons.adf_scanner_rounded,
+                    text: 'Maquina',
+                  )),
+                ],
+                rows: _listTroquel.map<DataRow>((Troquel troquel) {
+                  return DataRow(
+                    cells: <DataCell>[
+                      DataCell(Text('${troquel.ubicacion}'), onTap: () {}),
+                      DataCell(Text('${troquel.gico}'), onTap: () {}),
+                      DataCell(Text(troquel.cliente), onTap: () {}),
+                      DataCell(Text('${troquel.referencia}'), onTap: () {}),
+                      DataCell(Text(troquel.maquina), onTap: () {}),
+                    ],
+                  );
+                }).toList(),
+              ),
             ),
           ),
         ],

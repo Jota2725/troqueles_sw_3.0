@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:troqueles_sw/config/router/app_router.dart';
-import 'package:troqueles_sw/config/theme/app_theme.dart';
+
 
 void main() => runApp(const MyApp());
 
@@ -11,11 +11,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp.router(
+    return  FluentApp.router(
       routerConfig: appRouter ,
       debugShowCheckedModeBanner: false,
       title: 'Troqueles Smurfit WestRock',
-      theme:  AppTheme().getTheme(), 
+      
     );
   }
 }
