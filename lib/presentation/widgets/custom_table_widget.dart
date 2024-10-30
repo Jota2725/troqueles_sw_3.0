@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/domain/entities/troqueles.dart';
-import 'package:troqueles_sw/presentation/widgets/custom_search_bar.dart';
 
 class TroquelTable extends StatefulWidget {
   const TroquelTable({super.key});
@@ -39,7 +38,6 @@ class _TroquelTableState extends State<TroquelTable> {
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
-          
           SizedBox(
             width: double.infinity,
             child: Material(
@@ -109,7 +107,6 @@ class DataColums extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: const Color.fromRGBO(23, 13, 171, 1),
           ),
           const SizedBox(
             width: 5,
@@ -117,7 +114,8 @@ class DataColums extends StatelessWidget {
           Text(
             text,
             style: const TextStyle(
-                color: Color.fromRGBO(23, 13, 171, 1),
+
+                //rgb(11, 175, 254) otro color
                 fontWeight: FontWeight.bold),
           ),
         ],

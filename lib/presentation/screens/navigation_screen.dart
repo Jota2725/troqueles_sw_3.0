@@ -1,7 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco_pages.dart';
+import 'package:troqueles_sw/presentation/screens/home_screen.dart';
 import 'package:troqueles_sw/presentation/widgets/custom_search_bar.dart';
-import 'package:troqueles_sw/presentation/widgets/custom_table_widget.dart';
+
 
 class NavigationScreen extends StatefulWidget {
   static const name = 'Navegation_Screen';
@@ -23,33 +25,26 @@ class _NavigationScreenState extends State<NavigationScreen> {
           title: Center(child: CustomSearchBar())),
 
       pane: NavigationPane(
-        header: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: DefaultTextStyle(
-            style: FluentTheme.of(context).typography.title!,
-            child: const Text('Menu'),
-          ),
+        header: const Padding(
+          padding: EdgeInsets.only(left: 20),
+           
         ),
         items: [
           PaneItem(
-            icon: const Icon(Icons.home),
-            body: const Image(
-              image: NetworkImage(
-                  'https://packagingsuppliersglobal.com/assets/uploads/_headerImagery/35883/Smurfit-Westrock.webp'),
-              fit: BoxFit.cover,
-            ),
+            icon: const Icon(Icons.home,),
+            body: const HomeScreen(),
             title: const Text('Inicio'),
           ),
           PaneItemHeader(header: const Text('Troqueles')),
           PaneItemExpander(
-              body: const TroquelTable(),
+              body: const Text('Bibliaco General'),
               title: const Text('Bibliaco'),
               icon: const Icon(Icons.book_rounded),
               items: [
                 PaneItemHeader(header: const Text('Maquinas')),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const Text('Ward'),
+                  body: const BibliacoPages(),
                   title: const Text('Ward'),
                 ),
                 PaneItem(
@@ -93,27 +88,41 @@ class _NavigationScreenState extends State<NavigationScreen> {
             body: const Text(''),
             title: const Text('Troqueles Obsoletos'),
           ),
-          PaneItemHeader(header: const Text('Acesibilidad')),
+          PaneItemHeader(header: const Text('Consumos')),
           PaneItem(
-            icon: const Icon(Icons.autorenew),
-            body: const Text('Screen2'),
-            title: const Text('Troqueles en proceso'),
+            icon: const Icon(Icons.document_scanner),
+            body: const Text('General'),
+            title: const Text('General'),
           ),
           PaneItem(
-            icon: const Icon(Icons.fact_check_outlined),
+            icon: const Icon(Icons.access_time_outlined),
             body: const Text('Screen3'),
             title: const Text('Troqueles terminados'),
           ),
+          
           PaneItem(
-            icon: const Icon(Icons.construction),
-            body: const Text('Screen4'),
-            title: const Text('Troqueles Mantenimiento'),
+            icon: const Icon(Icons.inventory),
+            body: const Text('Consumos de material'),
+            title: const Text('Consumos de material'),
           ),
           PaneItem(
-            icon: const Icon(Icons.delete_forever),
-            body: const Text(''),
-            title: const Text('Troqueles Obsoletos'),
+            icon: const Icon(Icons.summarize),
+            body: const Text('Resumen'),
+            title: const Text('Resumen'),
           ),
+          PaneItemHeader(header: const Text('Accesibilidad')),
+          PaneItem(
+            icon: const Icon(Icons.accessibility_new),
+            body: const Text('Accesibilidad'),
+            title: const Text('Accesibilidad'),
+          ),
+          PaneItem(
+            icon: const Icon(Icons.settings),
+            body: const Text('Ajustes'),
+            title: const Text('Ajustes'),
+          ),
+          
+         
         ],
         selected: _currentIndex,
         displayMode: PaneDisplayMode.auto,

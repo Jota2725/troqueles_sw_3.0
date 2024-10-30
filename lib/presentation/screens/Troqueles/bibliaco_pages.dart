@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:troqueles_sw/presentation/widgets/custom_table_widget.dart';
 
 class BibliacoPages extends StatelessWidget {
   static const name = 'bibliaco_pages';
@@ -7,6 +8,6 @@ class BibliacoPages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Container(child: Text('BIBLIACO'),);
+    return const TroquelTable();
   }
 }
