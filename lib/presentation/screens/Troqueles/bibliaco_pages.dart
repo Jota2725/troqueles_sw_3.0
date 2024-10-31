@@ -19,7 +19,8 @@ class _BibliacoPagesState extends State<BibliacoPages> {
   // Método para importar datos desde el archivo Excel
   Future<void> _importarDesdeExcel() async {
     final datasource = TroquelDatasourceImpl();
-    List<Troquel> datosImportados = await datasource.seleccionarArchivoExcel('TW');
+    List<Troquel> datosImportados =
+        await datasource.seleccionarArchivoExcel('WA');
 
     setState(() {
       troqueles = datosImportados;
@@ -29,8 +30,11 @@ class _BibliacoPagesState extends State<BibliacoPages> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('WARD'),centerTitle: true,),
-      
+      appBar: AppBar(
+        title: const Text('TROQUELADORA WARD'),
+        centerTitle: true,
+       
+      ),
       body: TroquelTable(
         troqueles: troqueles,
         onImportPressed: _importarDesdeExcel,

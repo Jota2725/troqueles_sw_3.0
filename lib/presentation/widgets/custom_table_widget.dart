@@ -1,20 +1,17 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/domain/entities/troqueles.dart';
 
 class TroquelTable extends StatefulWidget {
   final List<Troquel> troqueles;
   final VoidCallback? onImportPressed;
-  const TroquelTable({super.key, required this.troqueles, this.onImportPressed});
+  const TroquelTable(
+      {super.key, required this.troqueles, this.onImportPressed});
 
   @override
   TroquelTableState createState() => TroquelTableState();
 }
 
 class TroquelTableState extends State<TroquelTable> {
-  
-
   bool sortAscending = true;
 
   @override
@@ -23,9 +20,32 @@ class TroquelTableState extends State<TroquelTable> {
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
-          TextButton(
-              onPressed: widget.onImportPressed,
-              child: const Text('Importar excel')),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+            
+            
+              TextButton.icon(
+                onPressed: () {},
+                label: const Text('Agregar'),
+                icon: const Icon(Icons.add_circle),
+                iconAlignment: IconAlignment.end,
+              ),
+            
+              TextButton.icon(
+                onPressed: () {},
+                label: const Text('Guardar'),
+                icon: const Icon(Icons.save),
+                iconAlignment: IconAlignment.end,
+              ),
+              TextButton.icon(
+                onPressed: widget.onImportPressed,
+                label: const Text('Importar excel'),
+                icon: const Icon(Icons.upload),
+                iconAlignment: IconAlignment.end,
+              ),
+            ],
+          ),
           SizedBox(
             width: double.infinity,
             child: Material(
@@ -33,6 +53,7 @@ class TroquelTableState extends State<TroquelTable> {
                 dividerThickness: 0,
                 sortColumnIndex: 0,
                 sortAscending: sortAscending,
+                onSelectAll: (value) => true,
                 columns: const <DataColumn>[
                   DataColumn(
                       label: DataColums(

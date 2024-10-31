@@ -44,8 +44,9 @@ dependencies:
 msix_config:
   display_name : SW TROQUELES
   publiseher_display_name : Ronald Vera
-  identity_name : company.suite.flutterapp
+  identity_name : com.example.troqueles_sw
   msix_version: 1.0.0.0  
+  logo_path: C:\Users\ronal\Downloads\Smurfit_Westrock_(logo).png
 
 dev_dependencies:
   flutter_test:
