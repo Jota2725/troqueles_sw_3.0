@@ -1,34 +1,19 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/domain/entities/troqueles.dart';
 
 class TroquelTable extends StatefulWidget {
-  const TroquelTable({super.key});
+  final List<Troquel> troqueles;
+  final VoidCallback? onImportPressed;
+  const TroquelTable({super.key, required this.troqueles, this.onImportPressed});
 
   @override
-  _TroquelTableState createState() => _TroquelTableState();
+  TroquelTableState createState() => TroquelTableState();
 }
 
-class _TroquelTableState extends State<TroquelTable> {
-  final List<Troquel> _listTroquel = [
-    Troquel(432, 3566, 'Agro', 18476301, 'WARD'),
-    Troquel(434, 3587, 'Bivien', 18547701, 'WARD'),
-    Troquel(567, 3566, 'Agro', 18375001, 'WARD'),
-    Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
-    Troquel(907, 3566, 'Agro', 18375001, 'WARD'),
-    Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
-    Troquel(432, 3566, 'Agro', 18476301, 'WARD'),
-    Troquel(434, 3587, 'Bivien', 18547701, 'WARD'),
-    Troquel(567, 3566, 'Agro', 18375001, 'WARD'),
-    Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
-    Troquel(907, 3566, 'Agro', 18375001, 'WARD'),
-    Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
-    Troquel(432, 3566, 'Agro', 18476301, 'WARD'),
-    Troquel(434, 3587, 'Bivien', 18547701, 'WARD'),
-    Troquel(567, 3566, 'Agro', 18375001, 'WARD'),
-    Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
-    Troquel(907, 3566, 'Agro', 18375001, 'WARD'),
-    Troquel(324, 3587, 'Bivien', 18375001, 'WARD'),
-  ];
+class TroquelTableState extends State<TroquelTable> {
+  
 
   bool sortAscending = true;
 
@@ -38,10 +23,14 @@ class _TroquelTableState extends State<TroquelTable> {
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
+          TextButton(
+              onPressed: widget.onImportPressed,
+              child: const Text('Importar excel')),
           SizedBox(
             width: double.infinity,
             child: Material(
               child: DataTable(
+                dividerThickness: 0,
                 sortColumnIndex: 0,
                 sortAscending: sortAscending,
                 columns: const <DataColumn>[
@@ -71,7 +60,7 @@ class _TroquelTableState extends State<TroquelTable> {
                     text: 'Maquina',
                   )),
                 ],
-                rows: _listTroquel.map<DataRow>((Troquel troquel) {
+                rows: widget.troqueles.map<DataRow>((Troquel troquel) {
                   return DataRow(
                     cells: <DataCell>[
                       DataCell(Text('${troquel.ubicacion}'), onTap: () {}),
