@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/widgets/custom_table_widget.dart';
 
-import '../../../domain/entities/troqueles.dart';
+import '../../../domain/entities/troquel.dart';
 import '../../../infrastructure/datasource/troquel_datasource.dart';
 
 class BibliacoPages extends StatefulWidget {
@@ -13,18 +13,32 @@ class BibliacoPages extends StatefulWidget {
 }
 
 class _BibliacoPagesState extends State<BibliacoPages> {
-  final String hojaDeseada = 'NombreDeTuHoja';
+  final String hojaDeseada = 'WA'; // Nombre de la hoja deseada en este caso
   List<Troquel> troqueles = [];
 
-  // Método para importar datos desde el archivo Excel
-  Future<void> _importarDesdeExcel() async {
+  @override
+  void initState() {
+    super.initState();
+    _cargarDatosDesdeBaseDeDatos(); // Carga los datos al iniciar la pantalla
+  }
+
+  // Método para cargar los datos desde ISAR al iniciar la pantalla
+  Future<void> _cargarDatosDesdeBaseDeDatos() async {
     final datasource = TroquelDatasourceImpl();
-    List<Troquel> datosImportados =
-        await datasource.seleccionarArchivoExcel('WA');
+    List<Troquel> datosDesdeBD = await datasource.getAllTroqueles();
 
     setState(() {
-      troqueles = datosImportados;
+      troqueles = datosDesdeBD;
     });
+  }
+
+  // Método para importar datos desde el archivo Excel y guardarlos en ISAR
+  Future<void> _importarDesdeExcel() async {
+    final datasource = TroquelDatasourceImpl();
+    await datasource.seleccionarArchivoExcel(hojaDeseada);
+
+    // Después de importar, recargar los datos desde la base de datos
+    _cargarDatosDesdeBaseDeDatos();
   }
 
   @override
@@ -33,7 +47,6 @@ class _BibliacoPagesState extends State<BibliacoPages> {
       appBar: AppBar(
         title: const Text('TROQUELADORA WARD'),
         centerTitle: true,
-       
       ),
       body: TroquelTable(
         troqueles: troqueles,

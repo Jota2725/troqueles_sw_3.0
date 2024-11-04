@@ -15,7 +15,7 @@ class MenuTroqueles extends StatelessWidget {
       width: size.width * 0.2,
       child: Column(
         children: [
-          Container(
+          SizedBox(
             height: 200,
             width: double.maxFinite,
             child: const Image(
@@ -25,7 +25,7 @@ class MenuTroqueles extends StatelessWidget {
               hoverColor: Colors.blue.shade100,
               leading: const Icon(
                 Icons.home,
-                color: const Color.fromRGBO(23, 13, 171, 1),
+                color: Color.fromRGBO(23, 13, 171, 1),
               ),
               trailing: const Icon(
                 Icons.arrow_forward_ios_outlined,

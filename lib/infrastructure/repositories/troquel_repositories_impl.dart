@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:troqueles_sw/domain/datasource/troquel_datasource.dart';
-import 'package:troqueles_sw/domain/entities/troqueles.dart';
+import 'package:troqueles_sw/domain/entities/troquel.dart';
 import 'package:troqueles_sw/domain/repositories/troquel_repositories.dart';
 
 class TroquelRepositoriesImpl extends TroquelRepositories {

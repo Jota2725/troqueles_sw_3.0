@@ -1,5 +1,13 @@
+
+import 'package:isar/isar.dart';
+part 'troquel.g.dart';
+
+@collection
 class Troquel {
+
+  Id? isarId;
   final int ubicacion;
+  //GICO ES ID
   final int gico;
   final String cliente;
   final int referencia;

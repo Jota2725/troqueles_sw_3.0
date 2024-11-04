@@ -1,6 +1,6 @@
 
 import 'dart:io';
-import 'package:troqueles_sw/domain/entities/troqueles.dart';
+import 'package:troqueles_sw/domain/entities/troquel.dart';
 
 abstract class TroquelDatasource {
   Future<List<Troquel>> seleccionarArchivoExcel(String sheetName);

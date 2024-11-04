@@ -2,10 +2,13 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:troqueles_sw/domain/datasource/troquel_datasource.dart';
-import '../../domain/entities/troqueles.dart';
+import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
+import '../../domain/entities/troquel.dart';
 
 class TroquelDatasourceImpl implements TroquelDatasource {
-  
+  final IsarDatasource  _isarDatasource = IsarDatasource();
+
+
   @override
   Future<List<Troquel>> seleccionarArchivoExcel(String sheetName) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -14,13 +17,15 @@ class TroquelDatasourceImpl implements TroquelDatasource {
     );
 
     if (result != null) {
-      return importarTroquelesDesdeExcel(File(result.files.single.path!), sheetName);
+      return importarTroquelesDesdeExcel(
+          File(result.files.single.path!), sheetName);
     }
     return [];
   }
 
   @override
-  Future<List<Troquel>> importarTroquelesDesdeExcel(File file, String sheetName) async {
+  Future<List<Troquel>> importarTroquelesDesdeExcel(
+      File file, String sheetName) async {
     var bytes = await file.readAsBytes();
     var excel = Excel.decodeBytes(bytes);
     List<Troquel> troqueles = [];
@@ -53,6 +58,12 @@ class TroquelDatasourceImpl implements TroquelDatasource {
       }
     }
 
+    
+    await _isarDatasource.saveTroqueles(troqueles);
     return troqueles;
+  }
+
+  Future<List<Troquel>> getAllTroqueles()async{
+    return await _isarDatasource.getAllTroqueles();
   }
 }
