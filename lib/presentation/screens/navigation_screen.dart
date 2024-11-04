@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco_pages.dart';
+import 'package:troqueles_sw/presentation/screens/Troqueles/tw_machine.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
 import 'package:troqueles_sw/presentation/widgets/custom_search_bar.dart';
 
@@ -54,7 +55,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const Text('Screen3'),
+                  body: const TWPage(),
                   title: const Text('Holandeza'),
                 ),
                 PaneItem(
