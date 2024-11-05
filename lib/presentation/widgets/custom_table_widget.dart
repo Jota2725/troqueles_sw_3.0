@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 
@@ -17,8 +18,10 @@ class TroquelTableState extends State<TroquelTable> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      
       scrollDirection: Axis.vertical,
       child: Column(
+      
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -43,7 +46,7 @@ class TroquelTableState extends State<TroquelTable> {
               ),
             ],
           ),
-          _TablaTroqueles(sortAscending: sortAscending, widget: widget),
+          FadeInUp(child: _TablaTroqueles(sortAscending: sortAscending, widget: widget)),
         ],
       ),
     );
