@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
+import 'package:troqueles_sw/presentation/widgets/add_troquelees.dart';
 
 class TroquelTable extends StatefulWidget {
   final List<Troquel> troqueles;
@@ -24,10 +27,19 @@ class TroquelTableState extends State<TroquelTable> {
       
         children: [
           Row(
+
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton.icon(
-                onPressed: () {},
+                onPressed: () {
+
+                  showDialog(context: context, builder: (BuildContext context){
+                    return AddTroquelees();
+
+
+
+                  }
+              );},
                 label: const Text('Agregar'),
                 icon: const Icon(Icons.add_circle),
                 iconAlignment: IconAlignment.end,
@@ -147,4 +159,13 @@ class DataColums extends StatelessWidget {
       ),
     );
   }
+
+
+
+
+
+
+
+  
 }
+

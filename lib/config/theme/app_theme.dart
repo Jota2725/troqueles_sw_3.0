@@ -15,6 +15,9 @@ class AppTheme {
         accentColor: customAccentColor,
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         iconTheme: const IconThemeData(color: Color(0xFF00205B)),
+        dialogTheme:  const ContentDialogThemeData(
+          barrierColor:  Color(0xFFFFFFFF), // Color de fondo sin transparencia
+        ), 
         
          navigationPaneTheme: NavigationPaneThemeData(
           
