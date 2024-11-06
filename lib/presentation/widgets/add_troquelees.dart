@@ -1,40 +1,160 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 
-class AddTroquelees extends StatelessWidget {
+import '../../domain/entities/troquel.dart';
+import '../../infrastructure/datasource/isar_datasource.dart';
+
+class AddTroquelees extends StatefulWidget {
   const AddTroquelees({super.key});
+
+  @override
+  State<AddTroquelees> createState() => _AddTroqueleesState();
+}
+
+class _AddTroqueleesState extends State<AddTroquelees> {
+  String? selectedValue;
+  final ubicacionController = TextEditingController();
+  final gicoController = TextEditingController();
+  final clienteController = TextEditingController();
+  final referenciaController = TextEditingController();
+  final IsarDatasource isarDatasource = IsarDatasource();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-     
-     
-     
-      title: const Text('Agregar un nuevo troquel a la lista'),
-       backgroundColor: FluentTheme.of(context).brightness == Brightness.light  ? 
-            Color(0xFFF5F5F5)
-            : const Color(0xFF1E1E1E), // Color de fondo según el tema
-      content: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            decoration: InputDecoration(labelText: 'Ingresa la ubicacion'),
-          ),
-          TextField(
-            decoration: InputDecoration(labelText: 'Ingresa el gico'),
-          )
-        ],
+      title: const Text('Agregar troquel'),
+      backgroundColor: FluentTheme.of(context).brightness == Brightness.light
+          ? const Color(0xFFF5F5F5)
+          : const Color(0xFF1E1E1E),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+                'A continuación ingrese toda la información del Troquel'),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: ubicacionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Ingresa la ubicación',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: TextField(
+                    controller: gicoController,
+                    decoration: const InputDecoration(
+                      labelText: 'Ingresa el GICO',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: clienteController,
+              decoration: const InputDecoration(
+                labelText: 'Ingresa el cliente',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: referenciaController,
+              decoration: const InputDecoration(
+                labelText: 'Ingresa el número CAD',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 20),
+            ComboBox<String>(
+              placeholder: Text(
+                selectedValue ?? 'Máquina',
+                style: FluentTheme.of(context).typography.body,
+              ),
+              value: selectedValue,
+              items: const [
+                ComboBoxItem(value: 'WA', child: Text('WARD')),
+                ComboBoxItem(value: 'TW', child: Text('HOLANDEZA')),
+                ComboBoxItem(value: 'FW', child: Text('FLEXO WARD')),
+                ComboBoxItem(value: 'ML', child: Text('MINI LINE')),
+                ComboBoxItem(value: 'DF', child: Text('DON FANG')),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  selectedValue = value;
+                });
+              },
+            ),
+          ],
+        ),
       ),
       actions: [
-        TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Cancelar')),
+        Center(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E1E1E),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(color: Color(0xFFF5F5F5)),
+                  )),
+              const SizedBox(
+                width: 20,
+              ),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0BAFFE)),
+                  onPressed: () async {
+                    if (ubicacionController.text.isEmpty ||
+                        gicoController.text.isEmpty ||
+                        clienteController.text.isEmpty ||
+                        referenciaController.text.isEmpty ||
+                        selectedValue == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Por favor, completa todos los campos requeridos.')),
+                      );
+                      return;
+                    }
 
-            ElevatedButton(onPressed: (){
-              Navigator.of(context).pop();
-            }, child: Text('Agregar'))
+                    // Crear y guardar Troquel
+                    final nuevoTroquel = Troquel(
+                      ubicacion: int.parse(ubicacionController.text),
+                      gico: int.parse(gicoController.text),
+                      cliente: clienteController.text,
+                      referencia: int.parse(referenciaController.text),
+                      maquina: selectedValue!,
+                    );
+
+                    await isarDatasource.saveTroqueles([nuevoTroquel]);
+
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Agregar',
+                    style: TextStyle(color: Color(0xFFF5F5F5)),
+                  ))
+            ],
+          ),
+        ),
       ],
     );
   }

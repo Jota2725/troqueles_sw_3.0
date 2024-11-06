@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
@@ -17,33 +15,41 @@ class TroquelTable extends StatefulWidget {
 
 class TroquelTableState extends State<TroquelTable> {
   bool sortAscending = true;
+   
+
+  
+
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      
       scrollDirection: Axis.vertical,
       child: Column(
-      
         children: [
           Row(
-
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton.icon(
+                onPressed: () {},
+                label: const Text('Actualizar'),
+                icon: const Icon(Icons.refresh_outlined),
+                iconAlignment: IconAlignment.end,
+              ),
+
+              //BOTON AGREGAR
+              TextButton.icon(
                 onPressed: () {
-
-                  showDialog(context: context, builder: (BuildContext context){
-                    return AddTroquelees();
-
-
-
-                  }
-              );},
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AddTroquelees();
+                      });
+                },
                 label: const Text('Agregar'),
                 icon: const Icon(Icons.add_circle),
                 iconAlignment: IconAlignment.end,
               ),
+
               TextButton.icon(
                 onPressed: () {},
                 label: const Text('Guardar'),
@@ -58,7 +64,9 @@ class TroquelTableState extends State<TroquelTable> {
               ),
             ],
           ),
-          FadeInUp(child: _TablaTroqueles(sortAscending: sortAscending, widget: widget)),
+          FadeInUp(
+              child: _TablaTroqueles(
+                  sortAscending: sortAscending, widget: widget)),
         ],
       ),
     );
@@ -69,6 +77,7 @@ class _TablaTroqueles extends StatelessWidget {
   const _TablaTroqueles({
     required this.sortAscending,
     required this.widget,
+    
   });
 
   final bool sortAscending;
@@ -159,13 +168,4 @@ class DataColums extends StatelessWidget {
       ),
     );
   }
-
-
-
-
-
-
-
-  
 }
-
