@@ -1,14 +1,12 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:isar/isar.dart';
 import 'package:troqueles_sw/domain/datasource/troquel_datasource.dart';
 import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
 import '../../domain/entities/troquel.dart';
 
 class TroquelDatasourceImpl implements TroquelDatasource {
-  final IsarDatasource  _isarDatasource = IsarDatasource();
-
+  final IsarDatasource _isarDatasource = IsarDatasource();
 
   @override
   Future<List<Troquel>> seleccionarArchivoExcel(String sheetName) async {
@@ -58,24 +56,7 @@ class TroquelDatasourceImpl implements TroquelDatasource {
         ));
       }
     }
-
-    
     await _isarDatasource.saveTroqueles(troqueles);
     return troqueles;
   }
-
-  Future<List<Troquel>> getAllTroqueles()async{
-    return await _isarDatasource.getAllTroqueles();
-  }
-
-
-  Future<List<Troquel>> getAllTroquelesPorMaquina(String maquina) async {
-  final isar = await _isarDatasource.openDB();
-  return await isar.troquels
-      .filter()
-      .maquinaEqualTo(maquina)
-      .findAll();
-}
-
-
 }

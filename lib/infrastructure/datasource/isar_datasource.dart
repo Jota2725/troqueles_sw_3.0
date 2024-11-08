@@ -9,7 +9,7 @@ class IsarDatasource extends LocalStorageDatasource {
   IsarDatasource() {
     db = openDB();
   }
-
+  // ABRIR BASE DE DATOS
   Future<Isar> openDB() async {
     final dir = await getApplicationDocumentsDirectory();
 
@@ -19,19 +19,68 @@ class IsarDatasource extends LocalStorageDatasource {
     }
     return Future.value(Isar.getInstance());
   }
+  // -----------------------------------------CRUD DE TROQUELES ----------------------------------------------
 
-  
+  // GUARDAR TROQUEL
   @override
-  Future<void> saveTroqueles(List<Troquel> troqueles)async {
-     final isar = await db;
-    await isar.writeTxn(()async{
-
+  Future<void> saveTroqueles(List<Troquel> troqueles) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
       await isar.troquels.putAll(troqueles);
     });
   }
- Future<List<Troquel>> getAllTroqueles() async {
+
+  //OBTENER TODOS LOS TROQUELES
+  @override
+  Future<List<Troquel>> getAllTroqueles() async {
     final isar = await db;
-    return await isar.troquels.where().findAll(); // Obtiene todos los registros de Troquel
+    return await isar.troquels.where().findAll();
   }
 
+  // ELIMINAR TODOS LOS TROQUELES
+  @override
+  Future<void> deleteAllTroqueles() async {
+    final isar = await db;
+    return await isar.writeTxn(() async {
+      await isar.troquels.clear();
+    });
+  }
+
+  // BORRAR TROQUEL
+  @override
+  Future<void> deleteTroquel(int id) async {
+    final isar = await db;
+    return await isar.writeTxn(() async {
+      await isar.troquels.delete(id);
+    });
+  }
+
+  // OBTENER TROQUEL POR ID
+  @override
+  Future<Troquel?> getTroquelById(int id) {
+    // TODO: implement getTroquelById
+    throw UnimplementedError();
+  }
+
+  //ACTUALIZAR TROQUEL
+  @override
+  Future<void> updateTroquel(Troquel troquel) async {
+    final isar = await db;
+    return await isar.writeTxn(() async {
+      await isar.troquels.put(troquel);
+    });
+  }
+
+  @override
+  Future<void> deleteAllTroquelesbyMachine(String maquina) async {
+    final isar = await db;
+    return await isar.writeTxn(() async {
+      await isar.troquels.filter().maquinaEqualTo(maquina).deleteAll();
+    });
+  }
+
+  Future<List<Troquel>> getAllTroquelesPorMaquina(String maquina) async {
+    final isar = await db;
+    return await isar.troquels.filter().maquinaEqualTo(maquina).findAll();
+  }
 }

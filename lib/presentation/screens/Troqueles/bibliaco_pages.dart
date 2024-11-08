@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/widgets/custom_table_widget.dart';
-
 import '../../../domain/entities/troquel.dart';
+import '../../../infrastructure/datasource/isar_datasource.dart';
 import '../../../infrastructure/datasource/troquel_datasource.dart';
+
 
 class BibliacoPages extends StatefulWidget {
   static const name = 'bibliaco_pages';
@@ -19,13 +20,13 @@ class _BibliacoPagesState extends State<BibliacoPages> {
   @override
   void initState() {
     super.initState();
-    _cargarDatosDesdeBaseDeDatosPorMaquina('WARD'); // Carga los datos al iniciar la pantalla
+    _cargarDatosDesdeBaseDeDatosPorMaquina(hojaDeseada); // Carga los datos al iniciar la pantalla
   }
 
   // Método para cargar los datos desde ISAR al iniciar la pantalla
   Future<void> _cargarDatosDesdeBaseDeDatos() async {
-    final datasource = TroquelDatasourceImpl();
-    List<Troquel> datosDesdeBD = await datasource.getAllTroqueles();
+    final datasource = IsarDatasource();
+    List<Troquel> datosDesdeBD = await datasource.getAllTroquelesPorMaquina(hojaDeseada);
 
     setState(() {
       troqueles = datosDesdeBD;
@@ -33,7 +34,7 @@ class _BibliacoPagesState extends State<BibliacoPages> {
   }
 
 void _cargarDatosDesdeBaseDeDatosPorMaquina(String maquina) async {
-  final datasource = TroquelDatasourceImpl();
+  final datasource = IsarDatasource();
   List<Troquel> datosDesdeBD = await datasource.getAllTroquelesPorMaquina(maquina);
   setState(() {
     troqueles = datosDesdeBD;
@@ -48,7 +49,7 @@ void _cargarDatosDesdeBaseDeDatosPorMaquina(String maquina) async {
     await datasource.seleccionarArchivoExcel(hojaDeseada);
 
     // Después de importar, recargar los datos desde la base de datos
-    _cargarDatosDesdeBaseDeDatos();
+    _cargarDatosDesdeBaseDeDatosPorMaquina(hojaDeseada);
   }
 
   @override
@@ -60,7 +61,9 @@ void _cargarDatosDesdeBaseDeDatosPorMaquina(String maquina) async {
       ),
       body: TroquelTable(
         troqueles: troqueles,
-        onImportPressed: _importarDesdeExcel,
+        onImportPressed: _importarDesdeExcel, maquina: hojaDeseada,
+       
+        
       ),
     );
   }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco_pages.dart';
 import 'package:troqueles_sw/presentation/screens/Troqueles/tw_machine.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
-import 'package:troqueles_sw/presentation/widgets/custom_search_bar.dart';
+
 
 
 class NavigationScreen extends StatefulWidget {
@@ -14,6 +14,7 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
+  
   int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               child: Image(
             image: AssetImage('assets/Smurfit_Westrock_(logo).png'),
           )),
-          title: Center(child: CustomSearchBar())),
+          title: Center(child: Text('SW TROQUELES 1.0 ',style: TextStyle(fontSize: 30),))),
 
       pane: NavigationPane(
         header: const Padding(

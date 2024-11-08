@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
 import 'package:troqueles_sw/presentation/widgets/custom_table_widget.dart';
 
 import '../../../domain/entities/troquel.dart';
@@ -24,8 +25,8 @@ class _BibliacoPagesState extends State<TWPage> {
 
   // Método para cargar los datos desde ISAR al iniciar la pantalla
   Future<void> _cargarDatosDesdeBaseDeDatos() async {
-    final datasource = TroquelDatasourceImpl();
-    List<Troquel> datosDesdeBD = await datasource.getAllTroqueles();
+    final datasource = IsarDatasource();
+    List<Troquel> datosDesdeBD = await datasource.getAllTroquelesPorMaquina(hojaDeseada);
 
     setState(() {
       troqueles = datosDesdeBD;
@@ -34,7 +35,7 @@ class _BibliacoPagesState extends State<TWPage> {
 
 
   void _cargarDatosDesdeBaseDeDatosPorMaquina(String maquina) async {
-  final datasource = TroquelDatasourceImpl();
+  final datasource = IsarDatasource();
   List<Troquel> datosDesdeBD = await datasource.getAllTroquelesPorMaquina(maquina);
   setState(() {
     troqueles = datosDesdeBD;
@@ -60,7 +61,8 @@ class _BibliacoPagesState extends State<TWPage> {
       ),
       body: TroquelTable(
         troqueles: troqueles,
-        onImportPressed: _importarDesdeExcel,
+        onImportPressed: _importarDesdeExcel, maquina: hojaDeseada,
+         
       ),
     );
   }

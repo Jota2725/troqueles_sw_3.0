@@ -3,11 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 import 'package:troqueles_sw/presentation/widgets/add_troquelees.dart';
 
+import '../../infrastructure/datasource/isar_datasource.dart';
+import 'custom_search_bar.dart';
+
 class TroquelTable extends StatefulWidget {
   final List<Troquel> troqueles;
   final VoidCallback? onImportPressed;
-  const TroquelTable(
-      {super.key, required this.troqueles, this.onImportPressed});
+  final String maquina;
+
+  const TroquelTable({
+    super.key,
+    required this.troqueles,
+    this.onImportPressed,
+    required this.maquina,
+  });
 
   @override
   TroquelTableState createState() => TroquelTableState();
@@ -15,10 +24,7 @@ class TroquelTable extends StatefulWidget {
 
 class TroquelTableState extends State<TroquelTable> {
   bool sortAscending = true;
-   
-
-  
-
+  final IsarDatasource isarDatasource = IsarDatasource();
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +33,19 @@ class TroquelTableState extends State<TroquelTable> {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const CustomSearchBar(),
+
+              TextButton.icon(
+                onPressed: () {
+                  isarDatasource.deleteAllTroquelesbyMachine(widget.maquina);
+                },
+                label: const Text('Eliminar todos'),
+                icon: const Icon(Icons.delete_forever),
+                iconAlignment: IconAlignment.end,
+              ),
+
               TextButton.icon(
                 onPressed: () {},
                 label: const Text('Actualizar'),
@@ -42,7 +59,7 @@ class TroquelTableState extends State<TroquelTable> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AddTroquelees();
+                        return const AddTroquelees();
                       });
                 },
                 label: const Text('Agregar'),
@@ -77,7 +94,6 @@ class _TablaTroqueles extends StatelessWidget {
   const _TablaTroqueles({
     required this.sortAscending,
     required this.widget,
-    
   });
 
   final bool sortAscending;
@@ -119,6 +135,7 @@ class _TablaTroqueles extends StatelessWidget {
               icon: Icons.adf_scanner_rounded,
               text: 'Maquina',
             )),
+            DataColumn(label: DataColums(text: ''))
           ],
           rows: widget.troqueles.map<DataRow>((Troquel troquel) {
             return DataRow(
@@ -128,6 +145,22 @@ class _TablaTroqueles extends StatelessWidget {
                 DataCell(Text(troquel.cliente), onTap: () {}),
                 DataCell(Text('${troquel.referencia}'), onTap: () {}),
                 DataCell(Text(troquel.maquina), onTap: () {}),
+                DataCell(Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.edit,
+                        )),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                    )
+                  ],
+                ))
               ],
             );
           }).toList(),
@@ -138,11 +171,11 @@ class _TablaTroqueles extends StatelessWidget {
 }
 
 class DataColums extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
   final String text;
   const DataColums({
     super.key,
-    required this.icon,
+    this.icon,
     required this.text,
   });
 

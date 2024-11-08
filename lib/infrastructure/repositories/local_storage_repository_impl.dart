@@ -16,4 +16,34 @@ class LocalStorageRepositoryImpl extends LocalStorageRepository {
     
   }
   
+  @override
+  Future<void> deleteAllTroqueles() {
+    return datasource.deleteAllTroqueles();
+  }
+  
+  @override
+  Future<void> deleteTroquel(int id) {
+    return datasource.deleteTroquel(id);
+  }
+  
+  @override
+  Future<List<Troquel>> getAllTroqueles() {
+    return datasource.getAllTroqueles();
+  }
+  
+  @override
+  Future<Troquel?> getTroquelById(int id) {
+    return datasource.getTroquelById(id);
+  }
+  
+  @override
+  Future<void> updateTroquel(Troquel troquel) {
+    return datasource.updateTroquel(troquel);
+  }
+  
+  @override
+  Future<void> deleteAllTroquelesbyMachine(String maquina) {
+    return deleteAllTroquelesbyMachine(maquina);
+  }
+  
 }
