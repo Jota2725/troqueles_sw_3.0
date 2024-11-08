@@ -46,27 +46,27 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 PaneItemHeader(header: const Text('Maquinas')),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const BibliacoPages(),
+                  body: const BibliacoPages(titulo: 'Troqueladora Ward', hojaDeseada: 'WA',),
                   title: const Text('Ward'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const Text('Screen2'),
+                  body: const BibliacoPages(titulo: 'Troqueladora Flexo ward', hojaDeseada: 'FW'),
                   title: const Text('Flexo Ward'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const TWPage(),
+                  body: const BibliacoPages(titulo: 'Holandeza', hojaDeseada: 'TW'),
                   title: const Text('Holandeza'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const Text('Screen4'),
+                  body: const  BibliacoPages(titulo: 'JS Machine', hojaDeseada:'JS' ),
                   title: const Text('Js Machine'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const Text('Screen4'),
+                  body: const BibliacoPages(titulo: 'Mini Line', hojaDeseada: 'ML'),
                   title: const Text('Mini line'),
                 ),
               ]),
