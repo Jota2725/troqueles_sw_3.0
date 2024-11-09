@@ -49,6 +49,7 @@ class _BibliacoPagesState extends State<BibliacoPages> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title:  Text(widget.titulo),
@@ -60,13 +61,7 @@ class _BibliacoPagesState extends State<BibliacoPages> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Mientras los datos están cargando, muestra un indicador de carga
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            // Si hay un error, muestra un mensaje
-            return const Center(child: Text('Error al cargar los datos.'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            // Si no hay datos, muestra un mensaje
-            return const Center(child: Text('No se encontraron troqueles.'));
-          } else {
+          } else  {
             // Cuando los datos están listos, muestra la tabla
             return TroquelTable(
               troqueles: snapshot.data!,

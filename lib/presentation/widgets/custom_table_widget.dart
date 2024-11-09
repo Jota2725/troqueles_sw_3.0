@@ -32,60 +32,76 @@ class TroquelTableState extends State<TroquelTable> {
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CustomSearchBar(),
-
-              TextButton.icon(
-                onPressed: () {
-                  isarDatasource.deleteAllTroquelesbyMachine(widget.maquina);
-                },
-                label: const Text('Eliminar todos'),
-                icon: const Icon(Icons.delete_forever),
-                iconAlignment: IconAlignment.end,
-              ),
-
-              TextButton.icon(
-                onPressed: () {},
-                label: const Text('Actualizar'),
-                icon: const Icon(Icons.refresh_outlined),
-                iconAlignment: IconAlignment.end,
-              ),
-
-              //BOTON AGREGAR
-              TextButton.icon(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const AddTroquelees();
-                      });
-                },
-                label: const Text('Agregar'),
-                icon: const Icon(Icons.add_circle),
-                iconAlignment: IconAlignment.end,
-              ),
-
-              TextButton.icon(
-                onPressed: () {},
-                label: const Text('Guardar'),
-                icon: const Icon(Icons.save),
-                iconAlignment: IconAlignment.end,
-              ),
-              TextButton.icon(
-                onPressed: widget.onImportPressed,
-                label: const Text('Importar excel'),
-                icon: const Icon(Icons.upload),
-                iconAlignment: IconAlignment.end,
-              ),
-            ],
-          ),
+          ActionsIcons(isarDatasource: isarDatasource, widget: widget),
           FadeInUp(
               child: _TablaTroqueles(
                   sortAscending: sortAscending, widget: widget)),
         ],
       ),
+    );
+  }
+}
+
+class ActionsIcons extends StatelessWidget {
+  const ActionsIcons({
+    super.key,
+    required this.isarDatasource,
+    required this.widget,
+  });
+
+  final IsarDatasource isarDatasource;
+  final TroquelTable widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const CustomSearchBar(),
+    
+        TextButton.icon(
+          onPressed: () {
+            isarDatasource.deleteAllTroquelesbyMachine(widget.maquina);
+          },
+          label: const Text('Eliminar todos'),
+          icon: const Icon(Icons.delete_forever),
+          iconAlignment: IconAlignment.end,
+        ),
+    
+        TextButton.icon(
+          onPressed: () {},
+          label: const Text('Actualizar'),
+          icon: const Icon(Icons.refresh_outlined),
+          iconAlignment: IconAlignment.end,
+        ),
+    
+        //BOTON AGREGAR
+        TextButton.icon(
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const AddTroquelees();
+                });
+          },
+          label: const Text('Agregar'),
+          icon: const Icon(Icons.add_circle),
+          iconAlignment: IconAlignment.end,
+        ),
+    
+        TextButton.icon(
+          onPressed: () {},
+          label: const Text('Guardar'),
+          icon: const Icon(Icons.save),
+          iconAlignment: IconAlignment.end,
+        ),
+        TextButton.icon(
+          onPressed: widget.onImportPressed,
+          label: const Text('Importar excel'),
+          icon: const Icon(Icons.upload),
+          iconAlignment: IconAlignment.end,
+        ),
+      ],
     );
   }
 }
