@@ -5,7 +5,8 @@ import '../../domain/entities/troquel.dart';
 import '../../infrastructure/datasource/isar_datasource.dart';
 
 class AddTroquelees extends StatefulWidget {
-  const AddTroquelees({super.key});
+  final Troquel? troquel;
+  const AddTroquelees({super.key, this.troquel});
 
   @override
   State<AddTroquelees> createState() => _AddTroqueleesState();
@@ -20,9 +21,22 @@ class _AddTroqueleesState extends State<AddTroquelees> {
   final IsarDatasource isarDatasource = IsarDatasource();
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.troquel != null) {
+      final troquel = widget.troquel!;
+      ubicacionController.text = troquel.ubicacion.toString();
+      gicoController.text = troquel.gico.toString();
+      clienteController.text = troquel.cliente;
+      referenciaController.text = troquel.referencia.toString();
+      selectedValue = troquel.maquina;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Agregar troquel'),
+      title: Text(widget.troquel == null ? 'Agregar troquel' : 'Editar troquel'),
       backgroundColor: FluentTheme.of(context).brightness == Brightness.light
           ? const Color(0xFFF5F5F5)
           : const Color(0xFF1E1E1E),
@@ -105,53 +119,62 @@ class _AddTroqueleesState extends State<AddTroquelees> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1E1E1E),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'Cancelar',
-                    style: TextStyle(color: Color(0xFFF5F5F5)),
-                  )),
-              const SizedBox(
-                width: 20,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E1E1E),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(color: Color(0xFFF5F5F5)),
+                ),
               ),
+              const SizedBox(width: 20),
               ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0BAFFE)),
-                  onPressed: () async {
-                    if (ubicacionController.text.isEmpty ||
-                        gicoController.text.isEmpty ||
-                        clienteController.text.isEmpty ||
-                        referenciaController.text.isEmpty ||
-                        selectedValue == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Por favor, completa todos los campos requeridos.')),
-                      );
-                      return;
-                    }
-
-                    // Crear y guardar Troquel
-                    final nuevoTroquel = Troquel(
-                      ubicacion: int.parse(ubicacionController.text),
-                      gico: int.parse(gicoController.text),
-                      cliente: clienteController.text,
-                      referencia: int.parse(referenciaController.text),
-                      maquina: selectedValue!,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0BAFFE),
+                ),
+                onPressed: () async {
+                  if (ubicacionController.text.isEmpty ||
+                      gicoController.text.isEmpty ||
+                      clienteController.text.isEmpty ||
+                      referenciaController.text.isEmpty ||
+                      selectedValue == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'Por favor, completa todos los campos requeridos.'),
+                      ),
                     );
+                    return;
+                  }
 
+                  // Crear o actualizar el troquel
+                  final nuevoTroquel = Troquel(
+                    ubicacion: int.parse(ubicacionController.text),
+                    gico: int.parse(gicoController.text),
+                    cliente: clienteController.text,
+                    referencia: int.parse(referenciaController.text),
+                    maquina: selectedValue!,
+                  );
+
+                  if (widget.troquel == null) {
+                    // Agregar nuevo troquel
                     await isarDatasource.saveTroqueles([nuevoTroquel]);
+                  } else {
+                    // Actualizar troquel existente
+                    nuevoTroquel.isarId = widget.troquel!.isarId;
+                    await isarDatasource.updateTroquel(nuevoTroquel);
+                  }
 
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'Agregar',
-                    style: TextStyle(color: Color(0xFFF5F5F5)),
-                  ))
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  widget.troquel == null ? 'Agregar' : 'Guardar',
+                  style: const TextStyle(color: Color(0xFFF5F5F5)),
+                ),
+              ),
             ],
           ),
         ),
