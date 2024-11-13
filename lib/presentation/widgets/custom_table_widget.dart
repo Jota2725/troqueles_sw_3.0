@@ -177,7 +177,10 @@ class _TablaTroqueles extends StatelessWidget {
                           Icons.edit,
                         )),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+
+                        
+                      },
                       icon: const Icon(
                         Icons.delete,
                         color: Colors.red,
