@@ -58,7 +58,7 @@ class ActionsIcons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const CustomSearchBar(),
-    
+
         TextButton.icon(
           onPressed: () {
             isarDatasource.deleteAllTroquelesbyMachine(widget.maquina);
@@ -67,14 +67,14 @@ class ActionsIcons extends StatelessWidget {
           icon: const Icon(Icons.delete_forever),
           iconAlignment: IconAlignment.end,
         ),
-    
+
         TextButton.icon(
           onPressed: () {},
           label: const Text('Actualizar'),
           icon: const Icon(Icons.refresh_outlined),
           iconAlignment: IconAlignment.end,
         ),
-    
+
         //BOTON AGREGAR
         TextButton.icon(
           onPressed: () {
@@ -88,7 +88,7 @@ class ActionsIcons extends StatelessWidget {
           icon: const Icon(Icons.add_circle),
           iconAlignment: IconAlignment.end,
         ),
-    
+
         TextButton.icon(
           onPressed: () {},
           label: const Text('Guardar'),
@@ -164,7 +164,15 @@ class _TablaTroqueles extends StatelessWidget {
                 DataCell(Row(
                   children: [
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AddTroquelees(
+                                  troquel: troquel,
+                                );
+                              });
+                        },
                         icon: const Icon(
                           Icons.edit,
                         )),

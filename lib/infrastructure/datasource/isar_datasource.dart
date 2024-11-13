@@ -66,8 +66,26 @@ class IsarDatasource extends LocalStorageDatasource {
   @override
   Future<void> updateTroquel(Troquel troquel) async {
     final isar = await db;
-    return await isar.writeTxn(() async {
-      await isar.troquels.put(troquel);
+     return await isar.writeTxn(() async {
+      
+        final updatedTroquel = Troquel(
+      ubicacion: troquel.ubicacion,
+      gico: troquel.gico,
+      cliente: troquel.cliente,
+      referencia: troquel.referencia,
+      maquina: troquel.maquina,
+      clave: troquel.clave,
+      largo: troquel.largo,
+      ancho: troquel.ancho,
+      alto: troquel.alto,
+      cabida: troquel.cabida,
+      estilo: troquel.estilo,
+      descripcion: troquel.descripcion,
+    )..isarId = troquel.isarId; 
+   
+   
+      await isar.troquels.put(updatedTroquel);
+   
     });
   }
 
