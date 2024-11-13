@@ -177,7 +177,12 @@ class _TablaTroqueles extends StatelessWidget {
                           Icons.edit,
                         )),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        final IsarDatasource isarDatasource = IsarDatasource();
+                        isarDatasource.deleteTroquel(troquel.isarId!);
+
+
+                      },
                       icon: const Icon(
                         Icons.delete,
                         color: Colors.red,
