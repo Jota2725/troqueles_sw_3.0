@@ -1,9 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/config/router/app_router.dart';
 import 'package:troqueles_sw/config/theme/app_theme.dart';
 
 
-void main() => runApp(const MyApp());
+void main() => runApp(const ProviderScope(child: MyApp()));
 
 class MyApp extends StatelessWidget {
   static const name = 'Home-Screen';

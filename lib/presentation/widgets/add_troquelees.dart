@@ -1,24 +1,25 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:troqueles_sw/domain/entities/troquel.dart';
 
-import '../../domain/entities/troquel.dart';
-import '../../infrastructure/datasource/isar_datasource.dart';
+import '../providers/troqueles_provider.dart';
 
-class AddTroquelees extends StatefulWidget {
+
+class AddTroquelees extends ConsumerStatefulWidget {
   final Troquel? troquel;
   const AddTroquelees({super.key, this.troquel});
 
   @override
-  State<AddTroquelees> createState() => _AddTroqueleesState();
+  ConsumerState<AddTroquelees> createState() => _AddTroqueleesState();
 }
 
-class _AddTroqueleesState extends State<AddTroquelees> {
+class _AddTroqueleesState extends ConsumerState<AddTroquelees> {
   String? selectedValue;
   final ubicacionController = TextEditingController();
   final gicoController = TextEditingController();
   final clienteController = TextEditingController();
   final referenciaController = TextEditingController();
-  final IsarDatasource isarDatasource = IsarDatasource();
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _AddTroqueleesState extends State<AddTroquelees> {
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+         children: [
             const Text(
                 'A continuación ingrese toda la información del Troquel'),
             const SizedBox(height: 20),
@@ -103,13 +104,19 @@ class _AddTroqueleesState extends State<AddTroquelees> {
                 ComboBoxItem(value: 'ML', child: Text('MINI LINE')),
                 ComboBoxItem(value: 'DF', child: Text('DON FANG')),
               ],
-              onChanged: (value) {
+              
+              onChanged: (value){
+
                 setState(() {
                   selectedValue = value;
+
                 });
-              },
-            ),
-          ],
+              }
+
+
+
+            // Contenido del formulario...
+         ) ],
         ),
       ),
       actions: [
@@ -119,38 +126,15 @@ class _AddTroqueleesState extends State<AddTroquelees> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E1E1E),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'Cancelar',
-                  style: TextStyle(color: Color(0xFFF5F5F5)),
-                ),
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancelar'),
               ),
               const SizedBox(width: 20),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0BAFFE),
-                ),
                 onPressed: () async {
-                  if (ubicacionController.text.isEmpty ||
-                      gicoController.text.isEmpty ||
-                      clienteController.text.isEmpty ||
-                      referenciaController.text.isEmpty ||
-                      selectedValue == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                            'Por favor, completa todos los campos requeridos.'),
-                      ),
-                    );
-                    return;
-                  }
 
-                  // Crear o actualizar el troquel
+
+                  // Verificar campos...
                   final nuevoTroquel = Troquel(
                     ubicacion: int.parse(ubicacionController.text),
                     gico: int.parse(gicoController.text),
@@ -159,21 +143,18 @@ class _AddTroqueleesState extends State<AddTroquelees> {
                     maquina: selectedValue!,
                   );
 
+                  final troquelNotifier = ref.read(troquelProvider.notifier);
+
                   if (widget.troquel == null) {
-                    // Agregar nuevo troquel
-                    await isarDatasource.saveTroqueles([nuevoTroquel]);
+                    await troquelNotifier.addTroquel(nuevoTroquel);
                   } else {
-                    // Actualizar troquel existente
                     nuevoTroquel.isarId = widget.troquel!.isarId;
-                    await isarDatasource.updateTroquel(nuevoTroquel);
+                    await troquelNotifier.updateTroquel(nuevoTroquel);
                   }
 
                   Navigator.of(context).pop();
                 },
-                child: Text(
-                  widget.troquel == null ? 'Agregar' : 'Guardar',
-                  style: const TextStyle(color: Color(0xFFF5F5F5)),
-                ),
+                child: Text(widget.troquel == null ? 'Agregar' : 'Guardar'),
               ),
             ],
           ),

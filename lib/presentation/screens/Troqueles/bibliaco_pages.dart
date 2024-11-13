@@ -1,72 +1,69 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/widgets/custom_table_widget.dart';
 import '../../../domain/entities/troquel.dart';
-import '../../../infrastructure/datasource/isar_datasource.dart';
 import '../../../infrastructure/datasource/troquel_datasource.dart';
+import '../../providers/troqueles_provider.dart';
 
-class BibliacoPages extends StatefulWidget {
+class BibliacoPages extends ConsumerStatefulWidget {
   final String titulo;
   final String hojaDeseada;
   static const name = 'bibliaco_pages';
 
-  const BibliacoPages(
-      {super.key, required this.titulo, required this.hojaDeseada});
+  const BibliacoPages({super.key, required this.titulo, required this.hojaDeseada});
 
   @override
-  // ignore: library_private_types_in_public_api
   _BibliacoPagesState createState() => _BibliacoPagesState();
 }
 
-class _BibliacoPagesState extends State<BibliacoPages> {
-  // Nombre de la hoja deseada en este caso
-  late Future<List<Troquel>>  futureTroqueles ;
+class _BibliacoPagesState extends ConsumerState<BibliacoPages> {
+  late Future<List<Troquel>> futureTroqueles;
 
   @override
   void initState() {
     super.initState();
-    futureTroqueles = _cargarDatosDesdeBaseDeDatosPorMaquina(
-        widget.hojaDeseada); // Carga los datos al iniciar la pantalla
+    futureTroqueles = _cargarDatosDesdeBaseDeDatosPorMaquina(widget.hojaDeseada); // Carga los datos al iniciar la pantalla
   }
 
   // Método para cargar los datos desde ISAR al iniciar la pantalla
-  /*Future<void> _cargarDatosDesdeBaseDeDatos() async {
-    final datasource = IsarDatasource();
-    List<Troquel> datosDesdeBD = await datasource.getAllTroquelesPorMaquina(widget.hojaDeseada);
-
-    setState(() {
-      troqueles = datosDesdeBD;
-    });
-  }
-  */
-
-   Future<List<Troquel>> _cargarDatosDesdeBaseDeDatosPorMaquina(String maquina) async {
-    final datasource = IsarDatasource();
-    return await datasource.getAllTroquelesPorMaquina(maquina);
+  Future<List<Troquel>> _cargarDatosDesdeBaseDeDatosPorMaquina(String maquina) async {
+    final troquelNotifier = ref.read(troquelProvider.notifier);
+    await troquelNotifier.loadTroqueles(maquina);  // Carga los troqueles por máquina
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    return troquelNotifier.state; // Retorna el estado actualizado
   }
 
   // Método para importar datos desde el archivo Excel y guardarlos en ISAR
- 
+  Future<void> _importarDesdeExcel() async {
+    final datasource = TroquelDatasourceImpl();
+    await datasource.seleccionarArchivoExcel(widget.hojaDeseada);
+
+    // Recarga los datos después de importar desde Excel
+    setState(() {
+      futureTroqueles = _cargarDatosDesdeBaseDeDatosPorMaquina(widget.hojaDeseada);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
-        title:  Text(widget.titulo),
+        title: Text(widget.titulo),
         centerTitle: true,
       ),
       body: FutureBuilder<List<Troquel>>(
         future: futureTroqueles,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // Mientras los datos están cargando, muestra un indicador de carga
             return const Center(child: CircularProgressIndicator());
-          } else  {
-            // Cuando los datos están listos, muestra la tabla
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No hay troqueles disponibles.'));
+          } else {
             return TroquelTable(
-              troqueles: snapshot.data!,
+             
               onImportPressed: () async {
-                // Aquí puedes recargar los datos después de importar desde Excel
                 await _importarDesdeExcel();
               },
               maquina: widget.hojaDeseada,
@@ -75,15 +72,5 @@ class _BibliacoPagesState extends State<BibliacoPages> {
         },
       ),
     );
-  }
-
-
-   Future<void> _importarDesdeExcel() async {
-    final datasource = TroquelDatasourceImpl();
-    await datasource.seleccionarArchivoExcel(widget.hojaDeseada);
-
-    setState(() {
-      futureTroqueles = _cargarDatosDesdeBaseDeDatosPorMaquina(widget.hojaDeseada);
-    });
   }
 }
