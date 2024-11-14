@@ -68,6 +68,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   body: const BibliacoPages(titulo: 'Mini Line', hojaDeseada: 'ML'),
                   title: const Text('Mini line'),
                 ),
+                PaneItem(
+                  icon: const Icon(Icons.factory),
+                  body: const BibliacoPages(titulo: 'DonFang', hojaDeseada: 'DF'),
+                  title: const Text('DongFang'),
+                ),
               ]),
           PaneItem(
             icon: const Icon(Icons.autorenew),

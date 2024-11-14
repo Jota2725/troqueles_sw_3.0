@@ -18,6 +18,18 @@ class TroquelNotifier extends StateNotifier<List<Troquel>> {
     await loadTroqueles(troquel.maquina); // Recargar los troqueles por máquina
   }
 
+
+  Future<void> searchTroquel(int gico, String maquina) async {
+    final result = await _isarDatasource.getTroquelByGicoAndMaquina(gico, maquina);
+    if (result != null) {
+      state = [result];
+       // Actualiza el estado con el troquel encontrado
+    } else {
+      state = []; // Limpia el estado si no se encuentra el troquel
+    }
+    
+  }
+
   // Actualizar un troquel existente
   Future<void> updateTroquel(Troquel troquel) async {
     await _isarDatasource.updateTroquel(troquel);

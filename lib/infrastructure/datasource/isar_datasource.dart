@@ -56,10 +56,14 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   // OBTENER TROQUEL POR ID
-  @override
-  Future<Troquel?> getTroquelById(int id) {
-    // TODO: implement getTroquelById
-    throw UnimplementedError();
+   Future<Troquel?> getTroquelByGicoAndMaquina(int gico, String maquina) async {
+     final isar = await db;
+    return await isar.troquels
+        .filter()
+        .gicoEqualTo(gico)
+        .and()
+        .maquinaEqualTo(maquina)
+        .findFirst();
   }
 
   //ACTUALIZAR TROQUEL
@@ -100,5 +104,11 @@ class IsarDatasource extends LocalStorageDatasource {
   Future<List<Troquel>> getAllTroquelesPorMaquina(String maquina) async {
     final isar = await db;
     return await isar.troquels.filter().maquinaEqualTo(maquina).findAll();
+  }
+  
+  @override
+  Future<Troquel?> getTroquelById(int id) {
+    // TODO: implement getTroquelById
+    throw UnimplementedError();
   }
 }

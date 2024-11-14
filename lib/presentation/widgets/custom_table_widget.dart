@@ -6,6 +6,7 @@ import 'package:troqueles_sw/presentation/widgets/add_troquelees.dart';
 import '../../infrastructure/datasource/isar_datasource.dart';
 import '../providers/troqueles_provider.dart';
 import 'actionIcons.dart';
+import 'custom_search_bar.dart';
  // Asegúrate de importar el provider aquí
 
 class TroquelTable extends ConsumerWidget {
@@ -26,6 +27,7 @@ class TroquelTable extends ConsumerWidget {
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
+        
           ActionsIcons(
             isarDatasource: IsarDatasource(),
             widget: this,
@@ -43,7 +45,7 @@ class _TablaTroqueles extends ConsumerWidget {
   final List<Troquel> troqueles;
 
   const _TablaTroqueles({
-    super.key,
+    
     required this.troqueles,
   });
 
@@ -91,6 +93,7 @@ class _TablaTroqueles extends ConsumerWidget {
                       onPressed: () async {
                         final troquelNotifier = ref.read(troquelProvider.notifier);
                         await troquelNotifier.deleteTroquel(troquel.isarId!,troquel.maquina );
+                        
                       },
                       icon: const Icon(Icons.delete, color: Colors.red),
                     )

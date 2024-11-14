@@ -79,6 +79,7 @@ class _AddTroqueleesState extends ConsumerState<AddTroquelees> {
               decoration: const InputDecoration(
                 labelText: 'Ingresa el cliente',
                 border: OutlineInputBorder(),
+                
               ),
             ),
             const SizedBox(height: 20),
@@ -100,9 +101,10 @@ class _AddTroqueleesState extends ConsumerState<AddTroquelees> {
               items: const [
                 ComboBoxItem(value: 'WA', child: Text('WARD')),
                 ComboBoxItem(value: 'TW', child: Text('HOLANDEZA')),
-                ComboBoxItem(value: 'FW', child: Text('FLEXO WARD')),
-                ComboBoxItem(value: 'ML', child: Text('MINI LINE')),
-                ComboBoxItem(value: 'DF', child: Text('DON FANG')),
+                ComboBoxItem(value: 'FW', child: Text('FLEXOWARD')),
+                ComboBoxItem(value: 'ML', child: Text('MINILINE')),
+                ComboBoxItem(value: 'DF', child: Text('DONFANG')),
+                ComboBoxItem(value: 'JS', child: Text('JS MACHINE')),
               ],
               
               onChanged: (value){

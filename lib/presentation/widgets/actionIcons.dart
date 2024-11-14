@@ -20,7 +20,7 @@ class ActionsIcons extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const CustomSearchBar(),
+         CustomSearchBar(widget.maquina),
 
                                                 //Eliminar todos
         //------------------------------------------------------------------------------------------------------------------------
@@ -35,7 +35,10 @@ class ActionsIcons extends StatelessWidget {
                                                   //BOTON ACTUALIZAR
         //------------------------------------------------------------------------------------------------------------------------
         TextButton.icon(
-          onPressed: () {},
+          onPressed: () {
+
+            isarDatasource.getAllTroquelesPorMaquina(widget.maquina);
+          },
           label: const Text('Actualizar'),
           icon: const Icon(Icons.refresh_outlined),
           iconAlignment: IconAlignment.end,
