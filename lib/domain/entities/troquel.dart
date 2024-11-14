@@ -6,7 +6,7 @@ part 'troquel.g.dart';
 class Troquel {
 
   Id? isarId;
-  final int ubicacion;
+  final String? ubicacion;
   //GICO ES ID
   final int gico;
   final String cliente;
@@ -22,7 +22,7 @@ class Troquel {
 
 
  Troquel({
-  required this.ubicacion,
+  this.ubicacion,
   required this.gico, 
   required this.cliente, 
   required this.referencia,

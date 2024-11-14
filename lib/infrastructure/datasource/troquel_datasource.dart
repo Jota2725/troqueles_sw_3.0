@@ -33,7 +33,7 @@ class TroquelDatasourceImpl implements TroquelDatasource {
     if (sheet != null) {
       for (var row in sheet.rows.skip(1)) {
         troqueles.add(Troquel(
-          ubicacion: int.tryParse(row[0]?.value.toString() ?? '0') ?? 0,
+          ubicacion: (row[0]?.value.toString() ?? 'libre'),
           gico: int.tryParse(row[1]?.value.toString() ?? '0') ?? 0,
           cliente: row[2]?.value.toString() ?? '',
           referencia: int.tryParse(row[3]?.value.toString() ?? '0') ?? 0,

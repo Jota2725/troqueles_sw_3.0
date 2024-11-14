@@ -138,7 +138,7 @@ class _AddTroqueleesState extends ConsumerState<AddTroquelees> {
 
                   // Verificar campos...
                   final nuevoTroquel = Troquel(
-                    ubicacion: int.parse(ubicacionController.text),
+                    ubicacion: ubicacionController.text,
                     gico: int.parse(gicoController.text),
                     cliente: clienteController.text,
                     referencia: int.parse(referenciaController.text),

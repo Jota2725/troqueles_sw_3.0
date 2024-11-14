@@ -75,7 +75,7 @@ const TroquelSchema = CollectionSchema(
     r'ubicacion': PropertySchema(
       id: 11,
       name: r'ubicacion',
-      type: IsarType.long,
+      type: IsarType.string,
     )
   },
   estimateSize: _troquelEstimateSize,
@@ -118,6 +118,12 @@ int _troquelEstimateSize(
     }
   }
   bytesCount += 3 + object.maquina.length * 3;
+  {
+    final value = object.ubicacion;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -138,7 +144,7 @@ void _troquelSerialize(
   writer.writeLong(offsets[8], object.largo);
   writer.writeString(offsets[9], object.maquina);
   writer.writeLong(offsets[10], object.referencia);
-  writer.writeLong(offsets[11], object.ubicacion);
+  writer.writeString(offsets[11], object.ubicacion);
 }
 
 Troquel _troquelDeserialize(
@@ -159,7 +165,7 @@ Troquel _troquelDeserialize(
     largo: reader.readLongOrNull(offsets[8]),
     maquina: reader.readString(offsets[9]),
     referencia: reader.readLong(offsets[10]),
-    ubicacion: reader.readLong(offsets[11]),
+    ubicacion: reader.readStringOrNull(offsets[11]),
   );
   object.isarId = id;
   return object;
@@ -195,7 +201,7 @@ P _troquelDeserializeProp<P>(
     case 10:
       return (reader.readLong(offset)) as P;
     case 11:
-      return (reader.readLong(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1440,47 +1446,71 @@ extension TroquelQueryFilter
     });
   }
 
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'ubicacion',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'ubicacion',
+      ));
+    });
+  }
+
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionEqualTo(
-      int value) {
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'ubicacion',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionGreaterThan(
-    int value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'ubicacion',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionLessThan(
-    int value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'ubicacion',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionBetween(
-    int lower,
-    int upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1489,6 +1519,75 @@ extension TroquelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'ubicacion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'ubicacion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'ubicacion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'ubicacion',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ubicacion',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> ubicacionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'ubicacion',
+        value: '',
       ));
     });
   }
@@ -1878,9 +1977,10 @@ extension TroquelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Troquel, Troquel, QDistinct> distinctByUbicacion() {
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctByUbicacion(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'ubicacion');
+      return query.addDistinctBy(r'ubicacion', caseSensitive: caseSensitive);
     });
   }
 }
@@ -1959,7 +2059,7 @@ extension TroquelQueryProperty
     });
   }
 
-  QueryBuilder<Troquel, int, QQueryOperations> ubicacionProperty() {
+  QueryBuilder<Troquel, String?, QQueryOperations> ubicacionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ubicacion');
     });

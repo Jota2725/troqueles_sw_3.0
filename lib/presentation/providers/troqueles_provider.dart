@@ -41,7 +41,15 @@ class TroquelNotifier extends StateNotifier<List<Troquel>> {
     await _isarDatasource.deleteTroquel(id);
     await loadTroqueles(maquina); // Recargar los troqueles por máquina
   }
+
+  Future<void>deleteAllTroquelesbyMachine( String maquina) async{
+  await _isarDatasource.deleteAllTroquelesbyMachine(maquina);
+await loadTroqueles(maquina);
+  }
+
 }
+
+
 
 // Provider de TroquelNotifier
 final troquelProvider = StateNotifierProvider<TroquelNotifier, List<Troquel>>((ref) {

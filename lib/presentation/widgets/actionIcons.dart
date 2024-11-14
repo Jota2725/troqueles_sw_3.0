@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../infrastructure/datasource/isar_datasource.dart';
+import '../providers/troqueles_provider.dart';
 import 'add_troquelees.dart';
 import 'custom_search_bar.dart';
 import 'custom_table_widget.dart';
 
-class ActionsIcons extends StatelessWidget {
+class ActionsIcons extends ConsumerWidget {
   const ActionsIcons({
     super.key,
     required this.isarDatasource,
@@ -16,7 +18,8 @@ class ActionsIcons extends StatelessWidget {
   final TroquelTable widget;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final troquelNotifier = ref.read(troquelProvider.notifier);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -26,7 +29,7 @@ class ActionsIcons extends StatelessWidget {
         //------------------------------------------------------------------------------------------------------------------------
         TextButton.icon(
           onPressed: () {
-            isarDatasource.deleteAllTroquelesbyMachine(widget.maquina);
+              troquelNotifier.deleteAllTroquelesbyMachine(widget.maquina);
           },
           label: const Text('Eliminar todos'),
           icon: const Icon(Icons.delete_forever),
@@ -36,10 +39,9 @@ class ActionsIcons extends StatelessWidget {
         //------------------------------------------------------------------------------------------------------------------------
         TextButton.icon(
           onPressed: () {
-
-            isarDatasource.getAllTroquelesPorMaquina(widget.maquina);
+           troquelNotifier.loadTroqueles(widget.maquina);
           },
-          label: const Text('Actualizar'),
+          label: const Text('Refrescar '),
           icon: const Icon(Icons.refresh_outlined),
           iconAlignment: IconAlignment.end,
         ),
@@ -64,8 +66,8 @@ class ActionsIcons extends StatelessWidget {
 
         TextButton.icon(
           onPressed: () {},
-          label: const Text('Guardar'),
-          icon: const Icon(Icons.save),
+          label: const Text('Libres'),
+          icon: const Icon(Icons.check_box_outline_blank),
           iconAlignment: IconAlignment.end,
         ),
 
