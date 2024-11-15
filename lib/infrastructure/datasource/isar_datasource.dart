@@ -56,8 +56,8 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   // OBTENER TROQUEL POR ID
-   Future<Troquel?> getTroquelByGicoAndMaquina(int gico, String maquina) async {
-     final isar = await db;
+  Future<Troquel?> getTroquelByGicoAndMaquina(int gico, String maquina) async {
+    final isar = await db;
     return await isar.troquels
         .filter()
         .gicoEqualTo(gico)
@@ -70,26 +70,23 @@ class IsarDatasource extends LocalStorageDatasource {
   @override
   Future<void> updateTroquel(Troquel troquel) async {
     final isar = await db;
-     return await isar.writeTxn(() async {
-      
-        final updatedTroquel = Troquel(
-      ubicacion: troquel.ubicacion,
-      gico: troquel.gico,
-      cliente: troquel.cliente,
-      referencia: troquel.referencia,
-      maquina: troquel.maquina,
-      clave: troquel.clave,
-      largo: troquel.largo,
-      ancho: troquel.ancho,
-      alto: troquel.alto,
-      cabida: troquel.cabida,
-      estilo: troquel.estilo,
-      descripcion: troquel.descripcion,
-    )..isarId = troquel.isarId; 
-   
-   
+    return await isar.writeTxn(() async {
+      final updatedTroquel = Troquel(
+        ubicacion: troquel.ubicacion,
+        gico: troquel.gico,
+        cliente: troquel.cliente,
+        referencia: troquel.referencia,
+        maquina: troquel.maquina,
+        clave: troquel.clave,
+        largo: troquel.largo,
+        ancho: troquel.ancho,
+        alto: troquel.alto,
+        cabida: troquel.cabida,
+        estilo: troquel.estilo,
+        descripcion: troquel.descripcion,
+      )..isarId = troquel.isarId;
+
       await isar.troquels.put(updatedTroquel);
-   
     });
   }
 
@@ -105,10 +102,18 @@ class IsarDatasource extends LocalStorageDatasource {
     final isar = await db;
     return await isar.troquels.filter().maquinaEqualTo(maquina).findAll();
   }
-  
+
   @override
   Future<Troquel?> getTroquelById(int id) {
     // TODO: implement getTroquelById
     throw UnimplementedError();
   }
+
+  Future<List<Troquel>> getTroquelesLibres(String maquina) async {
+  final isar = await db;
+  final query = isar.troquels.where().filter()
+    .ubicacionEqualTo('').or().ubicacionIsNull()
+  .and().maquinaEqualTo(maquina);
+  return await query.findAll();
+}
 }

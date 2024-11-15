@@ -65,7 +65,9 @@ class ActionsIcons extends ConsumerWidget {
         //---------------------------------------------------------------------------------------------------
 
         TextButton.icon(
-          onPressed: () {},
+          onPressed: () {
+            troquelNotifier.loadTroquelesLibres(widget.maquina);
+          },
           label: const Text('Libres'),
           icon: const Icon(Icons.check_box_outline_blank),
           iconAlignment: IconAlignment.end,

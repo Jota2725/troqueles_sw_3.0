@@ -18,16 +18,15 @@ class TroquelNotifier extends StateNotifier<List<Troquel>> {
     await loadTroqueles(troquel.maquina); // Recargar los troqueles por máquina
   }
 
-
   Future<void> searchTroquel(int gico, String maquina) async {
-    final result = await _isarDatasource.getTroquelByGicoAndMaquina(gico, maquina);
+    final result =
+        await _isarDatasource.getTroquelByGicoAndMaquina(gico, maquina);
     if (result != null) {
       state = [result];
-       // Actualiza el estado con el troquel encontrado
+      // Actualiza el estado con el troquel encontrado
     } else {
       state = []; // Limpia el estado si no se encuentra el troquel
     }
-    
   }
 
   // Actualizar un troquel existente
@@ -42,17 +41,19 @@ class TroquelNotifier extends StateNotifier<List<Troquel>> {
     await loadTroqueles(maquina); // Recargar los troqueles por máquina
   }
 
-  Future<void>deleteAllTroquelesbyMachine( String maquina) async{
-  await _isarDatasource.deleteAllTroquelesbyMachine(maquina);
-await loadTroqueles(maquina);
+  Future<void> deleteAllTroquelesbyMachine(String maquina) async {
+    await _isarDatasource.deleteAllTroquelesbyMachine(maquina);
+    await loadTroqueles(maquina);
   }
-
+Future<void> loadTroquelesLibres(String maquina) async {
+    final troquelesLibres = await _isarDatasource.getTroquelesLibres(maquina);
+    state = troquelesLibres; // Actualizar el estado con los troqueles libres específicos de la máquina
+  }
 }
 
-
-
 // Provider de TroquelNotifier
-final troquelProvider = StateNotifierProvider<TroquelNotifier, List<Troquel>>((ref) {
+final troquelProvider =
+    StateNotifierProvider<TroquelNotifier, List<Troquel>>((ref) {
   final isarDatasource = IsarDatasource();
   return TroquelNotifier(isarDatasource);
 });
