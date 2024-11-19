@@ -98,6 +98,7 @@ class IsarDatasource extends LocalStorageDatasource {
     });
   }
 
+
   Future<List<Troquel>> getAllTroquelesPorMaquina(String maquina) async {
     final isar = await db;
     return await isar.troquels.filter().maquinaEqualTo(maquina).findAll();

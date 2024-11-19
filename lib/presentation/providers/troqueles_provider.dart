@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
+
 import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
 
 class TroquelNotifier extends StateNotifier<List<Troquel>> {
   final IsarDatasource _isarDatasource;
+
 
   TroquelNotifier(this._isarDatasource) : super([]);
 
