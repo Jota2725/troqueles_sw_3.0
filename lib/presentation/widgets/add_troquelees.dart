@@ -1,8 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
-
 import '../providers/troqueles_provider.dart';
 
 class AddTroquelees extends ConsumerStatefulWidget {
@@ -10,252 +8,195 @@ class AddTroquelees extends ConsumerStatefulWidget {
   const AddTroquelees({super.key, this.troquel});
 
   @override
-  ConsumerState<AddTroquelees> createState() => _AddTroqueleesState();
+  ConsumerState<AddTroquelees> createState() => _AddTroquelesState();
 }
 
-class _AddTroqueleesState extends ConsumerState<AddTroquelees> {
+class _AddTroquelesState extends ConsumerState<AddTroquelees> {
   String? selectedValue;
-  final ubicacionController = TextEditingController();
-  final gicoController = TextEditingController();
-  final clienteController = TextEditingController();
-  final referenciaController = TextEditingController();
-  final claveController = TextEditingController();
-  final altoController = TextEditingController();
-  final anchoController = TextEditingController();
-  final largoController = TextEditingController();
-  final cabidaController = TextEditingController();
-  final estiloController = TextEditingController();
-  final descripcionController = TextEditingController();
+  final controllers = <String, TextEditingController>{};
+  final requiredFields = [ 'gico', 'cliente', 'referencia', 'clave', 'alto', 'ancho', 'largo', 'cabida', 'estilo'];
 
   @override
   void initState() {
     super.initState();
+    final fields = [
+      'ubicacion',
+      'gico',
+      'cliente',
+      'referencia',
+      'clave',
+      'alto',
+      'ancho',
+      'largo',
+      'cabida',
+      'estilo',
+      'descripcion'
+    ];
+
+    for (var field in fields) {
+      controllers[field] = TextEditingController();
+    }
+
     if (widget.troquel != null) {
       final troquel = widget.troquel!;
-      ubicacionController.text = troquel.ubicacion.toString();
-      gicoController.text = troquel.gico.toString();
-      clienteController.text = troquel.cliente;
-      referenciaController.text = troquel.referencia.toString();
+      controllers['ubicacion']!.text = troquel.ubicacion.toString();
+      controllers['gico']!.text = troquel.gico.toString();
+      controllers['cliente']!.text = troquel.cliente;
+      controllers['referencia']!.text = troquel.referencia.toString();
       selectedValue = troquel.maquina;
-      claveController.text = troquel.clave.toString();
-      anchoController.text = ' ${troquel.ancho.toString()} ';
-      altoController.text = '${troquel.alto.toString()} ';
-      largoController.text = '${troquel.largo}';
-      cabidaController.text = troquel.cabida.toString();
-      estiloController.text = troquel.estilo.toString();
-      descripcionController.text = troquel.descripcion.toString();
+      controllers['clave']!.text = troquel.clave ?? '' ;
+      controllers['alto']!.text = troquel.alto.toString();
+      controllers['ancho']!.text = troquel.ancho.toString();
+      controllers['largo']!.text = troquel.largo.toString();
+      controllers['cabida']!.text = troquel.cabida.toString();
+      controllers['estilo']!.text = troquel.estilo ?? '';
+      controllers['descripcion']!.text = troquel.descripcion ?? '';
     }
+  }
+
+  /// Valida si los campos requeridos están llenos
+  bool validateFields(BuildContext context) {
+    for (var field in requiredFields) {
+      if (controllers[field]!.text.trim().isEmpty) {
+        showError(context, 'El campo "${capitalize(field)}" es obligatorio.');
+        return false;
+      }
+    }
+
+    if (selectedValue == null || selectedValue!.isEmpty) {
+      showError(context, 'El campo "Máquina" es obligatorio.');
+      return false;
+    }
+
+    return true;
+  }
+
+  /// Muestra un mensaje de error con Fluent UI
+  void showError(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => ContentDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          Button(
+            child: const Text('OK'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Capitaliza una cadena
+  String capitalize(String text) {
+    return text[0].toUpperCase() + text.substring(1);
+  }
+
+  Widget buildTextField(String label, String key, {TextInputType? type}) {
+    return TextBox(
+      controller: controllers[key],
+      placeholder: label,
+      keyboardType: type,
+    );
+  }
+
+  Widget buildRow(List<Widget> children) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Row(
+        children: children
+            .expand((child) => [Expanded(child: child), const SizedBox(width: 20)])
+            .toList()
+          ..removeLast(),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title:
-          Text(widget.troquel == null ? 'Agregar troquel' : 'Editar troquel'),
-      backgroundColor: FluentTheme.of(context).brightness == Brightness.light
-          ? const Color(0xFFF5F5F5)
-          : const Color(0xFF1E1E1E),
+    return ContentDialog(
+      title: Text(widget.troquel == null ? 'Agregar troquel' : 'Editar troquel'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-                'A continuación ingrese toda la información del Troquel'),
+            const Text('A continuación ingrese toda la información del Troquel'),
             const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: ubicacionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Ingresa la ubicación',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TextField(
-                    controller: gicoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Ingresa el GICO',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-              ],
-            ),
+            buildRow([
+              buildTextField('Ubicación', 'ubicacion', type: TextInputType.number),
+              buildTextField('GICO', 'gico', type: TextInputType.number),
+            ]),
+            buildTextField('Cliente', 'cliente'),
             const SizedBox(height: 20),
-            TextField(
-              controller: clienteController,
-              decoration: const InputDecoration(
-                labelText: 'Ingresa el cliente',
-                border: OutlineInputBorder(),
+            buildTextField('Número CAD', 'referencia', type: TextInputType.number),
+            const SizedBox(height: 20),
+            buildRow([
+              ComboBox<String>(
+                placeholder: const Text('máquina'),
+                value: selectedValue,
+                items: const [
+                  ComboBoxItem(value: 'WA', child: Text('WARD')),
+                  ComboBoxItem(value: 'TW', child: Text('HOLANDEZA')),
+                  ComboBoxItem(value: 'FW', child: Text('FLEXPOWARD')),
+                  ComboBoxItem(value: 'ML', child: Text('MINILINE')),
+                  ComboBoxItem(value: 'DF', child: Text('DONFANG')),
+                  ComboBoxItem(value: 'JS', child: Text('JS MACHINE')),
+                ],
+                onChanged: (value) => setState(() => selectedValue = value),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: referenciaController,
-              decoration: const InputDecoration(
-                labelText: 'Ingresa el número CAD',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: ComboBox<String>(
-                      placeholder: Text(
-                        selectedValue ?? 'Máquina',
-                        style: FluentTheme.of(context).typography.body,
-                      ),
-                      value: selectedValue,
-                      items: const [
-                        ComboBoxItem(value: 'WA', child: Text('WARD')),
-                        ComboBoxItem(value: 'TW', child: Text('HOLANDEZA')),
-                        ComboBoxItem(value: 'FW', child: Text('FLEXOWARD')),
-                        ComboBoxItem(value: 'ML', child: Text('MINILINE')),
-                        ComboBoxItem(value: 'DF', child: Text('DONFANG')),
-                        ComboBoxItem(value: 'JS', child: Text('JS MACHINE')),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          selectedValue = value;
-                        });
-                      }
-                      // Contenido del formulario...
-                      ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TextField(
-                    controller: claveController,
-                    decoration: const InputDecoration(
-                      labelText: 'Ingrese la Clave',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: largoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Largo',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TextField(
-                    controller: anchoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Ancho',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TextField(
-                    controller: altoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Alto',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: cabidaController,
-                    decoration: const InputDecoration(
-                      labelText: 'Cabida',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TextField(
-                    controller: estiloController,
-                    decoration: const InputDecoration(
-                      labelText: 'Estilo',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-              ],
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: descripcionController,
-              decoration: const InputDecoration(
-                labelText: 'Descripción',
-                border: OutlineInputBorder(),
-              ),
-            ),
+              buildTextField('Clave', 'clave'),
+            ]),
+            buildRow([
+              buildTextField('Largo', 'largo', type: TextInputType.number),
+              buildTextField('Ancho', 'ancho', type: TextInputType.number),
+              buildTextField('Alto', 'alto', type: TextInputType.number),
+            ]),
+            buildRow([
+              buildTextField('Cabida', 'cabida', type: TextInputType.number),
+              buildTextField('Estilo', 'estilo'),
+            ]),
+            buildTextField('Descripción', 'descripcion'),
           ],
         ),
       ),
       actions: [
-        Center(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancelar'),
-              ),
-              const SizedBox(width: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  // Verificar campos...
-                  final nuevoTroquel = Troquel(
-                    ubicacion: ubicacionController.text,
-                    gico: int.parse(gicoController.text),
-                    cliente: clienteController.text,
-                    referencia: int.parse(referenciaController.text),
-                    maquina: selectedValue!,
-                    clave: claveController.text,
-                    alto: int.parse(altoController.text),
-                    ancho: int.parse(anchoController.text),
-                    largo: int.parse(largoController.text),
-                    cabida: int.parse(cabidaController.text),
-                    estilo: estiloController.text,
-                    descripcion: descripcionController.text,
-                  );
+        Button(
+          style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color(0xFF141414 ))),
+          child: const Text('Cancelar',style:  TextStyle(color: Colors.white),),
+          onPressed: () => Navigator.pop(context),
+        ),
+        Button(
+          style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color(0xFF0BAFFE ))),
+          child: Text(widget.troquel == null ? 'Agregar' : 'Guardar'),
+          onPressed: () async {
+            if (!validateFields(context)) return;
 
-                  final troquelNotifier = ref.read(troquelProvider.notifier);
+            final nuevoTroquel = Troquel(
+              ubicacion: controllers['ubicacion']!.text,
+              gico: int.parse(controllers['gico']!.text),
+              cliente: controllers['cliente']!.text,
+              referencia: int.parse(controllers['referencia']!.text),
+              maquina: selectedValue!,
+              clave: controllers['clave']!.text,
+              alto: int.parse(controllers['alto']!.text),
+              ancho: int.parse(controllers['ancho']!.text),
+              largo: int.parse(controllers['largo']!.text),
+              cabida: int.parse(controllers['cabida']!.text),
+              estilo: controllers['estilo']!.text,
+              descripcion: controllers['descripcion']!.text,
+            );
 
-                  if (widget.troquel == null) {
-                    await troquelNotifier.addTroquel(nuevoTroquel);
-                  } else {
-                    nuevoTroquel.isarId = widget.troquel!.isarId;
-                    await troquelNotifier.updateTroquel(nuevoTroquel);
-                  }
-
-                  Navigator.of(context).pop();
-                },
-                child: Text(widget.troquel == null ? 'Agregar' : 'Guardar'),
-              ),
-            ],
-          ),
+            final troquelNotifier = ref.read(troquelProvider.notifier);
+            if (widget.troquel == null) {
+              await troquelNotifier.addTroquel(nuevoTroquel);
+            } else {
+              nuevoTroquel.isarId = widget.troquel!.isarId;
+              await troquelNotifier.updateTroquel(nuevoTroquel);
+            }
+            // ignore: use_build_context_synchronously
+            Navigator.pop(context);
+          },
         ),
       ],
     );

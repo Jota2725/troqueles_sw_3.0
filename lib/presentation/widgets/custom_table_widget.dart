@@ -75,13 +75,7 @@ class _TablaTroqueles extends ConsumerWidget {
                 DataCell(Text(troquel.maquina)),
                 DataCell(Row(
                   children: [
-                    IconButton(
-                      tooltip: 'Mas informacion ',
-                      onPressed: () {
-                      
-                      },
-                      icon: const Icon(Icons.info),
-                    ),
+                   
                     IconButton(
                        tooltip: 'Editar Troquel ',
                       onPressed: () {

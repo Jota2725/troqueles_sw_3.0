@@ -1,7 +1,15 @@
-import 'troquel.dart';
+import 'package:isar/isar.dart';
+part 'proceso.g.dart';
 
+
+
+
+@collection
 class Proceso {
-  final Troquel troquel;
+  Id? isarId;
+  final String ntroquel;
+  @enumerated
+  final Tipo tipo;
   final DateTime fechaIngreso;
   final DateTime fechaEstimada;
   final String planta;
@@ -9,10 +17,11 @@ class Proceso {
   final String maquina;
   final String ingeniero;
   final String observaciones;
-  final Estado estado;
+  @enumerated
+  late final Estado estado;
 
-  Proceso(
-      {required this.troquel,
+  Proceso(this.tipo, 
+      {required this.ntroquel,
       required this.fechaIngreso,
       required this.fechaEstimada,
       required this.planta,
@@ -24,3 +33,4 @@ class Proceso {
 }
 
 enum Estado { suspendido, enProceso, completado }
+enum Tipo{ nuevo, modificacion, reparacion }

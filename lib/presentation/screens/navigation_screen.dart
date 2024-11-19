@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco_pages.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
 
+import 'Troqueles/EnProceso/enProceso_screen.dart';
+
 
 
 class NavigationScreen extends StatefulWidget {
@@ -76,7 +78,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               ]),
           PaneItem(
             icon: const Icon(Icons.autorenew),
-            body: const Text('Screen2'),
+            body:  EnprocesoScreen(),
             title: const Text('Troqueles en proceso'),
           ),
           PaneItem(
