@@ -58,6 +58,7 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   // OBTENER TROQUEL POR ID
+  @override
   Future<Troquel?> getTroquelByGicoAndMaquina(int gico, String maquina) async {
     final isar = await db;
     return await isar.troquels
@@ -99,63 +100,58 @@ class IsarDatasource extends LocalStorageDatasource {
       await isar.troquels.filter().maquinaEqualTo(maquina).deleteAll();
     });
   }
-   Future<List<Proceso>> getAllTroquelesInProcess()async {
-    final isar = await db;
-   return await isar.procesos.where().findAll();
 
-  }
-
-
+  @override
   Future<List<Troquel>> getAllTroquelesPorMaquina(String maquina) async {
     final isar = await db;
     return await isar.troquels.filter().maquinaEqualTo(maquina).findAll();
   }
 
   @override
-  Future<Troquel?> getTroquelById(int id) {
-    // TODO: implement getTroquelById
-    throw UnimplementedError();
+  Future<List<Troquel>> getTroquelesLibres(String maquina) async {
+    final isar = await db;
+    final query = isar.troquels
+        .where()
+        .filter()
+        .ubicacionEqualTo('')
+        .or()
+        .ubicacionIsNull()
+        .and()
+        .maquinaEqualTo(maquina);
+    return await query.findAll();
   }
 
-  Future<List<Troquel>> getTroquelesLibres(String maquina) async {
-  final isar = await db;
-  final query = isar.troquels.where().filter()
-    .ubicacionEqualTo('').or().ubicacionIsNull()
-  .and().maquinaEqualTo(maquina);
-  return await query.findAll();
-}
-
-
-
-  Future<void> addNewTroquel(List<Proceso> proceso) async {
-      final isar = await db;
-      await isar.writeTxn(()async{
-          await isar.procesos.putAll(proceso);
-
-      });
-
-
-
-  Future<void> deleteTroquelInProcees(int id) async{
+//-------------------------------------------------------Troqueles en proceso------------------------------------------------------------------------------------------------------
+  @override
+  Future<List<Proceso>> getAllTroquelesInProcess() async {
     final isar = await db;
-    await isar.writeTxn(()async{
-      await isar.procesos.delete(id);
+    return await isar.procesos.where().findAll();
+  }
 
-
+  @override
+  Future<void> addNewTroquelInProcess(List<Proceso> proceso) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.procesos.putAll(proceso);
     });
 
+   
+
+    
   }
-
   
- 
-
+  @override
+  Future<void> deleteTroquelInProcees(int id) async {
+      final isar = await db;
+      await isar.writeTxn(() async {
+        await isar.procesos.delete(id);
+      });
+    
+  }
   
-  Future<void> updateTroquelInProcces(Proceso proceso) {
-    // TODO: implement updateTroquelInProcces
+  @override
+  Future<void> updatedTroquelInProcess(Proceso proceso) {
+    // TODO: implement updatedTroquelInProcess
     throw UnimplementedError();
   }
 }
-
-
-}
-
