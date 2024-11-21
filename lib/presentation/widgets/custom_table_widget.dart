@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 import 'package:troqueles_sw/presentation/widgets/add_troquelees.dart';
-
 import '../providers/troqueles_provider.dart';
 import 'actionIcons.dart';
 import 'custom_search_bar.dart';
@@ -23,6 +22,7 @@ class TroquelTable extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final troquelNotifier = ref.read(troquelProvider.notifier);
     final troqueles = ref.watch(troquelProvider);
+    
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -54,6 +54,7 @@ class ActionsBibliaco extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return ActionsIcons(
       searchBar: CustomSearchBar(maquina),
       actions: [
@@ -79,7 +80,7 @@ class ActionsBibliaco extends StatelessWidget {
         ActionIcon(
           label: 'Importar Excel',
           icon: const Icon(Icons.upload),
-          onPressed: () => onImportPressed,
+          onPressed: onImportPressed!
         ),
         ActionIcon(
           label: 'Ubicaciones libres',

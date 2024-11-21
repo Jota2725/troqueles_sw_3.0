@@ -16,12 +16,12 @@ class ActionIcon {
 
 class ActionsIcons extends StatelessWidget {
   final List<ActionIcon> actions;
-  final Widget searchBar;
+  final Widget? searchBar;
 
   const ActionsIcons({
     super.key,
     required this.actions,
-    required this.searchBar,
+    this.searchBar,
   });
 
   @override
@@ -29,7 +29,7 @@ class ActionsIcons extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        searchBar,
+        searchBar ?? const SizedBox() ,
         ...actions.map((action) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
