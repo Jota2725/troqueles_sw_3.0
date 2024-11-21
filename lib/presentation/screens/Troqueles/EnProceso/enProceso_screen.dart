@@ -12,8 +12,8 @@ class TroquelViewPages extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final IsarDatasource isarInProceesDatasource = IsarDatasource();
-    
-        return Scaffold(
+
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Troqueles en Proceso'),
         centerTitle: true,
@@ -37,9 +37,8 @@ class TroquelViewPages extends ConsumerWidget {
                 ProcesoTable(
                   procesos: procesos,
                 )
-          
               ],
-     );
+            );
           }
         },
       ),
