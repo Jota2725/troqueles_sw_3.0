@@ -3,6 +3,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:troqueles_sw/domain/datasource/local_storage_datasource.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 
+import '../../domain/entities/proceso.dart';
+
 class IsarDatasource extends LocalStorageDatasource {
   late Future<Isar> db;
 
@@ -14,7 +16,7 @@ class IsarDatasource extends LocalStorageDatasource {
     final dir = await getApplicationDocumentsDirectory();
 
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([TroquelSchema],
+      return await Isar.open([TroquelSchema, ProcesoSchema],
           inspector: true, directory: dir.path);
     }
     return Future.value(Isar.getInstance());
@@ -97,6 +99,11 @@ class IsarDatasource extends LocalStorageDatasource {
       await isar.troquels.filter().maquinaEqualTo(maquina).deleteAll();
     });
   }
+   Future<List<Proceso>> getAllTroquelesInProcess()async {
+    final isar = await db;
+   return await isar.procesos.where().findAll();
+
+  }
 
 
   Future<List<Troquel>> getAllTroquelesPorMaquina(String maquina) async {
@@ -117,4 +124,38 @@ class IsarDatasource extends LocalStorageDatasource {
   .and().maquinaEqualTo(maquina);
   return await query.findAll();
 }
+
+
+
+  Future<void> addNewTroquel(List<Proceso> proceso) async {
+      final isar = await db;
+      await isar.writeTxn(()async{
+          await isar.procesos.putAll(proceso);
+
+      });
+
+
+
+  Future<void> deleteTroquelInProcees(int id) async{
+    final isar = await db;
+    await isar.writeTxn(()async{
+      await isar.procesos.delete(id);
+
+
+    });
+
+  }
+
+  
+ 
+
+  
+  Future<void> updateTroquelInProcces(Proceso proceso) {
+    // TODO: implement updateTroquelInProcces
+    throw UnimplementedError();
+  }
 }
+
+
+}
+

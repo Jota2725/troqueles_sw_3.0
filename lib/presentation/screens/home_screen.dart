@@ -13,10 +13,6 @@ class _MyhomeWidgetState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
  
-    return const Image(
-              image: NetworkImage(
-                  'https://packagingsuppliersglobal.com/assets/uploads/_headerImagery/35883/Smurfit-Westrock.webp'),
-              fit: BoxFit.cover,
-            );
+    return const Text('data');
   }
 }

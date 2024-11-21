@@ -2,6 +2,7 @@
 import 'package:troqueles_sw/domain/datasource/troquel_en_proceso_datasource.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
 
+
 import '../../domain/repositories/troquel_in_process_repositories.dart';
 
 class TroquelInProceesRepositoriesImpl extends TroquelInProcessRepositories {

@@ -5,8 +5,8 @@ import 'package:troqueles_sw/domain/entities/proceso.dart';
 class ProcesoTable extends ConsumerWidget {
   final List<Proceso> procesos;
 
-  const ProcesoTable({
-    super.key,
+  const ProcesoTable({super.key, 
+    
     required this.procesos,
   });
 
