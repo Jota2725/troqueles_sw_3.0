@@ -150,8 +150,24 @@ class IsarDatasource extends LocalStorageDatasource {
   }
   
   @override
-  Future<void> updatedTroquelInProcess(Proceso proceso) {
-    // TODO: implement updatedTroquelInProcess
-    throw UnimplementedError();
+  Future<void> updatedTroquelInProcess(Proceso proceso) async {
+
+    final isar = await db;
+    return await isar.writeTxn(() async {
+      final updatedProceso = Proceso(
+        ntroquel: proceso.ntroquel,
+       fechaIngreso: proceso.fechaIngreso,
+        fechaEstimada: proceso.fechaEstimada, 
+        planta: proceso.planta,
+         cliente: proceso.cliente, 
+         maquina:  proceso.maquina, 
+         ingeniero:  proceso.ingeniero, 
+         observaciones: proceso.observaciones, 
+         estado: proceso.estado
+      )..isarId = proceso.isarId;
+
+      await isar.procesos.put(updatedProceso);
+    });
+
   }
 }

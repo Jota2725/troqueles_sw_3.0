@@ -2,40 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
 
-
-
+import '../providers/process_provider.dart';
+import 'actionIcons.dart';
+import 'add_precesos.dart';
 
 class ProcesoTable extends ConsumerWidget {
-  final List<Proceso> procesos;
+  
 
-  const ProcesoTable({super.key, 
-    
-    required this.procesos,
+  const ProcesoTable({
+    super.key,
+
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final procesos = ref.watch(troquelProviderInProceso);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
-
-        
-
         children: [
-
-          
+          ActionsIcons(
+            actions: [
+              ActionIcon(
+                  label: 'Agregar',
+                  icon: const Icon(Icons.add_circle),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AddProcesos();
+                        });
+                  }),
+            ],
+          ),
           _TablaEnProceso(procesos: procesos),
-                    
         ],
       ),
-
     );
   }
 }
 
 class _TablaEnProceso extends StatelessWidget {
   const _TablaEnProceso({
-    
     required this.procesos,
   });
 
@@ -53,25 +61,20 @@ class _TablaEnProceso extends StatelessWidget {
           sortColumnIndex: 0,
           sortAscending: true,
           columns: const <DataColumn>[
+            DataColumn(label: DataColums(icon: Icons.numbers, text: 'Troquel')),
             DataColumn(
-                label: DataColums(icon: Icons.numbers, text: 'Troquel')),
-            DataColumn(
-                label:
-                    DataColums(icon: Icons.calendar_today, text: 'Ingreso')),
+                label: DataColums(icon: Icons.calendar_today, text: 'Ingreso')),
             DataColumn(
                 label: DataColums(icon: Icons.date_range, text: 'Estimada')),
             DataColumn(
                 label: DataColums(icon: Icons.location_city, text: 'Planta')),
-            DataColumn(
-                label: DataColums(icon: Icons.person, text: 'Cliente')),
+            DataColumn(label: DataColums(icon: Icons.person, text: 'Cliente')),
             DataColumn(
                 label: DataColums(icon: Icons.settings, text: 'Máquina')),
             DataColumn(
-                label:
-                    DataColums(icon: Icons.engineering, text: 'Ingeniero')),
+                label: DataColums(icon: Icons.engineering, text: 'Ingeniero')),
             DataColumn(
-                label:
-                    DataColums(icon: Icons.comment, text: 'Observaciones')),
+                label: DataColums(icon: Icons.comment, text: 'Observaciones')),
             DataColumn(label: DataColums(icon: Icons.flag, text: 'Estado')),
             DataColumn(label: DataColums(text: 'Acciones')),
           ],
@@ -82,7 +85,7 @@ class _TablaEnProceso extends StatelessWidget {
                 : proceso.estado == Estado.suspendido
                     ? Colors.red.withOpacity(0.3)
                     : Colors.green.withOpacity(0.3);
-    
+
             return DataRow(
               color: WidgetStateProperty.resolveWith<Color?>((states) {
                 if (states.contains(WidgetState.selected)) {
@@ -112,6 +115,12 @@ class _TablaEnProceso extends StatelessWidget {
                     IconButton(
                       tooltip: 'Editar',
                       onPressed: () {
+
+                         showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return  AddProcesos(proceso: proceso);
+                        });
                         // Acción de editar
                       },
                       icon: const Icon(Icons.edit),

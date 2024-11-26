@@ -78,7 +78,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               ]),
           PaneItem(
             icon: const Icon(Icons.autorenew),
-            body:  const TroquelViewPages(),
+            body:   TroquelViewPages(),
             title: const Text('Troqueles en proceso'),
           ),
           PaneItem(
