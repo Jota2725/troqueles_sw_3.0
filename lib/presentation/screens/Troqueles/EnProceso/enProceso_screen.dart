@@ -34,6 +34,9 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
 
   @override
   Widget build(BuildContext context) {
+    final procesos = ref.watch(troquelProviderInProceso);
+    final proceso = ref.watch(troquelProviderInProceso.notifier);
+    final troqueles = procesos.map((proceso) => proceso.ntroquel).toList();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Troqueles en Proceso'),
@@ -45,10 +48,11 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
                 showSearch(
                   context: context,
                   delegate: TroquelSearchDelegate(
-                    troqueles: ['', ''],
+                    proceso: troqueles ,
                     onSelected: (selected) {
-                      // Acción al seleccionar un troquel
-                      print('Troquel seleccionado: $selected');
+                      
+                     proceso.searchTroquelInProcess(selected);
+                      
                     },
                   ),
                 );

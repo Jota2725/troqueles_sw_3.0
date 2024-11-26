@@ -128,46 +128,47 @@ class IsarDatasource extends LocalStorageDatasource {
     return await isar.procesos.where().findAll();
   }
 
+
+  
+  Future<Proceso?> getTroquelInProcess(String troquel) async {
+    final isar = await db;
+    return await isar.procesos.filter().ntroquelEqualTo(troquel).findFirst() ;
+  }
+
+
   @override
   Future<void> addNewTroquelInProcess(List<Proceso> proceso) async {
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.procesos.putAll(proceso);
     });
-
-   
-
-    
   }
-  
+
   @override
   Future<void> deleteTroquelInProcees(int id) async {
-      final isar = await db;
-      await isar.writeTxn(() async {
-        await isar.procesos.delete(id);
-      });
-    
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.procesos.delete(id);
+    });
   }
-  
+
   @override
   Future<void> updatedTroquelInProcess(Proceso proceso) async {
-
     final isar = await db;
     return await isar.writeTxn(() async {
       final updatedProceso = Proceso(
-        ntroquel: proceso.ntroquel,
-       fechaIngreso: proceso.fechaIngreso,
-        fechaEstimada: proceso.fechaEstimada, 
-        planta: proceso.planta,
-         cliente: proceso.cliente, 
-         maquina:  proceso.maquina, 
-         ingeniero:  proceso.ingeniero, 
-         observaciones: proceso.observaciones, 
-         estado: proceso.estado
-      )..isarId = proceso.isarId;
+          ntroquel: proceso.ntroquel,
+          fechaIngreso: proceso.fechaIngreso,
+          fechaEstimada: proceso.fechaEstimada,
+          planta: proceso.planta,
+          cliente: proceso.cliente,
+          maquina: proceso.maquina,
+          ingeniero: proceso.ingeniero,
+          observaciones: proceso.observaciones,
+          estado: proceso.estado)
+        ..isarId = proceso.isarId;
 
       await isar.procesos.put(updatedProceso);
     });
-
   }
 }

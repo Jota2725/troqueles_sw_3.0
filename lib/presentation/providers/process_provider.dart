@@ -27,16 +27,16 @@ class TroquelNotifierInProceso extends StateNotifier<List<Proceso>> {
     await loadTroquelesInProcces();
   }
 
-  // Future<void> searchTroquel(int troquel,) async {
-  //   final result =
-  //       await _isarDatasource.getTroquel;
-  //   if (result != null) {
-  //     state = [result];
-  //     // Actualiza el estado con el troquel encontrado
-  //   } else {
-  //     state = []; // Limpia el estado si no se encuentra el troquel
-  //   }
-  // }
+  Future<void> searchTroquelInProcess(String proceso,) async {
+    final result =
+        await _isarDatasource.getTroquelInProcess(proceso);
+    if (result != null) {
+      state = [result];
+      // Actualiza el estado con el troquel encontrado
+    } else {
+      state = []; // Limpia el estado si no se encuentra el troquel
+    }
+  }
 
   // Actualizar un troquel existente
   Future<void> updateTroquel(Proceso proceso) async {

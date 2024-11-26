@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:troqueles_sw/domain/entities/proceso.dart';
 
 class TroquelSearchDelegate extends SearchDelegate {
-  final List<String> troqueles; // Lista de troqueles para buscar
-  final void Function(String troquel) onSelected; // Acción al seleccionar un troquel
+  final List<String> proceso; // Lista de troqueles para buscar
+  final void Function(String proceso) onSelected; // Acción al seleccionar un troquel
 
-  TroquelSearchDelegate({required this.troqueles, required this.onSelected});
+  TroquelSearchDelegate({required this.proceso, required this.onSelected});
 
   @override
   String get searchFieldLabel => 'Buscar troquel';
@@ -34,8 +35,8 @@ class TroquelSearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     // Mostrar resultados finales de búsqueda
-    final results = troqueles
-        .where((troquel) => troquel.toLowerCase().contains(query.toLowerCase()))
+    final results = proceso
+        .where((proceso) => proceso.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
     if (results.isEmpty) {
@@ -50,11 +51,11 @@ class TroquelSearchDelegate extends SearchDelegate {
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (context, index) {
-        final troquel = results[index];
+        final proceso = results[index];
         return ListTile(
-          title: Text(troquel),
+          title: Text(proceso),
           onTap: () {
-            onSelected(troquel); // Llama a la función al seleccionar
+            onSelected(proceso); // Llama a la función al seleccionar
             close(context, null);
           },
         );
@@ -79,8 +80,8 @@ class TroquelSearchDelegate extends SearchDelegate {
       return _emptyContainer();
     }
 
-    final suggestions = troqueles
-        .where((troquel) => troquel.toLowerCase().startsWith(query.toLowerCase()))
+    final suggestions = proceso
+        .where((proceso) => proceso.toLowerCase().startsWith(query.toLowerCase()))
         .toList();
 
     if (suggestions.isEmpty) {
