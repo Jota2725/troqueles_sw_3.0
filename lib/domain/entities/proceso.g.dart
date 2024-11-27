@@ -62,12 +62,6 @@ const ProcesoSchema = CollectionSchema(
       id: 8,
       name: r'planta',
       type: IsarType.string,
-    ),
-    r'tipo': PropertySchema(
-      id: 9,
-      name: r'tipo',
-      type: IsarType.byte,
-      enumMap: _ProcesotipoEnumValueMap,
     )
   },
   estimateSize: _procesoEstimateSize,
@@ -114,7 +108,6 @@ void _procesoSerialize(
   writer.writeString(offsets[6], object.ntroquel);
   writer.writeString(offsets[7], object.observaciones);
   writer.writeString(offsets[8], object.planta);
-  writer.writeByte(offsets[9], object.tipo.index);
 }
 
 Proceso _procesoDeserialize(
@@ -124,7 +117,6 @@ Proceso _procesoDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Proceso(
-    _ProcesotipoValueEnumMap[reader.readByteOrNull(offsets[9])] ?? Tipo.nuevo,
     cliente: reader.readString(offsets[0]),
     estado: _ProcesoestadoValueEnumMap[reader.readByteOrNull(offsets[1])] ??
         Estado.suspendido,
@@ -166,9 +158,6 @@ P _procesoDeserializeProp<P>(
       return (reader.readString(offset)) as P;
     case 8:
       return (reader.readString(offset)) as P;
-    case 9:
-      return (_ProcesotipoValueEnumMap[reader.readByteOrNull(offset)] ??
-          Tipo.nuevo) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -183,16 +172,6 @@ const _ProcesoestadoValueEnumMap = {
   0: Estado.suspendido,
   1: Estado.enProceso,
   2: Estado.completado,
-};
-const _ProcesotipoEnumValueMap = {
-  'nuevo': 0,
-  'modificacion': 1,
-  'reparacion': 2,
-};
-const _ProcesotipoValueEnumMap = {
-  0: Tipo.nuevo,
-  1: Tipo.modificacion,
-  2: Tipo.reparacion,
 };
 
 Id _procesoGetId(Proceso object) {
@@ -1295,59 +1274,6 @@ extension ProcesoQueryFilter
       ));
     });
   }
-
-  QueryBuilder<Proceso, Proceso, QAfterFilterCondition> tipoEqualTo(
-      Tipo value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipo',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Proceso, Proceso, QAfterFilterCondition> tipoGreaterThan(
-    Tipo value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipo',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Proceso, Proceso, QAfterFilterCondition> tipoLessThan(
-    Tipo value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipo',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Proceso, Proceso, QAfterFilterCondition> tipoBetween(
-    Tipo lower,
-    Tipo upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
 }
 
 extension ProcesoQueryObject
@@ -1462,18 +1388,6 @@ extension ProcesoQuerySortBy on QueryBuilder<Proceso, Proceso, QSortBy> {
   QueryBuilder<Proceso, Proceso, QAfterSortBy> sortByPlantaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'planta', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Proceso, Proceso, QAfterSortBy> sortByTipo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tipo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Proceso, Proceso, QAfterSortBy> sortByTipoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tipo', Sort.desc);
     });
   }
 }
@@ -1599,18 +1513,6 @@ extension ProcesoQuerySortThenBy
       return query.addSortBy(r'planta', Sort.desc);
     });
   }
-
-  QueryBuilder<Proceso, Proceso, QAfterSortBy> thenByTipo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tipo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Proceso, Proceso, QAfterSortBy> thenByTipoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tipo', Sort.desc);
-    });
-  }
 }
 
 extension ProcesoQueryWhereDistinct
@@ -1675,12 +1577,6 @@ extension ProcesoQueryWhereDistinct
       return query.addDistinctBy(r'planta', caseSensitive: caseSensitive);
     });
   }
-
-  QueryBuilder<Proceso, Proceso, QDistinct> distinctByTipo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'tipo');
-    });
-  }
 }
 
 extension ProcesoQueryProperty
@@ -1742,12 +1638,6 @@ extension ProcesoQueryProperty
   QueryBuilder<Proceso, String, QQueryOperations> plantaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'planta');
-    });
-  }
-
-  QueryBuilder<Proceso, Tipo, QQueryOperations> tipoProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'tipo');
     });
   }
 }

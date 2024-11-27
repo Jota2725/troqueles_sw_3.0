@@ -14,7 +14,17 @@ class AddTroquelees extends ConsumerStatefulWidget {
 class _AddTroquelesState extends ConsumerState<AddTroquelees> {
   String? selectedValue;
   final controllers = <String, TextEditingController>{};
-  final requiredFields = [ 'gico', 'cliente', 'referencia', 'clave', 'alto', 'ancho', 'largo', 'cabida', 'estilo'];
+  final requiredFields = [
+    'gico',
+    'cliente',
+    'referencia',
+    'clave',
+    'alto',
+    'ancho',
+    'largo',
+    'cabida',
+    'estilo'
+  ];
 
   @override
   void initState() {
@@ -44,7 +54,7 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
       controllers['cliente']!.text = troquel.cliente;
       controllers['referencia']!.text = troquel.referencia.toString();
       selectedValue = troquel.maquina;
-      controllers['clave']!.text = troquel.clave ?? '' ;
+      controllers['clave']!.text = troquel.clave ?? '';
       controllers['alto']!.text = troquel.alto.toString();
       controllers['ancho']!.text = troquel.ancho.toString();
       controllers['largo']!.text = troquel.largo.toString();
@@ -106,7 +116,8 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Row(
         children: children
-            .expand((child) => [Expanded(child: child), const SizedBox(width: 20)])
+            .expand(
+                (child) => [Expanded(child: child), const SizedBox(width: 20)])
             .toList()
           ..removeLast(),
       ),
@@ -116,20 +127,24 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
-      title: Text(widget.troquel == null ? 'Agregar troquel' : 'Editar troquel'),
+      title:
+          Text(widget.troquel == null ? 'Agregar troquel' : 'Editar troquel'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('A continuación ingrese toda la información del Troquel'),
+            const Text(
+                'A continuación ingrese toda la información del Troquel'),
             const SizedBox(height: 20),
             buildRow([
-              buildTextField('Ubicación', 'ubicacion', type: TextInputType.number),
+              buildTextField('Ubicación', 'ubicacion',
+                  type: TextInputType.number),
               buildTextField('GICO', 'gico', type: TextInputType.number),
             ]),
             buildTextField('Cliente', 'cliente'),
             const SizedBox(height: 20),
-            buildTextField('Número CAD', 'referencia', type: TextInputType.number),
+            buildTextField('Número CAD', 'referencia',
+                type: TextInputType.number),
             const SizedBox(height: 20),
             buildRow([
               ComboBox<String>(
@@ -162,12 +177,17 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
       ),
       actions: [
         Button(
-          style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color(0xFF141414 ))),
-          child: const Text('Cancelar',style:  TextStyle(color: Colors.white),),
+          style: const ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(Color(0xFF141414))),
+          child: const Text(
+            'Cancelar',
+            style: TextStyle(color: Colors.white),
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         Button(
-          style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color(0xFF0BAFFE ))),
+          style: const ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(Color(0xFF0BAFFE))),
           child: Text(widget.troquel == null ? 'Agregar' : 'Guardar'),
           onPressed: () async {
             if (!validateFields(context)) return;

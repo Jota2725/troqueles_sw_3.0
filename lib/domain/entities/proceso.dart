@@ -8,8 +8,8 @@ part 'proceso.g.dart';
 class Proceso {
   Id? isarId;
   final String ntroquel;
-  @enumerated
-  final Tipo tipo;
+  
+
   final DateTime fechaIngreso;
   final DateTime fechaEstimada;
   final String planta;
@@ -19,8 +19,9 @@ class Proceso {
   final String observaciones;
   @enumerated
   late final Estado estado;
+  
 
-  Proceso(this.tipo, 
+  Proceso( 
       {required this.ntroquel,
       required this.fechaIngreso,
       required this.fechaEstimada,
@@ -33,4 +34,3 @@ class Proceso {
 }
 
 enum Estado { suspendido, enProceso, completado }
-enum Tipo{ nuevo, modificacion, reparacion }

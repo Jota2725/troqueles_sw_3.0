@@ -3,6 +3,8 @@ import 'package:troqueles_sw/domain/entities/troquel.dart';
 
 import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
 
+import '../../domain/entities/proceso.dart';
+
 class TroquelNotifier extends StateNotifier<List<Troquel>> {
   final IsarDatasource _isarDatasource;
 
@@ -14,10 +16,17 @@ class TroquelNotifier extends StateNotifier<List<Troquel>> {
     state = await _isarDatasource.getAllTroquelesPorMaquina(maquina);
   }
 
+  
+
   // Agregar un nuevo troquel
   Future<void> addTroquel(Troquel troquel) async {
     await _isarDatasource.saveTroqueles([troquel]);
     await loadTroqueles(troquel.maquina); // Recargar los troqueles por máquina
+  }
+  Future<void> addTroquelInprocess(Proceso proceso) async {
+    await _isarDatasource.addNewTroquelInProcess([proceso]);
+    final updatedList = await _isarDatasource.getAllTroquelesInProcess();
+  state = updatedList.cast<Troquel>(); // Recargar los troqueles por máquina
   }
 
   Future<void> searchTroquel(int gico, String maquina) async {
@@ -52,6 +61,9 @@ Future<void> loadTroquelesLibres(String maquina) async {
     state = troquelesLibres; // Actualizar el estado con los troqueles libres específicos de la máquina
   }
 }
+
+
+
 
 // Provider de TroquelNotifier
 final troquelProvider =

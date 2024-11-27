@@ -1,28 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../infrastructure/datasource/isar_datasource.dart';
-import '../providers/troqueles_provider.dart';
-import 'add_troquelees.dart';
-import 'custom_search_bar.dart';
-import 'custom_table_widget.dart';
+typedef ActionCallback = void Function();
 
-class ActionsIcons extends ConsumerWidget {
+class ActionIcon {
+  final String label;
+  final Icon icon;
+  final ActionCallback onPressed;
+
+  ActionIcon({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+}
+
+class ActionsIcons extends StatelessWidget {
+  final List<ActionIcon> actions;
+  final Widget? searchBar;
+
   const ActionsIcons({
     super.key,
-    required this.isarDatasource,
-    required this.widget,
+    required this.actions,
+    this.searchBar,
   });
 
-  final IsarDatasource isarDatasource;
-  final TroquelTable widget;
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final troquelNotifier = ref.read(troquelProvider.notifier);
+  Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        searchBar ?? const SizedBox() ,
+        ...actions.map((action) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextButton.icon(
+              onPressed: action.onPressed,
+              label: Text(action.label),
+              icon: action.icon,
+              iconAlignment: IconAlignment.end,
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
          CustomSearchBar(widget.maquina),
 
                                                 //Eliminar todos
@@ -88,4 +133,5 @@ class ActionsIcons extends ConsumerWidget {
       ],
     );
   }
-}
+  */
+

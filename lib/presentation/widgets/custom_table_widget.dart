@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 import 'package:troqueles_sw/presentation/widgets/add_troquelees.dart';
-import '../../infrastructure/datasource/isar_datasource.dart';
 import '../providers/troqueles_provider.dart';
 import 'actionIcons.dart';
- // Asegúrate de importar el provider aquí
+import 'custom_search_bar.dart';
+// Asegúrate de importar el provider aquí
 
 class TroquelTable extends ConsumerWidget {
   final VoidCallback? onImportPressed;
@@ -20,22 +20,75 @@ class TroquelTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final troquelNotifier = ref.read(troquelProvider.notifier);
     final troqueles = ref.watch(troquelProvider);
+    
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
-        
-          ActionsIcons(
-            isarDatasource: IsarDatasource(),
-            widget: this,
-          ),
+          ActionsBibliaco(maquina: maquina, troquelNotifier: troquelNotifier, onImportPressed: onImportPressed),
           FadeInUp(
-            child: _TablaTroqueles(troqueles: troqueles,),
+            child: _TablaTroqueles(
+              troqueles: troqueles,
+            ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class ActionsBibliaco extends StatelessWidget {
+  const ActionsBibliaco({
+    super.key,
+    required this.maquina,
+    required this.troquelNotifier,
+    required this.onImportPressed,
+  });
+
+  final String maquina;
+  final TroquelNotifier troquelNotifier;
+  final VoidCallback? onImportPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    
+    return ActionsIcons(
+      searchBar: CustomSearchBar(maquina),
+      actions: [
+        ActionIcon(
+            label: 'Eliminar todos',
+            icon: const Icon(Icons.delete_forever),
+            onPressed: () =>
+                troquelNotifier.deleteAllTroquelesbyMachine(maquina)),
+        ActionIcon(
+            label: 'Refrescar',
+            icon: const Icon(Icons.refresh_outlined),
+            onPressed: () => troquelNotifier.loadTroqueles(maquina)),
+        ActionIcon(
+            label: 'Agregar',
+            icon: const Icon(Icons.add_circle),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const AddTroquelees();
+                  });
+            }),
+        ActionIcon(
+          label: 'Importar Excel',
+          icon: const Icon(Icons.upload),
+          onPressed: onImportPressed!
+        ),
+        ActionIcon(
+          label: 'Ubicaciones libres',
+          icon: const Icon(Icons.check_box_outline_blank),
+          onPressed: () => troquelNotifier.loadTroquelesLibres(maquina)
+          
+        )
+      ],
     );
   }
 }
@@ -44,7 +97,6 @@ class _TablaTroqueles extends ConsumerWidget {
   final List<Troquel> troqueles;
 
   const _TablaTroqueles({
-    
     required this.troqueles,
   });
 
@@ -58,11 +110,19 @@ class _TablaTroqueles extends ConsumerWidget {
           sortColumnIndex: 0,
           onSelectAll: (value) => true,
           columns: const <DataColumn>[
-            DataColumn(label: DataColums(icon: Icons.location_on, text: 'Ubicación')),
-            DataColumn(label: DataColums(icon: Icons.numbers_sharp, text: 'GICO')),
-            DataColumn(label: DataColums(icon: Icons.factory_rounded, text: 'Cliente')),
-            DataColumn(label: DataColums(icon: Icons.onetwothree_rounded, text: 'Referencia')),
-            DataColumn(label: DataColums(icon: Icons.adf_scanner_rounded, text: 'Máquina')),
+            DataColumn(
+                label: DataColums(icon: Icons.location_on, text: 'Ubicación')),
+            DataColumn(
+                label: DataColums(icon: Icons.numbers_sharp, text: 'GICO')),
+            DataColumn(
+                label:
+                    DataColums(icon: Icons.factory_rounded, text: 'Cliente')),
+            DataColumn(
+                label: DataColums(
+                    icon: Icons.onetwothree_rounded, text: 'Referencia')),
+            DataColumn(
+                label: DataColums(
+                    icon: Icons.adf_scanner_rounded, text: 'Máquina')),
             DataColumn(label: DataColums(text: '')),
           ],
           rows: troqueles.map<DataRow>((Troquel troquel) {
@@ -75,9 +135,8 @@ class _TablaTroqueles extends ConsumerWidget {
                 DataCell(Text(troquel.maquina)),
                 DataCell(Row(
                   children: [
-                   
                     IconButton(
-                       tooltip: 'Editar Troquel ',
+                      tooltip: 'Editar Troquel ',
                       onPressed: () {
                         showDialog(
                           context: context,
@@ -93,9 +152,10 @@ class _TablaTroqueles extends ConsumerWidget {
                     IconButton(
                       tooltip: 'Eliminar Troquel ',
                       onPressed: () async {
-                        final troquelNotifier = ref.read(troquelProvider.notifier);
-                        await troquelNotifier.deleteTroquel(troquel.isarId!,troquel.maquina );
-                        
+                        final troquelNotifier =
+                            ref.read(troquelProvider.notifier);
+                        await troquelNotifier.deleteTroquel(
+                            troquel.isarId!, troquel.maquina);
                       },
                       icon: const Icon(Icons.delete, color: Colors.red),
                     )
