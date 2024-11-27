@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:troqueles_sw/presentation/widgets/custom_table_widget.dart';
+import 'package:troqueles_sw/presentation/widgets/Tablas/custom_table_widget.dart';
 import '../../../domain/entities/troquel.dart';
 import '../../../infrastructure/datasource/troquel_datasource.dart';
 import '../../providers/troqueles_provider.dart';

@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco_pages.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
-
 import 'Troqueles/EnProceso/enproceso_screen.dart';
 
 

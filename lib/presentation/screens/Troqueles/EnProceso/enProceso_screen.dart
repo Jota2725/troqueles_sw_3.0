@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:troqueles_sw/domain/entities/proceso.dart';
 import '../../../providers/process_provider.dart';
-import '../../../widgets/in_process_table.dart';
+import '../../../widgets/Tablas/in_process_table.dart';
 import '../../search/troquel_search_delegate.dart';
 
 class TroquelViewPages extends ConsumerStatefulWidget {
+  const TroquelViewPages({super.key});
+
   @override
   TroquelViewState createState() => TroquelViewState();
 }
@@ -30,7 +31,7 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
     return troquelNotifier.state; // Retorna el estado actualizado
   }
 
-  // Método para importar datos desde el archivo Excel y guardarlos en ISAR
+  
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +49,9 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
                 showSearch(
                   context: context,
                   delegate: TroquelSearchDelegate(
-                    proceso: troqueles ,
+                    proceso: troqueles,
                     onSelected: (selected) {
-                      
-                     proceso.searchTroquelInProcess(selected);
-                      
+                      proceso.searchTroquelInProcess(selected);
                     },
                   ),
                 );
@@ -72,11 +71,7 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
           } else {
             return PageView(
               scrollDirection: Axis.horizontal,
-              children: [
-                ProcesoTable(
-                
-                )
-              ],
+              children: const [ProcesoTable()],
             );
           }
         },

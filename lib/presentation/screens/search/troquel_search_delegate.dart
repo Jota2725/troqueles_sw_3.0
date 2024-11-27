@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:troqueles_sw/domain/entities/proceso.dart';
 
 class TroquelSearchDelegate extends SearchDelegate {
   final List<String> proceso; // Lista de troqueles para buscar

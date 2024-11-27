@@ -1,19 +1,18 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/troqueles_provider.dart';
 
-
 class CustomSearchBar extends ConsumerWidget {
   final String maquina;
-  const CustomSearchBar(this.maquina, {
+  const CustomSearchBar(
+    this.maquina, {
     super.key,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final search = ref.read(troquelProvider.notifier);
     return SizedBox(
       width: 250,
       child: SearchAnchor(
@@ -23,50 +22,43 @@ class CustomSearchBar extends ConsumerWidget {
             hintText: 'BUSCAR  TROQUEL ',
             elevation: const WidgetStatePropertyAll(0),
             controller: controller,
-            
             padding: const WidgetStatePropertyAll<EdgeInsets>(
                 EdgeInsets.symmetric(horizontal: 18.0)),
-
-                onTap: (){
-                    controller.openView();
-                  
-                },
-         
+            onTap: () {
+              controller.openView();
+            },
             onChanged: (query) async {
-               if (query.isNotEmpty) {
+              if (query.isNotEmpty) {
                 // Convertir el query a un número (GICO)
                 final gico = int.tryParse(query);
                 if (gico != null) {
                   // Realiza la búsqueda en el proveedor
-                  await ref.read(troquelProvider.notifier).searchTroquel(gico, maquina);
+                  await search.searchTroquel(gico, maquina);
                 }
               } else {
                 // Si el campo está vacío, recargar todos los troqueles
-                await ref.read(troquelProvider.notifier).loadTroqueles(maquina);
+                await search.loadTroqueles(maquina);
               }
               controller.openView();
             },
             leading: const Icon(Icons.search),
-onSubmitted: (query) async {
+            onSubmitted: (query) async {
               if (query.isNotEmpty && int.tryParse(query) != null) {
                 final gico = int.parse(query);
-                await ref.read(troquelProvider.notifier).searchTroquel(gico, maquina);
-                
-              }else{
-                await ref.read(troquelProvider.notifier).loadTroqueles(maquina);
+                await search.searchTroquel(gico, maquina);
+              } else {
+                await search.loadTroqueles(maquina);
               }
             },
-                
           );
         },
-        suggestionsBuilder: (BuildContext context, SearchController controller) {
-          
-           // Obtenemos los troqueles actuales en el estado
+        suggestionsBuilder:
+            (BuildContext context, SearchController controller) {
+          // Obtenemos los troqueles actuales en el estado
           final query = controller.text;
           if (query.isEmpty) {
             return [];
           }
-
           // Obtenemos los troqueles actuales en el estado
           final troqueles = ref.watch(troquelProvider);
 
@@ -90,4 +82,3 @@ onSubmitted: (query) async {
     );
   }
 }
-

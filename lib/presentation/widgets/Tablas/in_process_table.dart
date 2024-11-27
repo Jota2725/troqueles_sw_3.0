@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
-
-import '../providers/process_provider.dart';
-import 'actionIcons.dart';
-import 'add_precesos.dart';
+import '../../providers/process_provider.dart';
+import '../widgets.dart';
 
 class ProcesoTable extends ConsumerWidget {
-  
-
   const ProcesoTable({
     super.key,
-
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final procesos = ref.watch(troquelProviderInProceso);
+    final proceso = ref.watch(troquelProviderInProceso.notifier);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
           ActionsIcons(
+            searchBar: const CustomSearchBar(''),
             actions: [
               ActionIcon(
                   label: 'Agregar',
@@ -33,6 +30,10 @@ class ProcesoTable extends ConsumerWidget {
                           return const AddProcesos();
                         });
                   }),
+              ActionIcon(
+                  label: 'Refrescar',
+                  icon: const Icon(Icons.refresh_outlined),
+                  onPressed: () => proceso.loadTroquelesInProcces()),
             ],
           ),
           _TablaEnProceso(procesos: procesos),
@@ -115,12 +116,11 @@ class _TablaEnProceso extends StatelessWidget {
                     IconButton(
                       tooltip: 'Editar',
                       onPressed: () {
-
-                         showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return  AddProcesos(proceso: proceso);
-                        });
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AddProcesos(proceso: proceso);
+                            });
                         // Acción de editar
                       },
                       icon: const Icon(Icons.edit),
@@ -192,36 +192,6 @@ class WrapTextCell extends StatelessWidget {
         maxLines: null,
         overflow: TextOverflow.visible,
         style: const TextStyle(fontSize: 12),
-      ),
-    );
-  }
-}
-
-class DataColums extends StatelessWidget {
-  final IconData? icon;
-  final String text;
-
-  const DataColums({
-    super.key,
-    this.icon,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        children: [
-          if (icon != null) Icon(icon),
-          const SizedBox(width: 5),
-          Text(
-            text,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-            maxLines: 2,
-            softWrap: true,
-            overflow: TextOverflow.visible,
-          ),
-        ],
       ),
     );
   }

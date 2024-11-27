@@ -2,10 +2,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
-import 'package:troqueles_sw/presentation/widgets/add_troquelees.dart';
-import '../providers/troqueles_provider.dart';
-import 'actionIcons.dart';
-import 'custom_search_bar.dart';
+import '../../providers/troqueles_provider.dart';
+import '../widgets.dart';
 // Asegúrate de importar el provider aquí
 
 class TroquelTable extends ConsumerWidget {
@@ -22,13 +20,15 @@ class TroquelTable extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final troquelNotifier = ref.read(troquelProvider.notifier);
     final troqueles = ref.watch(troquelProvider);
-    
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
-          ActionsBibliaco(maquina: maquina, troquelNotifier: troquelNotifier, onImportPressed: onImportPressed),
+          ActionsBibliaco(
+              maquina: maquina,
+              troquelNotifier: troquelNotifier,
+              onImportPressed: onImportPressed),
           FadeInUp(
             child: _TablaTroqueles(
               troqueles: troqueles,
@@ -54,7 +54,6 @@ class ActionsBibliaco extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return ActionsIcons(
       searchBar: CustomSearchBar(maquina),
       actions: [
@@ -78,16 +77,13 @@ class ActionsBibliaco extends StatelessWidget {
                   });
             }),
         ActionIcon(
-          label: 'Importar Excel',
-          icon: const Icon(Icons.upload),
-          onPressed: onImportPressed!
-        ),
+            label: 'Importar Excel',
+            icon: const Icon(Icons.upload),
+            onPressed: onImportPressed!),
         ActionIcon(
-          label: 'Ubicaciones libres',
-          icon: const Icon(Icons.check_box_outline_blank),
-          onPressed: () => troquelNotifier.loadTroquelesLibres(maquina)
-          
-        )
+            label: 'Ubicaciones libres',
+            icon: const Icon(Icons.check_box_outline_blank),
+            onPressed: () => troquelNotifier.loadTroquelesLibres(maquina))
       ],
     );
   }
@@ -165,32 +161,6 @@ class _TablaTroqueles extends ConsumerWidget {
             );
           }).toList(),
         ),
-      ),
-    );
-  }
-}
-
-class DataColums extends StatelessWidget {
-  final IconData? icon;
-  final String text;
-  const DataColums({
-    super.key,
-    this.icon,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        children: [
-          Icon(icon),
-          const SizedBox(width: 5),
-          Text(
-            text,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
       ),
     );
   }

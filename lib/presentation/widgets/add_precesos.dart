@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
+import '../../utils/validators.dart';
 import '../providers/process_provider.dart';
 
 class AddProcesos extends ConsumerStatefulWidget {
@@ -82,73 +83,6 @@ class _AddProcesosState extends ConsumerState<AddProcesos> {
     }
   }
 
-  bool validateFields(BuildContext context) {
-    // Validar campos de texto requeridos
-    for (var field in requiredFields) {
-      if (!controllers.containsKey(field) ||
-          controllers[field]!.text.trim().isEmpty) {
-        showError(context, 'El campo "${capitalize(field)}" es obligatorio.');
-        return false;
-      }
-    }
-
-    // Validar que se haya seleccionado una planta
-    if (selectedPlanta == null || selectedPlanta!.trim().isEmpty) {
-      showError(context, 'Debe seleccionar una planta.');
-      return false;
-    }
-
-    // Validar que se haya seleccionado una máquina
-    if (selectedValue == null || selectedValue!.trim().isEmpty) {
-      showError(context, 'Debe seleccionar una máquina.');
-      return false;
-    }
-
-    // Validar que se haya seleccionado un estado
-    if (selectedEstado == null || selectedEstado!.trim().isEmpty) {
-      showError(context, 'Debe seleccionar un estado.');
-      return false;
-    }
-
-    // Validar fecha de ingreso
-    if (selectedFechaIngreso == null) {
-      showError(context, 'Debe seleccionar una fecha de ingreso.');
-      return false;
-    }
-
-    // Validar fecha estimada
-    if (selectedFechaEstimada == null) {
-      showError(context, 'Debe seleccionar una fecha estimada.');
-      return false;
-    }
-
-    // Validar que la fecha estimada sea posterior a la fecha de ingreso
-    if (selectedFechaEstimada!.isBefore(selectedFechaIngreso!)) {
-      showError(context,
-          'La fecha estimada debe ser posterior a la fecha de ingreso.');
-      return false;
-    }
-
-    return true; // Si pasa todas las validaciones, es válido
-  }
-
-  /// Muestra un mensaje de error con Fluent UI
-  void showError(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => ContentDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          Button(
-            child: const Text('OK'),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Capitaliza una cadena
   String capitalize(String text) {
     return text[0].toUpperCase() + text.substring(1);
@@ -206,7 +140,6 @@ class _AddProcesosState extends ConsumerState<AddProcesos> {
                   selected: selectedFechaIngreso,
                   onChanged: (date) => setState(() {
                     selectedFechaIngreso = date;
-                    print('Fecha convertida a DateTime: $selectedFechaIngreso');
                   }),
                   startDate: DateTime(2000),
                   endDate: DateTime(2100),
@@ -273,7 +206,7 @@ class _AddProcesosState extends ConsumerState<AddProcesos> {
                     items: const [
                       ComboBoxItem(value: 'WA', child: Text('WARD')),
                       ComboBoxItem(value: 'TW', child: Text('HOLANDEZA')),
-                      ComboBoxItem(value: 'FW', child: Text('FLEXPOWARD')),
+                      ComboBoxItem(value: 'FW', child: Text('FLEXO WARD')),
                       ComboBoxItem(value: 'ML', child: Text('MINILINE')),
                       ComboBoxItem(value: 'DF', child: Text('DONFANG')),
                       ComboBoxItem(value: 'JS', child: Text('JS MACHINE')),
@@ -322,7 +255,15 @@ class _AddProcesosState extends ConsumerState<AddProcesos> {
               backgroundColor: WidgetStatePropertyAll(Color(0xFF0BAFFE))),
           child: Text(widget.proceso == null ? 'Agregar' : 'Guardar'),
           onPressed: () async {
-            if (!validateFields(context)) return;
+            if (!validateFields(
+                context,
+                requiredFields,
+                controllers,
+                selectedFechaIngreso,
+                selectedFechaEstimada,
+                selectedPlanta,
+                selectedValue,
+                selectedEstado)) return;
 
             final nuevoProceso = Proceso(
               ntroquel: controllers['Troquel']!.text,
