@@ -14,16 +14,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Instancia del tema personalizado
     final AppTheme appTheme = AppTheme();
-    return  FluentApp.router(
-      routerConfig: appRouter ,
-      themeMode: ThemeMode.system,
-      theme: appTheme.getLightTheme(),
-      darkTheme: appTheme.getDarkTheme(),
 
+    return FluentApp.router(
+      // Configuración del enrutador
+      routerConfig: appRouter,
+
+      // Configuración del tema
+      themeMode: ThemeMode.system, // Cambia automáticamente entre claro y oscuro según el sistema
+      theme: appTheme.getLightFluentTheme(),
+      darkTheme: appTheme.getDarkFluentTheme(),
+
+      // Configuración adicional
       debugShowCheckedModeBanner: false,
       title: 'Troqueles Smurfit WestRock',
-      
     );
   }
 }

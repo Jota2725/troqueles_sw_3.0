@@ -43,7 +43,7 @@ class ProcesoTable extends ConsumerWidget {
   }
 }
 
-class _TablaEnProceso extends StatelessWidget {
+class _TablaEnProceso extends ConsumerWidget {
   const _TablaEnProceso({
     required this.procesos,
   });
@@ -51,7 +51,7 @@ class _TablaEnProceso extends StatelessWidget {
   final List<Proceso> procesos;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 100,
       child: Material(
@@ -119,7 +119,9 @@ class _TablaEnProceso extends StatelessWidget {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return AddProcesos(proceso: proceso);
+                              return AddProcesos(
+                                proceso: proceso,
+                              );
                             });
                         // Acción de editar
                       },
@@ -127,7 +129,10 @@ class _TablaEnProceso extends StatelessWidget {
                     ),
                     IconButton(
                       tooltip: 'Eliminar',
-                      onPressed: () {
+                      onPressed: () async {
+                        final provider =
+                            ref.read(troquelProviderInProceso.notifier);
+                        await provider.deleteTroquelInProcees(proceso.isarId!);
                         // Acción de eliminar
                       },
                       icon: const Icon(Icons.delete, color: Colors.red),

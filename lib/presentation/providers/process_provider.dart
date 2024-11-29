@@ -45,8 +45,8 @@ class TroquelNotifierInProceso extends StateNotifier<List<Proceso>> {
   }
 
   // Eliminar un troquel por ID
-  Future<void> deleteTroquel(int id) async {
-    await _isarDatasource.deleteTroquel(id);
+  Future<void> deleteTroquelInProcees(int id) async {
+    await _isarDatasource.deleteTroquelInProcees(id);
     await loadTroquelesInProcces(); // Recargar los troqueles por máquina
   }
 
