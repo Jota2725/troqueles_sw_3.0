@@ -66,11 +66,12 @@ class _TablaCompletados extends StatelessWidget {
             DataColumn(
                 label: DataColums(icon: Icons.comment, text: 'Observaciones')),
             DataColumn(label: DataColums(icon: Icons.flag, text: 'Estado')),
+            
           ],
           rows: completados.map<DataRow>((proceso) {
             return DataRow(
-              color: MaterialStateProperty.resolveWith<Color?>((states) {
-                if (states.contains(MaterialState.selected)) {
+              color: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.selected)) {
                   return Colors.blue.withOpacity(0.3);
                 }
                 return Colors.green.withOpacity(0.3);

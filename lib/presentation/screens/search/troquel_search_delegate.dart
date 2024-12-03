@@ -80,7 +80,7 @@ class TroquelSearchDelegate extends SearchDelegate {
     }
 
     final suggestions = proceso
-        .where((proceso) => proceso.toLowerCase().startsWith(query.toLowerCase()))
+        .where((proceso) => proceso.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
     if (suggestions.isEmpty) {

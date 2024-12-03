@@ -130,7 +130,7 @@ class _TablaEnProceso extends ConsumerWidget {
                         completadosProvider.addProcesoCompletado(proceso);
 
                          // Navegar a la siguiente página si la planta es Cali
-                        if (proceso.planta == " Cali") {
+                        if (proceso.planta == "Cali") {
                           pageController.nextPage(
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut,);}
