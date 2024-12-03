@@ -128,6 +128,12 @@ class IsarDatasource extends LocalStorageDatasource {
     return await isar.procesos.where().findAll();
   }
 
+  Future<List<Proceso>> getTroquelesByEstado(Estado estado) async {
+  final isar = await db;
+  final procesos = await isar.procesos.where().filter().estadoEqualTo(estado).findAll();
+  return procesos;
+}
+
 
   
   Future<Proceso?> getTroquelInProcess(String troquel) async {
@@ -171,4 +177,8 @@ class IsarDatasource extends LocalStorageDatasource {
       await isar.procesos.put(updatedProceso);
     });
   }
+
+
+
+
 }

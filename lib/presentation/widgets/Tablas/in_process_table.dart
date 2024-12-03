@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
+import '../../providers/completados_provider.dart';
 import '../../providers/process_provider.dart';
 import '../widgets.dart';
 
 class ProcesoTable extends ConsumerWidget {
-  const ProcesoTable({
-    super.key,
+  final PageController pageController;
+
+  const ProcesoTable(  {super.key, 
+    required this.pageController,
+
   });
+  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,7 +41,7 @@ class ProcesoTable extends ConsumerWidget {
                   onPressed: () => proceso.loadTroquelesInProcces()),
             ],
           ),
-          _TablaEnProceso(procesos: procesos),
+          _TablaEnProceso(procesos: procesos, pageController: pageController ,),
         ],
       ),
     );
@@ -45,8 +50,10 @@ class ProcesoTable extends ConsumerWidget {
 
 class _TablaEnProceso extends ConsumerWidget {
   const _TablaEnProceso({
-    required this.procesos,
+    required this.procesos, required this.pageController, 
+    
   });
+  final PageController pageController;
 
   final List<Proceso> procesos;
 
@@ -107,8 +114,30 @@ class _TablaEnProceso extends ConsumerWidget {
                 DataCell(Text(proceso.observaciones)),
                 DataCell(
                   DropdownCell(
+                    onComplete: (){},
+                    proceso: proceso,
                     currentValue: proceso.estado,
-                    onChanged: (newEstado) {},
+                    onChanged: (newEstado) {
+
+                      if (newEstado == Estado.completado) {
+                        final provider = ref.read(troquelProviderInProceso.notifier);
+                        provider.deleteTroquelInProcees(proceso.isarId!);
+
+
+                        // Agregar a la tabla de completados
+                        final completadosProvider =
+                            ref.read(troquelProviderCompletados.notifier);
+                        completadosProvider.addProcesoCompletado(proceso);
+
+                         // Navegar a la siguiente página si la planta es Cali
+                        if (proceso.planta == " Cali") {
+                          pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,);}
+
+                      }
+
+                    },
                   ),
                 ),
                 DataCell(Row(
@@ -150,12 +179,14 @@ class _TablaEnProceso extends ConsumerWidget {
 
 class DropdownCell extends StatelessWidget {
   final Estado currentValue;
+  final Proceso proceso;
   final ValueChanged<Estado?> onChanged;
+  final VoidCallback? onComplete;
 
   const DropdownCell({
     super.key,
     required this.currentValue,
-    required this.onChanged,
+    required this.onChanged, required this.proceso, this.onComplete,
   });
 
   @override
@@ -171,7 +202,12 @@ class DropdownCell extends StatelessWidget {
           ),
         );
       }).toList(),
-      onChanged: onChanged,
+      onChanged: (newEstado){
+        onChanged(newEstado);
+        if(newEstado ==  Estado.completado){
+          onComplete?.call();
+        }
+      },
       underline:
           Container(height: 1, color: Colors.grey), // Línea bajo el dropdown
       isExpanded: true, // Expande el dropdown dentro de la celda

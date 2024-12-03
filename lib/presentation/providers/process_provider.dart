@@ -11,7 +11,8 @@ class TroquelNotifierInProceso extends StateNotifier<List<Proceso>> {
 
   // Inicializar y cargar troqueles por maquina
   Future<void> loadTroquelesInProcces() async {
-    state = await _isarDatasource.getAllTroquelesInProcess();
+    final todosLosProcesos = await _isarDatasource.getAllTroquelesInProcess();
+    state =  todosLosProcesos.where((proceso) => proceso.estado != Estado.completado).toList();
   }
 
   // Agregar un nuevo troquel
@@ -20,16 +21,15 @@ class TroquelNotifierInProceso extends StateNotifier<List<Proceso>> {
     await loadTroquelesInProcces(); // Recargar los troqueles por máquina
   }
 
-
-  Future<void> getAllTroquelesInProcess()async{
-
+  Future<void> getAllTroquelesInProcess() async {
     await _isarDatasource.getAllTroquelesInProcess();
     await loadTroquelesInProcces();
   }
 
-  Future<void> searchTroquelInProcess(String proceso,) async {
-    final result =
-        await _isarDatasource.getTroquelInProcess(proceso);
+  Future<void> searchTroquelInProcess(
+    String proceso,
+  ) async {
+    final result = await _isarDatasource.getTroquelInProcess(proceso);
     if (result != null) {
       state = [result];
       // Actualiza el estado con el troquel encontrado

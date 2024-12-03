@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
+import '../../../providers/completados_provider.dart';
 import '../../../providers/process_provider.dart';
 import '../../../widgets/Tablas/in_process_table.dart';
 import '../../search/troquel_search_delegate.dart';
@@ -14,12 +15,20 @@ class TroquelViewPages extends ConsumerStatefulWidget {
 
 class TroquelViewState extends ConsumerState<TroquelViewPages> {
   late Future<List<Proceso>> futureProcesos;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
     futureProcesos =
         _cargarDatosEnProceso(); // Carga los datos al iniciar la pantalla
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   // Método para cargar los datos desde ISAR al iniciar la pantalla
@@ -28,10 +37,32 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
     await troquelNotifier
         .loadTroquelesInProcces(); // Carga los troqueles por máquina
     // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-    return troquelNotifier.state; // Retorna el estado actualizado
+    return troquelNotifier.state;
+    // Retorna el estado actualizado
   }
 
-  
+  void _handleEstadoChange(Proceso proceso, Estado? newEstado) {
+    final troquelNotifier = ref.read(troquelProviderInProceso.notifier);
+
+    if (newEstado == Estado.completado) {
+      // Eliminar de la tabla actual
+      troquelNotifier.deleteTroquelInProcees(proceso.isarId!);
+
+      // Agregar a la tabla de completados
+      final completadosNotifier = ref.read(troquelProviderCompletados.notifier);
+      completadosNotifier.addProcesoCompletado(proceso);
+
+      // Verificar y navegar a la siguiente página si la planta es Cali
+      if (proceso.planta == 'Cali') {
+        print('Navegando desde página: ${_pageController.page}');
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        print('Intento de navegar a página siguiente');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +101,15 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
             return const Center(child: Text('No hay procesos en curso.'));
           } else {
             return PageView(
+              controller: _pageController,
               scrollDirection: Axis.horizontal,
-              children: const [ProcesoTable()],
+              children: [
+                ProcesoTable(pageController: _pageController),
+                const Text('Agregar al bibliaco')
+
+                //Agregar Consumos
+                //Agregar Tiempos
+              ],
             );
           }
         },

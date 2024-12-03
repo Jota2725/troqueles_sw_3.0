@@ -2,9 +2,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco_pages.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
+import '../widgets/Tablas/completados_tabla.dart';
 import 'Troqueles/EnProceso/enproceso_screen.dart';
-
-
 
 class NavigationScreen extends StatefulWidget {
   static const name = 'Navegation_Screen';
@@ -14,7 +13,6 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
-  
   int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -24,16 +22,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
               child: Image(
             image: AssetImage('assets/Smurfit_Westrock_(logo).png'),
           )),
-          title: Center(child: Text('SW TROQUELES 1.0 ',style: TextStyle(fontSize: 30),))),
-
+          title: Center(
+              child: Text(
+            'SW TROQUELES 1.0 ',
+            style: TextStyle(fontSize: 30),
+          ))),
       pane: NavigationPane(
         header: const Padding(
           padding: EdgeInsets.only(left: 20),
-           
         ),
         items: [
           PaneItem(
-            icon: const Icon(Icons.home,),
+            icon: const Icon(
+              Icons.home,
+            ),
             body: const HomeScreen(),
             title: const Text('Inicio'),
           ),
@@ -46,43 +48,51 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 PaneItemHeader(header: const Text('Maquinas')),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const BibliacoPages(titulo: 'Troqueladora Ward', hojaDeseada: 'WA',),
+                  body: const BibliacoPages(
+                    titulo: 'Troqueladora Ward',
+                    hojaDeseada: 'WA',
+                  ),
                   title: const Text('Ward'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const BibliacoPages(titulo: 'Troqueladora Flexo ward', hojaDeseada: 'FW'),
+                  body: const BibliacoPages(
+                      titulo: 'Troqueladora Flexo ward', hojaDeseada: 'FW'),
                   title: const Text('Flexo Ward'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const BibliacoPages(titulo: 'Holandeza', hojaDeseada: 'TW'),
+                  body: const BibliacoPages(
+                      titulo: 'Holandeza', hojaDeseada: 'TW'),
                   title: const Text('Holandeza'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const  BibliacoPages(titulo: 'JS Machine', hojaDeseada:'JS' ),
+                  body: const BibliacoPages(
+                      titulo: 'JS Machine', hojaDeseada: 'JS'),
                   title: const Text('Js Machine'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const BibliacoPages(titulo: 'Mini Line', hojaDeseada: 'ML'),
+                  body: const BibliacoPages(
+                      titulo: 'Mini Line', hojaDeseada: 'ML'),
                   title: const Text('Mini line'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
-                  body: const BibliacoPages(titulo: 'DonFang', hojaDeseada: 'DF'),
+                  body:
+                      const BibliacoPages(titulo: 'DonFang', hojaDeseada: 'DF'),
                   title: const Text('DongFang'),
                 ),
               ]),
           PaneItem(
             icon: const Icon(Icons.autorenew),
-            body:   TroquelViewPages(),
+            body: const TroquelViewPages(),
             title: const Text('Troqueles en proceso'),
           ),
           PaneItem(
             icon: const Icon(Icons.fact_check_outlined),
-            body: const Text('Screen3'),
+            body: const CompletadosTable(),
             title: const Text('Troqueles terminados'),
           ),
           PaneItem(
@@ -106,7 +116,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             body: const Text('Screen3'),
             title: const Text('Troqueles terminados'),
           ),
-          
           PaneItem(
             icon: const Icon(Icons.inventory),
             body: const Text('Consumos de material'),
@@ -128,8 +137,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             body: const Text('Ajustes'),
             title: const Text('Ajustes'),
           ),
-          
-         
         ],
         selected: _currentIndex,
         displayMode: PaneDisplayMode.auto,
