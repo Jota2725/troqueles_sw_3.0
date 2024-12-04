@@ -5,6 +5,7 @@ import '../../../providers/completados_provider.dart';
 import '../../../providers/process_provider.dart';
 import '../../../widgets/Tablas/in_process_table.dart';
 import '../../search/troquel_search_delegate.dart';
+import 'pages_addtroquel.dart';
 
 class TroquelViewPages extends ConsumerStatefulWidget {
   const TroquelViewPages({super.key});
@@ -42,38 +43,37 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
   }
 
   void _handleEstadoChange(Proceso proceso, Estado? newEstado) {
-  final troquelNotifier = ref.read(troquelProviderInProceso.notifier);
+    final troquelNotifier = ref.read(troquelProviderInProceso.notifier);
 
-  if (newEstado == Estado.completado) {
-    // Eliminar de la tabla actual
-    troquelNotifier.deleteTroquelInProcees(proceso.isarId!);
+    if (newEstado == Estado.completado) {
+      // Eliminar de la tabla actual
+      troquelNotifier.deleteTroquelInProcees(proceso.isarId!);
 
-    // Agregar a la tabla de completados
-    final completadosNotifier = ref.read(troquelProviderCompletados.notifier);
-    completadosNotifier.addProcesoCompletado(proceso);
+      // Agregar a la tabla de completados
+      final completadosNotifier = ref.read(troquelProviderCompletados.notifier);
+      completadosNotifier.addProcesoCompletado(proceso);
 
-    // Verificar las condiciones antes de navegar
-    if (proceso.planta == 'Cali') {
-      // Si las condiciones son válidas, navegar a la siguiente página
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-      print('Navegando a la siguiente página: ${_pageController.page}');
+      // Verificar las condiciones antes de navegar
+      if (proceso.planta == 'Cali') {
+        // Si las condiciones son válidas, navegar a la siguiente página
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        
+      } else {
+        // Mostrar un mensaje si no se cumple la condición
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Solo se puede navegar si la planta es "Cali".'),
+          ),
+        );
+      }
     } else {
-      // Mostrar un mensaje si no se cumple la condición
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Solo se puede navegar si la planta es "Cali".'),
-        ),
-      );
+      // Si el estado no es completado, opcionalmente informar
+     
     }
-  } else {
-    // Si el estado no es completado, opcionalmente informar
-    print('El estado no es "Completado".');
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,9 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
         centerTitle: true,
         elevation: 0,
         actions: [
-          IconButton(
+          TextButton.icon(
+            iconAlignment: IconAlignment.end,
+              label: const Text('Buscar'),
               onPressed: () {
                 showSearch(
                   context: context,
@@ -116,7 +118,7 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
               scrollDirection: Axis.horizontal,
               children: [
                 ProcesoTable(pageController: _pageController),
-                const Text('Agregar al bibliaco')
+                 PageAddTroquel(pageController: _pageController,)
 
                 //Agregar Consumos
                 //Agregar Tiempos

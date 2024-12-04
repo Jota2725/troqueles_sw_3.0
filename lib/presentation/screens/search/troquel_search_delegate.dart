@@ -63,7 +63,7 @@ class TroquelSearchDelegate extends SearchDelegate {
   }
 
   Widget _emptyContainer() {
-    return Center(
+    return const Center(
       child: Icon(
         Icons.search,
         color: Colors.black38,
@@ -83,6 +83,8 @@ class TroquelSearchDelegate extends SearchDelegate {
         .where((proceso) => proceso.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
+        
+
     if (suggestions.isEmpty) {
       return Center(
         child: Text(
@@ -97,7 +99,8 @@ class TroquelSearchDelegate extends SearchDelegate {
       itemBuilder: (context, index) {
         final suggestion = suggestions[index];
         return ListTile(
-          title: Text(suggestion),
+          hoverColor: const Color(0xFF0BAFFE),  
+          title: Text(suggestion ),
           onTap: () {
             query = suggestion; // Actualiza la búsqueda con el sugerido
             showResults(context); // Muestra los resultados
