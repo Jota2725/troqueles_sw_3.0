@@ -1,5 +1,5 @@
 export 'package:troqueles_sw/presentation/widgets/data_columns_widget.dart';
-export 'package:troqueles_sw/presentation/widgets/Tablas/in_process_table.dart';
+export 'package:troqueles_sw/presentation/widgets/Tablas/proceso_table.dart';
 export 'package:troqueles_sw/presentation/widgets/Tablas/custom_table_widget.dart';
 export 'package:troqueles_sw/presentation/widgets/forms/Enproceso/add_precesos.dart';
 export 'package:troqueles_sw/presentation/widgets/add_troquelees.dart';

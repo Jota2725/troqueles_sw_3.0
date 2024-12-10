@@ -1,4 +1,4 @@
-import 'package:animate_do/animate_do.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
@@ -29,10 +29,8 @@ class TroquelTable extends ConsumerWidget {
               maquina: maquina,
               troquelNotifier: troquelNotifier,
               onImportPressed: onImportPressed),
-          FadeInUp(
-            child: _TablaTroqueles(
-              troqueles: troqueles,
-            ),
+          _TablaTroqueles(
+            troqueles: troqueles,
           ),
         ],
       ),

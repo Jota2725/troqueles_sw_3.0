@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class HomeScreen extends StatefulWidget {
   static const name = 'Home-Screen';
   const HomeScreen({super.key});
@@ -12,7 +13,9 @@ class _MyhomeWidgetState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
- 
-    return const Text('data');
+    return const Image(
+      image: AssetImage('assets/ImageFondoSW.jpg'),
+      fit: BoxFit.cover,
+    );
   }
 }

@@ -49,6 +49,11 @@ class TroquelNotifierCompletados extends StateNotifier<List<Proceso>> {
   }
 }
 
+// Provider para almacenar los datos del troquel seleccionado
+final selectedTroquelProvider = StateProvider<Map<String, dynamic>>((ref) => {});
+
+
+
 // Provider de TroquelNotifierCompletados
 final troquelProviderCompletados =
     StateNotifierProvider<TroquelNotifierCompletados, List<Proceso>>((ref) {

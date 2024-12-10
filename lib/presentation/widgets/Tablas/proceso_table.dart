@@ -8,11 +8,10 @@ import '../widgets.dart';
 class ProcesoTable extends ConsumerWidget {
   final PageController pageController;
 
-  const ProcesoTable(  {super.key, 
+  const ProcesoTable({
+    super.key,
     required this.pageController,
-
   });
-  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,7 +22,6 @@ class ProcesoTable extends ConsumerWidget {
       child: Column(
         children: [
           ActionsIcons(
-            searchBar: const CustomSearchBar(''),
             actions: [
               ActionIcon(
                   label: 'Agregar',
@@ -41,7 +39,10 @@ class ProcesoTable extends ConsumerWidget {
                   onPressed: () => proceso.loadTroquelesInProcces()),
             ],
           ),
-          _TablaEnProceso(procesos: procesos, pageController: pageController ,),
+          _TablaEnProceso(
+            procesos: procesos,
+            pageController: pageController,
+          ),
         ],
       ),
     );
@@ -50,9 +51,10 @@ class ProcesoTable extends ConsumerWidget {
 
 class _TablaEnProceso extends ConsumerWidget {
   const _TablaEnProceso({
-    required this.procesos, required this.pageController, 
-    
+    required this.procesos,
+    required this.pageController,
   });
+
   final PageController pageController;
 
   final List<Proceso> procesos;
@@ -114,29 +116,33 @@ class _TablaEnProceso extends ConsumerWidget {
                 DataCell(Text(proceso.observaciones)),
                 DataCell(
                   DropdownCell(
-                    onComplete: (){},
+                    onComplete: () {},
                     proceso: proceso,
                     currentValue: proceso.estado,
                     onChanged: (newEstado) {
-
                       if (newEstado == Estado.completado) {
-                        final provider = ref.read(troquelProviderInProceso.notifier);
+                        final provider =
+                            ref.read(troquelProviderInProceso.notifier);
                         provider.deleteTroquelInProcees(proceso.isarId!);
-
 
                         // Agregar a la tabla de completados
                         final completadosProvider =
                             ref.read(troquelProviderCompletados.notifier);
                         completadosProvider.addProcesoCompletado(proceso);
 
+                        ref.read(selectedTroquelProvider.notifier).state = {
+                          'numeroTroquel': proceso.ntroquel,
+                          'cliente': proceso.cliente,
+                          'maquina': proceso.maquina,
+                        };
                          // Navegar a la siguiente página si la planta es Cali
                         if (proceso.planta == "Cali") {
                           pageController.nextPage(
                             duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,);}
-
+                            curve: Curves.easeInOut,
+                          );
+                        }
                       }
-
                     },
                   ),
                 ),
@@ -186,7 +192,9 @@ class DropdownCell extends StatelessWidget {
   const DropdownCell({
     super.key,
     required this.currentValue,
-    required this.onChanged, required this.proceso, this.onComplete,
+    required this.onChanged,
+    required this.proceso,
+    this.onComplete,
   });
 
   @override
@@ -202,9 +210,9 @@ class DropdownCell extends StatelessWidget {
           ),
         );
       }).toList(),
-      onChanged: (newEstado){
+      onChanged: (newEstado) {
         onChanged(newEstado);
-        if(newEstado ==  Estado.completado){
+        if (newEstado == Estado.completado) {
           onComplete?.call();
         }
       },
