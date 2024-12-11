@@ -23,6 +23,8 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
   late final TextEditingController numeroTroquelController;
   late final TextEditingController clienteController;
   late final TextEditingController maquinaController;
+  final TextEditingController referenciaController = TextEditingController();
+
   final TextEditingController textEditingController = TextEditingController();
   final GlobalKey<FormState> keyForm = GlobalKey();
 
@@ -49,6 +51,22 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextButton.icon(
+              label: Text('Guardar'),
+              onPressed: () {
+                //AGREGAR AL Bibliaco
+                widget.pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
+              icon: Icon(Icons.save),
+            ),
+          )
+        ],
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
@@ -90,9 +108,10 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
         height: double.maxFinite,
         child: Column(
           children: [
-            const Text('A continuación ingrese toda la información del troquel nuevo'),
+            const Text(
+                'A continuación ingrese toda la información del troquel nuevo'),
             const SizedBox(height: 10),
-              Form(
+            Form(
               key: keyForm,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -114,13 +133,11 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
                         controller: clienteController,
                         enabled: false,
                         decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Plasticos Rimax',
-                          labelText: 'Cliente'
-                        ),
+                            hintText: 'Plasticos Rimax', labelText: 'Cliente'),
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        controller: textEditingController,
+                        controller: referenciaController,
                         decoration: InputDecorations.authInputDescoration(
                           hintText: '12354357',
                           labelText: 'Referencia CAD',
@@ -130,12 +147,8 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
                       TextFormField(
                         controller: maquinaController,
                         enabled: false,
-                      
                         decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Holandeza',
-                          labelText: 'Maquina'
-                    
-                        ),
+                            hintText: 'Holandeza', labelText: 'Maquina'),
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -175,24 +188,24 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
                       TextFormField(
                         controller: textEditingController,
                         decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Peso',
-                          labelText: 'Peso',
+                          hintText: 'Cabida',
+                          labelText: 'Cabida',
                         ),
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
                         controller: textEditingController,
                         decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Material',
-                          labelText: 'Material',
+                          hintText: 'Estilo',
+                          labelText: 'Estilo',
                         ),
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
                         controller: textEditingController,
                         decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Comentarios',
-                          labelText: 'Comentarios',
+                          hintText: 'Descripcion',
+                          labelText: 'Descripcion',
                         ),
                       ),
                     ],

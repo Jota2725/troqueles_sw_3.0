@@ -95,7 +95,9 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
                   cliente: cliente,
                   maquina: maquina,
                   pageController: _pageController,
-                )
+                ),
+                const Text('Consumos'),
+                const Text('Tiempos')
 
                 // Agregar Consumos
                 // Agregar Tiempos
