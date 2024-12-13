@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
+import '../../../../infrastructure/datasource/isar_datasource.dart';
 import '../../../providers/completados_provider.dart';
 import '../../../providers/process_provider.dart';
 import '../../../widgets/Tablas/proceso_table.dart';
 import '../../search/troquel_search_delegate.dart';
+
+import '../consumos/consumos_page.dart';
 import 'pages_addtroquel.dart';
 
 class TroquelViewPages extends ConsumerStatefulWidget {
@@ -20,6 +23,7 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
   String? numeroTroquel;
   String? cliente;
   String? maquina;
+  final  IsarDatasource isar = IsarDatasource(); 
 
   @override
   void initState() {
@@ -96,8 +100,14 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
                   maquina: maquina,
                   pageController: _pageController,
                 ),
-                const Text('Consumos'),
-                const Text('Tiempos')
+                 ConsumosPage(
+                  pageController: _pageController,
+                  ntroquel: numeroTroquel,
+                  cliente: cliente,
+                  tipoTrabajo: maquina,
+
+                )
+               
 
                 // Agregar Consumos
                 // Agregar Tiempos

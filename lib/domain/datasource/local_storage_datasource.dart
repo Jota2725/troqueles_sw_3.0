@@ -1,6 +1,8 @@
 import 'package:troqueles_sw/domain/entities/proceso.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 
+import '../entities/consumo.dart';
+
 abstract class LocalStorageDatasource {
 
   // TODO TROQUELES BIBILIACO
@@ -20,6 +22,10 @@ abstract class LocalStorageDatasource {
   Future<void>addNewTroquelInProcess(List<Proceso> proceso);
   Future<void>deleteTroquelInProcees(int id);
   Future<void>updatedTroquelInProcess(Proceso proceso);
+
+  // TODO CONSUMOS DE MATERIALES
+
+  Future<List<Consumo>>getAllConsumos();
 
   
   

@@ -1,6 +1,8 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:troqueles_sw/domain/datasource/local_storage_datasource.dart';
+import 'package:troqueles_sw/domain/entities/consumo.dart';
+import 'package:troqueles_sw/domain/entities/materiales.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 
 import '../../domain/entities/proceso.dart';
@@ -16,7 +18,7 @@ class IsarDatasource extends LocalStorageDatasource {
     final dir = await getApplicationDocumentsDirectory();
 
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([TroquelSchema, ProcesoSchema],
+      return await Isar.open([TroquelSchema, ProcesoSchema,ConsumoSchema,MaterialesSchema],
           inspector: true, directory: dir.path);
     }
     return Future.value(Isar.getInstance());
@@ -176,6 +178,14 @@ class IsarDatasource extends LocalStorageDatasource {
 
       await isar.procesos.put(updatedProceso);
     });
+  }
+
+  @override
+  Future<List<Consumo>> getAllConsumos() async {
+    final isar = await db;
+    return await isar.consumos.where().findAll();
+
+   
   }
 
 
