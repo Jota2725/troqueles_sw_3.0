@@ -1,4 +1,6 @@
 import 'package:troqueles_sw/domain/datasource/local_storage_datasource.dart';
+import 'package:troqueles_sw/domain/entities/consumo.dart';
+import 'package:troqueles_sw/domain/entities/materiales.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 import 'package:troqueles_sw/domain/repositories/local_storage_repository.dart';
@@ -71,5 +73,15 @@ class LocalStorageRepositoryImpl extends LocalStorageRepository {
   @override
   Future<void> updatedTroquelInProcess(Proceso proceso) {
     return datasource.updatedTroquelInProcess(proceso);
+  }
+
+  @override
+  Future<List<Consumo>> getAllConsumos() {
+    return datasource.getAllConsumos();
+  }
+
+  @override
+  Future<List<Materiales>> gettAllMateriles() {
+    return gettAllMateriles();
   }
 }

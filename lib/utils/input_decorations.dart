@@ -7,9 +7,9 @@ class InputDecorations {
       IconData? prefixIcon}) {
     return InputDecoration(
         border: const OutlineInputBorder(),
-        enabledBorder: const UnderlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.deepPurple)),
-        focusedBorder: const UnderlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.deepPurple, width: 2)),
         hintText: hintText,
         labelText: labelText,

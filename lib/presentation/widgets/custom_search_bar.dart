@@ -6,9 +6,7 @@ import '../providers/troqueles_provider.dart';
 class CustomSearchBar extends ConsumerWidget {
   final String maquina;
   const CustomSearchBar(
-    this.maquina, {
-    super.key,
-  });
+    this.maquina, );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,9 +43,9 @@ class CustomSearchBar extends ConsumerWidget {
             onSubmitted: (query) async {
               if (query.isNotEmpty && int.tryParse(query) != null) {
                 final gico = int.parse(query);
-                await search.searchTroquel(gico, maquina);
+                await search.searchTroquel(gico, maquina  );
               } else {
-                await search.loadTroqueles(maquina);
+                await search.loadTroqueles(maquina );
               }
             },
           );

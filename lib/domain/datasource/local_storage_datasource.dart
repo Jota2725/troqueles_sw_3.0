@@ -2,6 +2,7 @@ import 'package:troqueles_sw/domain/entities/proceso.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 
 import '../entities/consumo.dart';
+import '../entities/materiales.dart';
 
 abstract class LocalStorageDatasource {
 
@@ -26,6 +27,9 @@ abstract class LocalStorageDatasource {
   // TODO CONSUMOS DE MATERIALES
 
   Future<List<Consumo>>getAllConsumos();
+
+  
+  Future<List<Materiales>>gettAllMateriles(); 
 
   
   

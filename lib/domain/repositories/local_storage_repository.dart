@@ -1,5 +1,7 @@
 
 
+import '../entities/consumo.dart';
+import '../entities/materiales.dart';
 import '../entities/proceso.dart';
 import '../entities/troquel.dart';
 
@@ -20,6 +22,12 @@ Future<void> saveTroqueles(List<Troquel> troqueles);
   Future<void>addNewTroquelInProcess(List<Proceso> proceso);
   Future<void>deleteTroquelInProcees(int id);
   Future<void>updatedTroquelInProcess(Proceso proceso);
+
+  Future<List<Consumo>>getAllConsumos();
+
+  
+  Future<List<Materiales>>gettAllMateriles(); 
+
 
 
 }

@@ -187,6 +187,12 @@ class IsarDatasource extends LocalStorageDatasource {
 
    
   }
+  
+  @override 
+  Future<List<Materiales>> gettAllMateriles() async {
+    final isar = await db;
+    return await isar.materiales.where().findAll();
+  }
 
 
 

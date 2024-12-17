@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../utils/input_decorations.dart';
+import '../../../providers/materials_provider.dart';
+import '../../../widgets/search_materials.dart'; // Asegúrate de importar correctamente tus clases y dependencias.
 
-import '../../../../domain/entities/materiales.dart'; // Asegúrate de importar correctamente tus clases y dependencias.
-
-class ConsumosPage extends StatefulWidget {
+class ConsumosPage extends ConsumerStatefulWidget {
   const ConsumosPage({
     super.key,
     required this.ntroquel,
@@ -18,54 +20,34 @@ class ConsumosPage extends StatefulWidget {
   final String tipoTrabajo;
 
   @override
-  State<ConsumosPage> createState() => _ConsumosPageState();
+  ConsumerState<ConsumosPage> createState() => _ConsumosPageState();
 }
 
-class _ConsumosPageState extends State<ConsumosPage> {
-  // Simulamos la lista de materiales para este ejemplo.
-  final List<Materiales> materiales = [
-    Materiales(
-      codigo: 1,
-      unidad: Unidad.mts,
-      descripcion: 'Madera tipo A',
-      tipo: Tipo.maderas,
-      cantidad: 10,
-      conversion: 1.0,
-    ),
-    Materiales(
-      codigo: 2,
-      unidad: Unidad.rollo,
-      descripcion: 'Cuchilla tipo B',
-      tipo: Tipo.cuchillas,
-      cantidad: 5,
-      conversion: 0.5,
-    ),
-    Materiales(
-      codigo: 3,
-      unidad: Unidad.und,
-      descripcion: 'Herramienta básica',
-      tipo: Tipo.herramientas,
-      cantidad: 15,
-      conversion: 0.2,
-    ),
-  ];
+class _ConsumosPageState extends ConsumerState<ConsumosPage> {
+  final TextEditingController descripcionController = TextEditingController();
+  final TextEditingController tipoController = TextEditingController();
+  final TextEditingController conversionController = TextEditingController();
+  final TextEditingController cantidadController = TextEditingController();
 
-  void _agregarMaterial(Tipo tipo) {
-    // Lógica para agregar un material (puedes personalizarla).
-    setState(() {
-      materiales.add(Materiales(
-        codigo: materiales.length + 1,
-        unidad: Unidad.und,
-        descripcion: 'Nuevo material de tipo ${tipo.name}',
-        tipo: tipo,
-        cantidad: 1,
-        conversion: 1.0,
-      ));
-    });
-  }
+  final GlobalKey<FormState> keyForm = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
+    final selectedMaterial =
+        ref.watch(materialProvider.notifier).selectedMaterial;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (selectedMaterial != null) {
+        setState(() {
+          descripcionController.text = selectedMaterial.descripcion;
+          tipoController.text = selectedMaterial.tipo.name;
+          conversionController.text = selectedMaterial.conversion.toString();
+        });
+      }
+    });
+
+    final size = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Agregar consumos al troquel ${widget.ntroquel}'),
@@ -105,58 +87,129 @@ class _ConsumosPageState extends State<ConsumosPage> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('CLIENTE : ${widget.cliente}',
-                      style: const TextStyle(fontSize: 16)),
-                  const SizedBox(height: 10),
-                  Text('TIPO DE TRABAJO : ${widget.tipoTrabajo}',
-                      style: const TextStyle(fontSize: 16)),
-                  const SizedBox(height: 20),
-                ],
-              ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: Tipo.values.length,
-              itemBuilder: (context, index) {
-                final tipo = Tipo.values[index];
-                final materialesPorTipo = materiales
-                    .where((material) => material.tipo == tipo)
-                    .toList();
-
-                return ExpansionTile(
-                  
-                  title: Text(tipo.name.toUpperCase()),
-                  
-                  subtitle: Text(
-                      materialesPorTipo.isNotEmpty
-                          ? 'Total: ${materialesPorTipo.length} materiales'
-                          : 'No hay materiales en esta categoría'),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ...materialesPorTipo.map((material) {
-                      return ListTile(
-                        title: Text(material.descripcion),
-                        subtitle: Text(
-                            'Código: ${material.codigo}, Cantidad: ${material.cantidad}, Unidad: ${material.unidad.name}, Conversion: ${material.conversion} '),
-                      );
-                    }).toList(),
-                    ListTile(
-                      title: const Text('Agregar material'),
-                      trailing: const Icon(Icons.add),
-                      onTap: () => _agregarMaterial(tipo),
+                    // Textos superiores centrados
+                    Text(
+                      'CLIENTE : ${widget.cliente}',
+                      style: const TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'TIPO DE TRABAJO : ${widget.tipoTrabajo}',
+                      style: const TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Formulario
+                    Center(
+                      child: Form(
+                        key: keyForm,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: size * 0.5,
+                            child: Column(
+                              children: [
+                                const SearchMaterials(),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                  enabled: false,
+                                  controller: descripcionController,
+                                  decoration:
+                                      InputDecorations.authInputDescoration(
+                                    hintText: 'Descripcion',
+                                    labelText: 'Descripcion',
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                  enabled: false,
+                                  controller: tipoController,
+                                  decoration:
+                                      InputDecorations.authInputDescoration(
+                                    hintText: 'Tipo',
+                                    labelText: 'Tipo',
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                  enabled: false,
+                                  controller: conversionController,
+                                  decoration:
+                                      InputDecorations.authInputDescoration(
+                                    hintText: 'Conversión',
+                                    labelText: 'Conversion',
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                  controller: cantidadController,
+                                  decoration:
+                                      InputDecorations.authInputDescoration(
+                                    hintText: 'Cantidad',
+                                    labelText: 'Cantidad',
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Botones centrados
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FilledButton.icon(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  WidgetStatePropertyAll(Colors.blueGrey)),
+                          icon: const Icon(
+                            Icons.add_circle_outline,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {},
+                          label: const Text('Agregar Material',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                        ),
+                        const SizedBox(width: 10),
+                        FilledButton.icon(
+                          icon: const Icon(
+                            Icons.send,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {},
+                          label: const Text(
+                            'Finalizar Consumos',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                );
-              },
-            ),
-          ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
