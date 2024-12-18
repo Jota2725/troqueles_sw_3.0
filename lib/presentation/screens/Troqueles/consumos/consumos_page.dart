@@ -31,10 +31,25 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
 
   final GlobalKey<FormState> keyForm = GlobalKey();
 
+
+
+  @override
+  void dispose() {
+    // Limpiar controladores al destruir el widget
+    descripcionController.dispose();
+    tipoController.dispose();
+    conversionController.dispose();
+    cantidadController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final selectedMaterial =
         ref.watch(materialProvider.notifier).selectedMaterial;
+
+
+
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (selectedMaterial != null) {
