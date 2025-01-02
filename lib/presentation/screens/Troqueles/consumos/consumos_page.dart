@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+
 import '../../../../utils/input_decorations.dart';
 import '../../../providers/materials_provider.dart';
-import '../../../widgets/search_materials.dart'; // Asegúrate de importar correctamente tus clases y dependencias.
+import '../../../widgets/search_materials.dart';
 
 class ConsumosPage extends ConsumerStatefulWidget {
   const ConsumosPage({
@@ -24,21 +25,11 @@ class ConsumosPage extends ConsumerStatefulWidget {
 }
 
 class _ConsumosPageState extends ConsumerState<ConsumosPage> {
-  final TextEditingController descripcionController = TextEditingController();
-  final TextEditingController tipoController = TextEditingController();
-  final TextEditingController conversionController = TextEditingController();
   final TextEditingController cantidadController = TextEditingController();
-
   final GlobalKey<FormState> keyForm = GlobalKey();
-
-
 
   @override
   void dispose() {
-    // Limpiar controladores al destruir el widget
-    descripcionController.dispose();
-    tipoController.dispose();
-    conversionController.dispose();
     cantidadController.dispose();
     super.dispose();
   }
@@ -47,19 +38,6 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
   Widget build(BuildContext context) {
     final selectedMaterial =
         ref.watch(materialProvider.notifier).selectedMaterial;
-
-
-
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (selectedMaterial != null) {
-        setState(() {
-          descripcionController.text = selectedMaterial.descripcion;
-          tipoController.text = selectedMaterial.tipo.name;
-          conversionController.text = selectedMaterial.conversion.toString();
-        });
-      }
-    });
 
     final size = MediaQuery.of(context).size.width;
 
@@ -112,7 +90,6 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Textos superiores centrados
                     Text(
                       'CLIENTE : ${widget.cliente}',
                       style: const TextStyle(fontSize: 16),
@@ -125,8 +102,6 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
-
-                    // Formulario
                     Center(
                       child: Form(
                         key: keyForm,
@@ -140,7 +115,9 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                                 const SizedBox(height: 10),
                                 TextFormField(
                                   enabled: false,
-                                  controller: descripcionController,
+                                  controller: TextEditingController(
+                                    text: selectedMaterial?.descripcion ?? '',
+                                  ),
                                   decoration:
                                       InputDecorations.authInputDescoration(
                                     hintText: 'Descripcion',
@@ -150,8 +127,11 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                                 const SizedBox(height: 10),
                                 TextFormField(
                                   enabled: false,
-                                  controller: tipoController,
+                                  controller: TextEditingController(
+                                    text: selectedMaterial?.tipo.name ?? '',
+                                  ),
                                   decoration:
+                                      
                                       InputDecorations.authInputDescoration(
                                     hintText: 'Tipo',
                                     labelText: 'Tipo',
@@ -160,7 +140,11 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                                 const SizedBox(height: 10),
                                 TextFormField(
                                   enabled: false,
-                                  controller: conversionController,
+                                  controller: TextEditingController(
+                                    text: selectedMaterial?.conversion
+                                            .toString() ??
+                                        '',
+                                  ),
                                   decoration:
                                       InputDecorations.authInputDescoration(
                                     hintText: 'Conversión',
@@ -183,15 +167,13 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                         ),
                       ),
                     ),
-
-                    // Botones centrados
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         FilledButton.icon(
                           style: ButtonStyle(
                               backgroundColor:
-                                  WidgetStatePropertyAll(Colors.blueGrey)),
+                                  const MaterialStatePropertyAll(Colors.blueGrey)),
                           icon: const Icon(
                             Icons.add_circle_outline,
                             color: Colors.white,

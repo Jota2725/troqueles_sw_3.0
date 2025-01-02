@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/materiales.dart';
-
 import '../../infrastructure/datasource/isar_datasource.dart';
 
 class MaterialNotifier extends StateNotifier<List<Materiales>> {
@@ -8,58 +7,29 @@ class MaterialNotifier extends StateNotifier<List<Materiales>> {
 
   MaterialNotifier(this._isarDatasource) : super([]);
 
-  // Inicializar y cargar troqueles por maquina
+  Materiales? _selectedMaterial;
+  Materiales? get selectedMaterial => _selectedMaterial;
+
+  // Cargar todos los materiales
   Future<void> loadMateriales() async {
     state = await _isarDatasource.gettAllMateriles();
   }
 
-  Materiales? _selectedMaterial;
-  Materiales? get selectedMaterial => _selectedMaterial;
-
+  // Establecer el material seleccionado
   void setSelectedMaterial(Materiales material) {
     _selectedMaterial = material;
+    // Notificar el cambio de estado. No es necesario recargar toda la lista.
+    state = List.from(state); // Esto asegura que el cambio se notifique.
   }
 
-  // Agregar un nuevo troquel
-  // Future<void> addTroquel(Troquel troquel) async {
-  //   await _isarDatasource.saveTroqueles([troquel]);
-  //   await loadTroqueles(troquel.maquina); // Recargar los troqueles por máquina
-  // }
-  // Future<void> addTroquelInprocess(Proceso proceso) async {
-  //   await _isarDatasource.addNewTroquelInProcess([proceso]);
-  //   final updatedList = await _isarDatasource.getAllTroquelesInProcess();
-  // state = updatedList.cast<Troquel>(); // Recargar los troqueles por máquina
-  // }
-
-  Future<void> searchMaterial() async {
-    final result = await _isarDatasource.gettAllMateriles();
+  // Buscar materiales (puedes ajustar según el criterio de búsqueda)
+  Future<void> searchMaterial(String query) async {
+    final result = await _isarDatasource.gettAllMateriles(); // Ajustar lógica de búsqueda según la base de datos
     state = result;
-    // Actualiza el estado con el troquel encontrado
   }
-
-  // Actualizar un troquel existente
-  // Future<void> updateTroquel(Troquel troquel) async {
-  //   await _isarDatasource.updateTroquel(troquel);
-  //   await loadTroqueles(troquel.maquina); // Recargar los troqueles por máquina
-  // }
-
-  // Eliminar un troquel por ID
-//   Future<void> deleteTroquel(int id, String maquina) async {
-//     await _isarDatasource.deleteTroquel(id);
-//     await loadTroqueles(maquina); // Recargar los troqueles por máquina
-//   }
-
-//   Future<void> deleteAllTroquelesbyMachine(String maquina) async {
-//     await _isarDatasource.deleteAllTroquelesbyMachine(maquina);
-//     await loadTroqueles(maquina);
-//   }
-// Future<void> loadTroquelesLibres(String maquina) async {
-//     final troquelesLibres = await _isarDatasource.getTroquelesLibres(maquina);
-//     state = troquelesLibres; // Actualizar el estado con los troqueles libres específicos de la máquina
-//   }
 }
 
-// Provider de TroquelNotifier
+// Provider de MaterialNotifier
 final materialProvider =
     StateNotifierProvider<MaterialNotifier, List<Materiales>>((ref) {
   final isarDatasource = IsarDatasource();
