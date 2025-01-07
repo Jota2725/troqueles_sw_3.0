@@ -4,6 +4,7 @@ import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco_pages.dart'
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
 import '../widgets/Tablas/completados_tabla.dart';
 import 'Troqueles/EnProceso/troquel_view_pages.dart';
+import 'materiales/materialesScreen.dart';
 
 class NavigationScreen extends StatefulWidget {
   static const name = 'Navegation_Screen';
@@ -95,17 +96,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
             body: const CompletadosTable(),
             title: const Text('Troqueles terminados'),
           ),
-          PaneItem(
-            icon: const Icon(Icons.construction),
-            body: const Text('Screen4'),
-            title: const Text('Troqueles Mantenimiento'),
-          ),
+          
           PaneItem(
             icon: const Icon(Icons.delete_forever),
             body: const Text(''),
             title: const Text('Troqueles Obsoletos'),
           ),
-          PaneItemHeader(header: const Text('Consumos')),
+          PaneItemHeader(header: const Text('Consumos  y materiales ')),
           PaneItem(
             icon: const Icon(Icons.document_scanner),
             body: const Text('General'),
@@ -114,7 +111,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
           PaneItem(
             icon: const Icon(Icons.access_time_outlined),
             body: const Text('Screen3'),
-            title: const Text('Troqueles terminados'),
+            title: const Text('Tiempos'),
+          ),
+          PaneItem(
+            icon: const Icon(Icons.widgets),
+            body:const MaterialesScreen(),
+            title: const Text('Materiales'),
           ),
           PaneItem(
             icon: const Icon(Icons.inventory),

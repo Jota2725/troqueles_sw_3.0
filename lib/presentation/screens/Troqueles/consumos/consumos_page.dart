@@ -53,6 +53,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                 return AlertDialog(
                   title: const Text('¿Está seguro?'),
                   actions: [
+                    //BOTON VOLVER A ANTERIOR PAGINA
                     TextButton.icon(
                       label: const Text('Salir'),
                       onPressed: () {
@@ -79,6 +80,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
+      //FORMULARIO
       body: SingleChildScrollView(
         child: Center(
           child: Column(
