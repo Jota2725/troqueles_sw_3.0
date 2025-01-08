@@ -23,6 +23,7 @@ class MaterialesScreen extends StatelessWidget {
                 Container(
                   color: Colors.red,
                   width: size.width,
+                  
                   child: Column(
                     children: [
                       Row(

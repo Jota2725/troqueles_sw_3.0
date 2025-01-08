@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
@@ -90,76 +89,87 @@ class ActionsBibliaco extends StatelessWidget {
 class _TablaTroqueles extends ConsumerWidget {
   final List<Troquel> troqueles;
 
-  const _TablaTroqueles({
-    required this.troqueles,
-  });
+  const _TablaTroqueles({required this.troqueles});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: double.infinity,
       child: Material(
-        child: DataTable(
-          dividerThickness: 0,
-          sortColumnIndex: 0,
-          onSelectAll: (value) => true,
+        child: PaginatedDataTable(
+          
+          
+          showEmptyRows: false,
+          showFirstLastButtons: true,
           columns: const <DataColumn>[
-            DataColumn(
-                label: DataColums(icon: Icons.location_on, text: 'Ubicación')),
-            DataColumn(
-                label: DataColums(icon: Icons.numbers_sharp, text: 'GICO')),
-            DataColumn(
-                label:
-                    DataColums(icon: Icons.factory_rounded, text: 'Cliente')),
-            DataColumn(
-                label: DataColums(
-                    icon: Icons.onetwothree_rounded, text: 'Referencia')),
-            DataColumn(
-                label: DataColums(
-                    icon: Icons.adf_scanner_rounded, text: 'Máquina')),
-            DataColumn(label: DataColums(text: '')),
+
+            DataColumn(label: Text('Ubicación')),
+            DataColumn(label: Text('GICO')),
+            DataColumn(label: Text('Cliente')),
+            DataColumn(label: Text('Referencia')),
+            DataColumn(label: Text('Máquina')),
+            DataColumn(label: Text('Acciones')),
           ],
-          rows: troqueles.map<DataRow>((Troquel troquel) {
-            return DataRow(
-              cells: <DataCell>[
-                DataCell(Text('${troquel.ubicacion}')),
-                DataCell(Text('${troquel.gico}')),
-                DataCell(Text(troquel.cliente)),
-                DataCell(Text('${troquel.referencia}')),
-                DataCell(Text(troquel.maquina)),
-                DataCell(Row(
-                  children: [
-                    IconButton(
-                      tooltip: 'Editar Troquel ',
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AddTroquelees(
-                              troquel: troquel,
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.edit),
-                    ),
-                    IconButton(
-                      tooltip: 'Eliminar Troquel ',
-                      onPressed: () async {
-                        final troquelNotifier =
-                            ref.read(troquelProvider.notifier);
-                        await troquelNotifier.deleteTroquel(
-                            troquel.isarId!, troquel.maquina);
-                      },
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                    )
-                  ],
-                )),
-              ],
-            );
-          }).toList(),
+          source: _TroquelesDataSource(troqueles, context, ref),
+          rowsPerPage: 20, // Número de filas visibles por página
         ),
       ),
     );
   }
+}
+
+class _TroquelesDataSource extends DataTableSource {
+  final List<Troquel> troqueles;
+  final BuildContext context;
+  final WidgetRef ref;
+
+  _TroquelesDataSource(this.troqueles, this.context, this.ref);
+
+  @override
+  DataRow getRow(int index) {
+    final troquel = troqueles[index];
+    return DataRow(cells: [
+      DataCell(Text('${troquel.ubicacion}')),
+      DataCell(Text('${troquel.gico}')),
+      DataCell(Text(troquel.cliente)),
+      DataCell(Text('${troquel.referencia}')),
+      DataCell(Text(troquel.maquina)),
+      DataCell(Row(
+        children: [
+          IconButton(
+            tooltip: 'Editar Troquel',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AddTroquelees(
+                    troquel: troquel,
+                  );
+                },
+              );
+            },
+            icon: const Icon(Icons.edit),
+          ),
+          IconButton(
+            tooltip: 'Eliminar Troquel',
+            onPressed: () async {
+              final troquelNotifier = ref.read(troquelProvider.notifier);
+              await troquelNotifier.deleteTroquel(
+                  troquel.isarId!, troquel.maquina);
+            },
+            icon: const Icon(Icons.delete, color: Colors.red),
+          ),
+        ],
+      )),
+    ]);
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => troqueles.length;
+
+  @override
+  int get selectedRowCount => 0;
 }
