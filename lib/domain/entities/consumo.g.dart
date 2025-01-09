@@ -17,18 +17,23 @@ const ConsumoSchema = CollectionSchema(
   name: r'Consumo',
   id: -6107959095797373155,
   properties: {
-    r'cliente': PropertySchema(
+    r'cantidad': PropertySchema(
       id: 0,
+      name: r'cantidad',
+      type: IsarType.long,
+    ),
+    r'cliente': PropertySchema(
+      id: 1,
       name: r'cliente',
       type: IsarType.string,
     ),
     r'nTroquel': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'nTroquel',
       type: IsarType.string,
     ),
     r'tipo': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'tipo',
       type: IsarType.string,
     )
@@ -73,9 +78,10 @@ void _consumoSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.cliente);
-  writer.writeString(offsets[1], object.nTroquel);
-  writer.writeString(offsets[2], object.tipo);
+  writer.writeLong(offsets[0], object.cantidad);
+  writer.writeString(offsets[1], object.cliente);
+  writer.writeString(offsets[2], object.nTroquel);
+  writer.writeString(offsets[3], object.tipo);
 }
 
 Consumo _consumoDeserialize(
@@ -85,9 +91,10 @@ Consumo _consumoDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Consumo(
-    cliente: reader.readString(offsets[0]),
-    nTroquel: reader.readString(offsets[1]),
-    tipo: reader.readString(offsets[2]),
+    reader.readLong(offsets[0]),
+    cliente: reader.readString(offsets[1]),
+    nTroquel: reader.readString(offsets[2]),
+    tipo: reader.readString(offsets[3]),
   );
   object.isarid = id;
   return object;
@@ -101,10 +108,12 @@ P _consumoDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
+      return (reader.readString(offset)) as P;
+    case 3:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -203,6 +212,59 @@ extension ConsumoQueryWhere on QueryBuilder<Consumo, Consumo, QWhereClause> {
 
 extension ConsumoQueryFilter
     on QueryBuilder<Consumo, Consumo, QFilterCondition> {
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> cantidadEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'cantidad',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> cantidadGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'cantidad',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> cantidadLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'cantidad',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> cantidadBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'cantidad',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Consumo, Consumo, QAfterFilterCondition> clienteEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -728,6 +790,18 @@ extension ConsumoQueryLinks
 }
 
 extension ConsumoQuerySortBy on QueryBuilder<Consumo, Consumo, QSortBy> {
+  QueryBuilder<Consumo, Consumo, QAfterSortBy> sortByCantidad() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'cantidad', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterSortBy> sortByCantidadDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'cantidad', Sort.desc);
+    });
+  }
+
   QueryBuilder<Consumo, Consumo, QAfterSortBy> sortByCliente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cliente', Sort.asc);
@@ -767,6 +841,18 @@ extension ConsumoQuerySortBy on QueryBuilder<Consumo, Consumo, QSortBy> {
 
 extension ConsumoQuerySortThenBy
     on QueryBuilder<Consumo, Consumo, QSortThenBy> {
+  QueryBuilder<Consumo, Consumo, QAfterSortBy> thenByCantidad() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'cantidad', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterSortBy> thenByCantidadDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'cantidad', Sort.desc);
+    });
+  }
+
   QueryBuilder<Consumo, Consumo, QAfterSortBy> thenByCliente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cliente', Sort.asc);
@@ -818,6 +904,12 @@ extension ConsumoQuerySortThenBy
 
 extension ConsumoQueryWhereDistinct
     on QueryBuilder<Consumo, Consumo, QDistinct> {
+  QueryBuilder<Consumo, Consumo, QDistinct> distinctByCantidad() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'cantidad');
+    });
+  }
+
   QueryBuilder<Consumo, Consumo, QDistinct> distinctByCliente(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -845,6 +937,12 @@ extension ConsumoQueryProperty
   QueryBuilder<Consumo, int, QQueryOperations> isaridProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isarid');
+    });
+  }
+
+  QueryBuilder<Consumo, int, QQueryOperations> cantidadProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'cantidad');
     });
   }
 

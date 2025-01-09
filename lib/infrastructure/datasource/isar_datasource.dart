@@ -187,13 +187,37 @@ class IsarDatasource extends LocalStorageDatasource {
 
    
   }
-  
+
+
+  //----------------------MATERIALES---------------------------------------
   @override 
   Future<List<Materiales>> gettAllMateriles() async {
     final isar = await db;
     return await isar.materiales.where().findAll();
   }
 
+
+   Future<void> addNewMaterial(List<Materiales> materiales) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.materiales.putAll(materiales);
+    });
+  }
+
+
+   Future<void> addNewConsumo(List<Consumo> consumos) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.consumos.putAll(consumos);
+
+      for (var i = 0; i < consumos.length; i++) {
+      final consumo = consumos[i];
+      // Asegúrate de que los materiales estén asociados al consumo correcto
+      consumo.materiales.save();
+    }
+
+    });
+  }
 
 
 

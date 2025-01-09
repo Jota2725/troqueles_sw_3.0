@@ -6,7 +6,6 @@ import '../../../providers/process_provider.dart';
 
 import 'controllers/procesos_form.dart';
 
-
 class AddProcesos extends ConsumerStatefulWidget {
   final Proceso? proceso;
   const AddProcesos({super.key, this.proceso});
@@ -62,7 +61,9 @@ class _AddProcesosState extends ConsumerState<AddProcesos> {
               nuevoProceso.isarId = widget.proceso!.isarId;
               await troquelNotifierInProceso.updateTroquel(nuevoProceso);
             }
-            Navigator.of(context).pop();
+            if ( mounted && Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
           },
         ),
       ],

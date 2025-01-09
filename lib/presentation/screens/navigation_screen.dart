@@ -115,7 +115,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           PaneItem(
             icon: const Icon(Icons.widgets),
-            body:const MaterialesScreen(),
+            body: MaterialesScreen(),
             title: const Text('Materiales'),
           ),
           PaneItem(

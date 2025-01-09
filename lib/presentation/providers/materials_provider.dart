@@ -7,31 +7,53 @@ class MaterialNotifier extends StateNotifier<List<Materiales>> {
 
   MaterialNotifier(this._isarDatasource) : super([]);
 
-  Materiales? _selectedMaterial;
+
+ Materiales? _selectedMaterial;
   Materiales? get selectedMaterial => _selectedMaterial;
 
+  final List<Materiales> _selectedMaterials = [];
+  List<Materiales> get selectedMaterials => List.unmodifiable(_selectedMaterials);
   // Cargar todos los materiales
   Future<void> loadMateriales() async {
     state = await _isarDatasource.gettAllMateriles();
   }
 
-  // Establecer el material seleccionado
-  void setSelectedMaterial(Materiales material) {
-    _selectedMaterial = material;
-    // Notificar el cambio de estado. No es necesario recargar toda la lista.
-    state = List.from(state); // Esto asegura que el cambio se notifique.
+  Future<void> addMateriales(Materiales material) async {
+    await _isarDatasource.addNewMaterial([material]);
   }
 
-  // Buscar materiales (puedes ajustar según el criterio de búsqueda)
+   void setSelectedMaterial(Materiales material) {
+    _selectedMaterial = material;
+    state = List.from(state); // Asegura que el cambio se notifique.
+  }
+
+  void addMaterialToSelected(Materiales material) {
+    _selectedMaterials.add(material);
+    // Notificar cambios solo si necesitas mostrar la lista en la UI
+    state = List.from(state);
+  }
+
+  void clearSelectedMaterials() {
+    _selectedMaterials.clear();
+    state = List.from(state); // Notificar cambios.
+  }
+
+  // Buscar materiales
   Future<void> searchMaterial(String query) async {
-    final result = await _isarDatasource.gettAllMateriles(); // Ajustar lógica de búsqueda según la base de datos
+    final result = await _isarDatasource.gettAllMateriles(); // Ajusta la lógica según tu base de datos
     state = result;
   }
 }
 
-// Provider de MaterialNotifier
+
+
+// Proveedor de la lista de materiales
 final materialProvider =
     StateNotifierProvider<MaterialNotifier, List<Materiales>>((ref) {
   final isarDatasource = IsarDatasource();
   return MaterialNotifier(isarDatasource);
 });
+
+// Proveedor para el material seleccionado
+final selectedMaterialProvider =
+    StateProvider<Materiales?>((ref) => null);

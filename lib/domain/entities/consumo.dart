@@ -7,12 +7,12 @@ part 'consumo.g.dart';
 @collection
 class Consumo {
   Id? isarid;
-
   final String nTroquel;
   final String cliente;
   @Backlink(to: 'consumo') // Relación inversa hacia la entidad Materiales.
   final IsarLinks<Materiales> materiales = IsarLinks<Materiales>();
   final String tipo;
+  final int cantidad;
 
-  Consumo({required this.nTroquel, required this.cliente, required this.tipo});
+  Consumo(this.cantidad, {required this.nTroquel, required this.cliente, required this.tipo});
 }
