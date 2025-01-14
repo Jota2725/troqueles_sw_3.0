@@ -23,7 +23,7 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
   String? numeroTroquel;
   String? cliente;
   String? maquina;
-  final  IsarDatasource isar = IsarDatasource(); 
+  final IsarDatasource isar = IsarDatasource();
 
   @override
   void initState() {
@@ -100,14 +100,12 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
                   maquina: maquina,
                   pageController: _pageController,
                 ),
-                 ConsumosPage(
+                ConsumosPage(
                   pageController: _pageController,
                   ntroquel: numeroTroquel,
                   cliente: cliente,
                   tipoTrabajo: maquina,
-
                 )
-               
 
                 // Agregar Consumos
                 // Agregar Tiempos

@@ -33,4 +33,4 @@ class Proceso {
       required this.estado});
 }
 
-enum Estado { suspendido, enProceso, completado }
+enum Estado { suspendido, enProceso, completado, pendiente }

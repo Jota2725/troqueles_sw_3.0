@@ -167,11 +167,13 @@ const _ProcesoestadoEnumValueMap = {
   'suspendido': 0,
   'enProceso': 1,
   'completado': 2,
+  'pendiente': 3,
 };
 const _ProcesoestadoValueEnumMap = {
   0: Estado.suspendido,
   1: Estado.enProceso,
   2: Estado.completado,
+  3: Estado.pendiente,
 };
 
 Id _procesoGetId(Proceso object) {

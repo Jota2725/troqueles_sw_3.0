@@ -116,11 +116,12 @@ class _TablaEnProceso extends ConsumerWidget {
                 DataCell(Text(proceso.observaciones)),
                 DataCell(
                   DropdownCell(
-                    onComplete: () {},
                     proceso: proceso,
                     currentValue: proceso.estado,
                     onChanged: (newEstado) {
                       if (newEstado == Estado.completado) {
+
+                        // Borrar troquel de la tabla de procesos
                         final provider =
                             ref.read(troquelProviderInProceso.notifier);
                         provider.deleteTroquelInProcees(proceso.isarId!);

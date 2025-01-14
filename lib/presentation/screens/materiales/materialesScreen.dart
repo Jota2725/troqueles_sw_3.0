@@ -18,7 +18,6 @@ class MaterialesScreen extends ConsumerWidget {
     final TextEditingController conversionController = TextEditingController();
     Unidad? unidadSeleccionada;
     Tipo? tipoSeleccionado;
-
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -124,12 +123,15 @@ class MaterialesScreen extends ConsumerWidget {
                                       },
                                       decoration:
                                           InputDecorations.authInputDescoration(
-                                              hintText: 'Seleccione la unidad',
-                                              labelText: 'Selecione la unidad'),
+                                              hintText:
+                                                  'Seleccione el tipo de material',
+                                              labelText:
+                                                  'Selecione el tipo de material'),
                                       validator: (value) {
                                         if (value == null) {
                                           return 'Por favor seleccione un tipo';
                                         }
+
                                         return null;
                                       },
                                     ),
@@ -153,6 +155,8 @@ class MaterialesScreen extends ConsumerWidget {
                                             double.tryParse(value) == null) {
                                           return 'Por favor ingrese una cantidad válida';
                                         }
+                                      
+
                                         return null;
                                       },
                                     ),
@@ -232,13 +236,18 @@ class MaterialesScreen extends ConsumerWidget {
                             child: Container(
                               color: Colors.blue,
                               padding: const EdgeInsets.all(10.0),
-                              child: const Center(
-                                child: Text(
-                                  'Lista de materiales',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
+                              child: Column(
+                                 
+                                children: [
+                                  const Text(
+                                    'Lista de materiales',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                  ),
+
+                                       
+                                ],
                               ),
                             ),
                           ),
