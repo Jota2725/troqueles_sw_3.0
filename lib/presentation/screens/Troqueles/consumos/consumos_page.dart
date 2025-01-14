@@ -6,7 +6,7 @@ import '../../../../domain/entities/materiales.dart';
 import '../../../../utils/input_decorations.dart';
 import '../../../providers/consumos_provider.dart';
 import '../../../providers/materials_provider.dart';
-import '../../../widgets/search_materials.dart';
+import '../../../widgets/search/search_materials.dart';
 
 class ConsumosPage extends ConsumerStatefulWidget {
   const ConsumosPage({

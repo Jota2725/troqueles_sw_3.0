@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:troqueles_sw/domain/entities/troquel.dart';
+import 'package:troqueles_sw/presentation/providers/troqueles_provider.dart';
 import '../../../../utils/input_decorations.dart';
 
-class PageAddTroquel extends StatefulWidget {
+class PageAddTroquel extends ConsumerStatefulWidget {
   final PageController pageController;
   final String numeroTroquel;
   final String cliente;
@@ -16,16 +19,22 @@ class PageAddTroquel extends StatefulWidget {
   });
 
   @override
-  State<PageAddTroquel> createState() => _PageAddTroquelState();
+  _PageAddTroquelState createState() => _PageAddTroquelState();
 }
 
-class _PageAddTroquelState extends State<PageAddTroquel> {
+class _PageAddTroquelState extends ConsumerState<PageAddTroquel> {
   late final TextEditingController numeroTroquelController;
   late final TextEditingController clienteController;
   late final TextEditingController maquinaController;
   final TextEditingController referenciaController = TextEditingController();
-
+  final TextEditingController largoController = TextEditingController();
+  final TextEditingController anchoController = TextEditingController();
+  final TextEditingController altoController = TextEditingController();
   final TextEditingController textEditingController = TextEditingController();
+  final TextEditingController cabidaController = TextEditingController();
+  final TextEditingController estiloController = TextEditingController();
+  final TextEditingController descripcionController = TextEditingController();
+  final TextEditingController claveController = TextEditingController();
   final GlobalKey<FormState> keyForm = GlobalKey();
 
   @override
@@ -41,7 +50,14 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
     numeroTroquelController.dispose();
     clienteController.dispose();
     maquinaController.dispose();
-    textEditingController.dispose();
+    referenciaController.dispose();
+    largoController.dispose();
+    anchoController.dispose();
+    altoController.dispose();
+    cabidaController.dispose();
+    estiloController.dispose();
+    descripcionController.dispose();
+    claveController.dispose();
     super.dispose();
   }
 
@@ -56,12 +72,33 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton.icon(
               label: Text('Guardar'),
-              onPressed: () {
-                //AGREGAR AL Bibliaco
-                widget.pageController.nextPage(
+              onPressed: () async {
+                final addbibliaco = ref.watch(troquelProvider.notifier);
+                if (keyForm.currentState!.validate()) {
+                  final nuevoTroquel = Troquel(
+                      gico: int.parse(numeroTroquelController.text),
+                      cliente: clienteController.text,
+                      referencia: int.parse(referenciaController.text),
+                      maquina: maquinaController.text,
+                      alto: int.parse(altoController.text),
+                      ancho: int.parse(anchoController.text),
+                      largo: int.parse(largoController.text),
+                      cabida: int.parse(cabidaController.text),
+                      clave: claveController.text,
+                      descripcion: descripcionController.text,
+                      estilo: estiloController.text,
+                      ubicacion: '' );
+
+
+                  await addbibliaco.addTroquel(nuevoTroquel);
+                  widget.pageController.nextPage(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
+                }
+
+                //AGREGAR AL Bibliaco
+                
               },
               icon: Icon(Icons.save),
             ),
@@ -139,9 +176,18 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
                       TextFormField(
                         controller: referenciaController,
                         decoration: InputDecorations.authInputDescoration(
-                          hintText: '12354357',
+                          hintText: 'Ingrese la referencia del troquel',
                           labelText: 'Referencia CAD',
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Ingrese la referencia';
+                          }
+                          if (double.tryParse(value) == null) {
+                            return 'la referencia debe ser un valor numerico';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
@@ -150,61 +196,108 @@ class _PageAddTroquelState extends State<PageAddTroquel> {
                         decoration: InputDecorations.authInputDescoration(
                             hintText: 'Holandeza', labelText: 'Maquina'),
                       ),
+                      TextFormField(
+                        validator: (value) {
+                          if(value == null || value.isEmpty){
+                            return 'Ingrese la clave del troquel';
+                          }
+                          return null;
+                        },
+                        controller: claveController,
+                        decoration: InputDecorations.authInputDescoration(
+                            hintText: 'Ingrese la clave', labelText: 'Clave'),
+                      ),
                       const SizedBox(height: 10),
                       Row(
                         children: [
                           Expanded(
                             child: TextFormField(
-                              controller: textEditingController,
+                              controller: largoController,
                               decoration: InputDecorations.authInputDescoration(
-                                hintText: '17',
+                                hintText: 'Ingrese el largo del troquel',
                                 labelText: 'Largo',
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingrese el largo del troquel';
+                                }
+                                if (double.tryParse(value) == null) {
+                                  return 'el largo debe de ser un valor numerico';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: TextFormField(
-                              controller: textEditingController,
+                              controller: anchoController,
                               decoration: InputDecorations.authInputDescoration(
-                                hintText: '20',
+                                hintText: 'Ingrese el ancho del troquel',
                                 labelText: 'Ancho',
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingrese el ancho del troquel';
+                                }
+                                if (double.tryParse(value) == null) {
+                                  return 'el ancho debe de ser un valor numerico';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: TextFormField(
-                              controller: textEditingController,
+                              controller: altoController,
                               decoration: InputDecorations.authInputDescoration(
-                                hintText: '30',
+                                hintText: 'Ingrese el Alto del troquel',
                                 labelText: 'Alto',
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingrese el alto del troquel';
+                                }
+                                if (double.tryParse(value) == null) {
+                                  return 'el alto debe de ser un valor numerico';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        controller: textEditingController,
+                        controller: cabidaController,
                         decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Cabida',
+                          hintText: 'Ingrese la cabida del troquel',
                           labelText: 'Cabida',
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Ingrese una cantidad';
+                          }
+                          if (double.tryParse(value) == null) {
+                            return 'Ingrese un número válido';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        controller: textEditingController,
+                        controller: estiloController,
                         decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Estilo',
+                          hintText: 'Ingrese el estilo del troquel',
                           labelText: 'Estilo',
                         ),
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        controller: textEditingController,
+                        controller: descripcionController,
                         decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Descripcion',
+                          hintText: 'Ingrese una descripcion del troquel',
                           labelText: 'Descripcion',
                         ),
                       ),

@@ -1,10 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco_pages.dart';
+import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco/bibliaco_pages.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
-import '../widgets/Tablas/completados_tabla.dart';
-import 'Troqueles/EnProceso/troquel_view_pages.dart';
-import 'materiales/materialesScreen.dart';
+import '../../widgets/Tablas/completados_tabla.dart';
+import '../Troqueles/EnProceso/troquel_view_pages.dart';
+import '../materiales/materialesScreen.dart';
 
 class NavigationScreen extends StatefulWidget {
   static const name = 'Navegation_Screen';

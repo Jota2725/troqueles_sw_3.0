@@ -1,16 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:troqueles_sw/presentation/widgets/Tablas/custom_table_widget.dart';
-import '../../../domain/entities/troquel.dart';
-import '../../../infrastructure/datasource/troquel_datasource.dart';
-import '../../providers/troqueles_provider.dart';
+import 'package:troqueles_sw/presentation/widgets/Tablas/bibliaco_table.dart';
+import '../../../../domain/entities/troquel.dart';
+import '../../../../infrastructure/datasource/troquel_datasource.dart';
+import '../../../providers/troqueles_provider.dart';
 
 class BibliacoPages extends ConsumerStatefulWidget {
   final String titulo;
   final String hojaDeseada;
   static const name = 'bibliaco_pages';
 
-  const BibliacoPages({super.key, required this.titulo, required this.hojaDeseada});
+  const BibliacoPages(
+      {super.key, required this.titulo, required this.hojaDeseada});
 
   @override
   _BibliacoPagesState createState() => _BibliacoPagesState();
@@ -22,13 +23,16 @@ class _BibliacoPagesState extends ConsumerState<BibliacoPages> {
   @override
   void initState() {
     super.initState();
-    futureTroqueles = _cargarDatosDesdeBaseDeDatosPorMaquina(widget.hojaDeseada); // Carga los datos al iniciar la pantalla
+    futureTroqueles = _cargarDatosDesdeBaseDeDatosPorMaquina(
+        widget.hojaDeseada); // Carga los datos al iniciar la pantalla
   }
 
   // Método para cargar los datos desde ISAR al iniciar la pantalla
-  Future<List<Troquel>> _cargarDatosDesdeBaseDeDatosPorMaquina(String maquina) async {
+  Future<List<Troquel>> _cargarDatosDesdeBaseDeDatosPorMaquina(
+      String maquina) async {
     final troquelNotifier = ref.read(troquelProvider.notifier);
-    await troquelNotifier.loadTroqueles(maquina);  // Carga los troqueles por máquina
+    await troquelNotifier
+        .loadTroqueles(maquina); // Carga los troqueles por máquina
     // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     return troquelNotifier.state; // Retorna el estado actualizado
   }
@@ -40,7 +44,8 @@ class _BibliacoPagesState extends ConsumerState<BibliacoPages> {
 
     // Recarga los datos después de importar desde Excel
     setState(() {
-      futureTroqueles = _cargarDatosDesdeBaseDeDatosPorMaquina(widget.hojaDeseada);
+      futureTroqueles =
+          _cargarDatosDesdeBaseDeDatosPorMaquina(widget.hojaDeseada);
     });
   }
 
@@ -56,10 +61,8 @@ class _BibliacoPagesState extends ConsumerState<BibliacoPages> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else  {
-          
+          } else {
             return TroquelTable(
-             
               onImportPressed: () async {
                 await _importarDesdeExcel();
               },

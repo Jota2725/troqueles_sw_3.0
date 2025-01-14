@@ -5,7 +5,7 @@ import '../../../../infrastructure/datasource/isar_datasource.dart';
 import '../../../providers/completados_provider.dart';
 import '../../../providers/process_provider.dart';
 import '../../../widgets/Tablas/proceso_table.dart';
-import '../../search/troquel_search_delegate.dart';
+import '../../../widgets/search/troquel_search_delegate.dart';
 
 import '../consumos/consumos_page.dart';
 import 'pages_addtroquel.dart';

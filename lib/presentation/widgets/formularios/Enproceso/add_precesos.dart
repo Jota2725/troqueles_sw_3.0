@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
-import 'package:troqueles_sw/presentation/widgets/forms/Enproceso/campos/buildFields.dart';
+import 'package:troqueles_sw/presentation/widgets/formularios/Enproceso/campos/buildFields.dart';
 import '../../../providers/process_provider.dart';
 
 import 'controllers/procesos_form.dart';

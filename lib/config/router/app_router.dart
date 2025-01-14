@@ -1,7 +1,7 @@
 
 import 'package:go_router/go_router.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
-import 'package:troqueles_sw/presentation/screens/navigation_screen.dart';
+import 'package:troqueles_sw/presentation/screens/navigation/navigation_screen.dart';
 
 final appRouter = GoRouter(initialLocation: '/', routes: [
   GoRoute(

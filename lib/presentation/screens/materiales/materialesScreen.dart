@@ -155,7 +155,6 @@ class MaterialesScreen extends ConsumerWidget {
                                             double.tryParse(value) == null) {
                                           return 'Por favor ingrese una cantidad válida';
                                         }
-                                      
 
                                         return null;
                                       },
@@ -212,8 +211,6 @@ class MaterialesScreen extends ConsumerWidget {
                                           conversionController.clear();
                                           unidadSeleccionada = null;
                                           tipoSeleccionado = null;
-
-                                          print('Se añadio el material');
                                         }
                                       },
                                       icon: const Icon(
@@ -237,7 +234,6 @@ class MaterialesScreen extends ConsumerWidget {
                               color: Colors.blue,
                               padding: const EdgeInsets.all(10.0),
                               child: Column(
-                                 
                                 children: [
                                   const Text(
                                     'Lista de materiales',
@@ -245,8 +241,6 @@ class MaterialesScreen extends ConsumerWidget {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20),
                                   ),
-
-                                       
                                 ],
                               ),
                             ),
