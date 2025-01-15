@@ -32,7 +32,8 @@ class TroquelDatasourceImpl implements TroquelDatasource {
     var sheet = excel.tables[sheetName];
     if (sheet != null) {
       for (var row in sheet.rows.skip(1)) {
-        troqueles.add(Troquel(
+        troqueles.add(
+        Troquel(
           ubicacion: (row[0]?.value.toString() ?? ''),
           gico: int.tryParse(row[1]?.value.toString() ?? '0') ?? 0,
           cliente: row[2]?.value.toString() ?? '',

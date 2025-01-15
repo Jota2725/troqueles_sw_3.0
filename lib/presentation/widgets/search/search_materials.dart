@@ -14,6 +14,7 @@ class SearchMaterials extends ConsumerWidget {
     return SizedBox(
       width: double.infinity,
       child: SearchAnchor(
+        viewBackgroundColor: Colors.black,
         viewHintText: 'Buscar material por código',
         builder: (BuildContext context, SearchController controller) {
           return SearchBar(
@@ -64,7 +65,7 @@ class SearchMaterials extends ConsumerWidget {
             return ListTile(
               title: Text(
                 'Código: ${material.codigo}\n'
-                'Material: ${_truncarDescripcion(material.descripcion, 30)}\n'
+                'Material: ${_truncarDescripcion(material.descripcion, 50)}\n'
                 'Tipo: ${material.tipo.name}',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

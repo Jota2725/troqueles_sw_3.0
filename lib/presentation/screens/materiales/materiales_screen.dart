@@ -11,7 +11,7 @@ class MaterialesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     final TextEditingController codigoController = TextEditingController();
     final TextEditingController descripcionController = TextEditingController();
     final TextEditingController cantidadController = TextEditingController();
@@ -32,7 +32,7 @@ class MaterialesScreen extends ConsumerWidget {
                     fontSize: 30,
                   ),
                 ),
-                Container(
+                SizedBox(
                   width: size.width,
                   child: Column(
                     children: [
@@ -43,7 +43,7 @@ class MaterialesScreen extends ConsumerWidget {
                             child: Container(
                               padding: const EdgeInsets.all(10.0),
                               child: Form(
-                                key: _formKey,
+                                key: formKey,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -78,6 +78,7 @@ class MaterialesScreen extends ConsumerWidget {
                                       height: 20,
                                     ),
                                     DropdownButtonFormField(
+                                      dropdownColor: Colors.black,
                                       items: getDropdownItems(),
                                       onChanged: (value) {
                                         unidadSeleccionada = value;
@@ -117,6 +118,7 @@ class MaterialesScreen extends ConsumerWidget {
                                       height: 20,
                                     ),
                                     DropdownButtonFormField(
+                                      dropdownColor: Colors.black,
                                       items: getDropdownItemsTipo(),
                                       onChanged: (value) {
                                         tipoSeleccionado = value;
@@ -186,31 +188,93 @@ class MaterialesScreen extends ConsumerWidget {
                                     Center(
                                         child: TextButton.icon(
                                       onPressed: () {
-                                        final addMaterial = ref
-                                            .watch(materialProvider.notifier);
+                                        if (formKey.currentState!.validate()) {
+                                          // Si el formulario es válido, mostrar el diálogo de confirmación
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                backgroundColor: Colors.black,
+                                                title:
+                                                    Text("Confirmar creación"),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                        "Código: ${codigoController.text}"),
+                                                    Text(
+                                                        "Tipo: ${tipoSeleccionado?.name}"),
+                                                    Text(
+                                                        "Unidad: ${unidadSeleccionada?.name}"),
+                                                    Text(
+                                                        "Descripción: ${descripcionController.text}"),
+                                                    Text(
+                                                        "Cantidad: ${cantidadController.text}"),
+                                                    Text(
+                                                        "Conversión: ${conversionController.text}"),
+                                                  ],
+                                                ),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: const Text("Cancelar"),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop(); // Cerrar el diálogo
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: const Text("Confirmar"),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop(); // Cerrar el diálogo
 
-                                        if (_formKey.currentState!.validate()) {
-                                          final newMaterial = Materiales(
-                                              codigo: int.parse(
-                                                  codigoController.text),
-                                              tipo: tipoSeleccionado!,
-                                              unidad: unidadSeleccionada!,
-                                              descripcion:
-                                                  descripcionController.text,
-                                              cantidad: int.parse(
-                                                  cantidadController.text),
-                                              conversion: double.parse(
-                                                  conversionController.text));
+                                                      // Lógica para agregar el material
+                                                      final addMaterial =
+                                                          ref.watch(
+                                                              materialProvider
+                                                                  .notifier);
 
-                                          addMaterial
-                                              .addMateriales(newMaterial);
+                                                      final newMaterial =
+                                                          Materiales(
+                                                        codigo: int.parse(
+                                                            codigoController
+                                                                .text),
+                                                        tipo: tipoSeleccionado!,
+                                                        unidad:
+                                                            unidadSeleccionada!,
+                                                        descripcion:
+                                                            descripcionController
+                                                                .text,
+                                                        cantidad: int.parse(
+                                                            cantidadController
+                                                                .text),
+                                                        conversion: double.parse(
+                                                            conversionController
+                                                                .text),
+                                                      );
 
-                                          codigoController.clear();
-                                          descripcionController.clear();
-                                          cantidadController.clear();
-                                          conversionController.clear();
-                                          unidadSeleccionada = null;
-                                          tipoSeleccionado = null;
+                                                      addMaterial.addMateriales(
+                                                          newMaterial);
+
+                                                      // Limpiar los campos
+                                                      codigoController.clear();
+                                                      descripcionController
+                                                          .clear();
+                                                      cantidadController
+                                                          .clear();
+                                                      conversionController
+                                                          .clear();
+                                                      unidadSeleccionada = null;
+                                                      tipoSeleccionado = null;
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
                                         }
                                       },
                                       icon: const Icon(
@@ -220,8 +284,9 @@ class MaterialesScreen extends ConsumerWidget {
                                       label: const Text(
                                         'Crear Material',
                                         style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ))
                                   ],
@@ -233,9 +298,9 @@ class MaterialesScreen extends ConsumerWidget {
                             child: Container(
                               color: Colors.blue,
                               padding: const EdgeInsets.all(10.0),
-                              child: Column(
+                              child: const Column(
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Lista de materiales',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,

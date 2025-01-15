@@ -47,7 +47,7 @@ class _ProcesoFieldsState extends State<ProcesoFields> {
           buildComboBox(
             label: 'Planta',
             selectedValue: widget.controller.selectedPlanta,
-            items: const ['Cali', 'Bogota', 'Medellin', 'Barranquilla'],
+            items: const ['Cali', 'Bogota', 'Medellin', 'Barranquilla', 'Corrumed','Packing','P.Bogota','R.Dominicana','Costa Rica'],
             onChanged: (value) {
               setState(() {
                 widget.controller.selectedPlanta = value;

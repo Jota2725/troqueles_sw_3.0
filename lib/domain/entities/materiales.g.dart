@@ -164,6 +164,13 @@ const _MaterialesunidadEnumValueMap = {
   'rollo': 3,
   'und': 4,
   'cm': 5,
+  'caja': 6,
+  'cm2': 7,
+  'doc': 8,
+  'kit': 9,
+  'bolsa': 10,
+  'tiras': 11,
+  'tiras_plan': 12,
 };
 const _MaterialesunidadValueEnumMap = {
   0: Unidad.mts,
@@ -172,6 +179,13 @@ const _MaterialesunidadValueEnumMap = {
   3: Unidad.rollo,
   4: Unidad.und,
   5: Unidad.cm,
+  6: Unidad.caja,
+  7: Unidad.cm2,
+  8: Unidad.doc,
+  9: Unidad.kit,
+  10: Unidad.bolsa,
+  11: Unidad.tiras,
+  12: Unidad.tiras_plan,
 };
 
 Id _materialesGetId(Materiales object) {

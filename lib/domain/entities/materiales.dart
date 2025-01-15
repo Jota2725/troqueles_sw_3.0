@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:isar/isar.dart';
 import 'package:troqueles_sw/domain/entities/consumo.dart';
 part 'materiales.g.dart';
@@ -26,6 +28,20 @@ class Materiales {
       required this.conversion});
 }
 
-enum Unidad { mts, par, plancha, rollo, und, cm }
+enum Unidad<String> {
+  mts,
+  par,
+  plancha,
+  rollo,
+  und,
+  cm,
+  caja,
+  cm2,
+  doc,
+  kit,
+  bolsa,
+  tiras,
+  tiras_plan,
+}
 
 enum Tipo { maderas, cuchillas, escores, gomas, herramientas, prealistamientos }

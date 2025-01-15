@@ -140,173 +140,175 @@ class _PageAddTroquelState extends ConsumerState<PageAddTroquel> {
         ),
         title: const Text('Agregar a Bibliaco'),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.maxFinite,
-        child: Column(
-          children: [
-            const Text(
-                'A continuación ingrese toda la información del troquel nuevo'),
-            const SizedBox(height: 10),
-            Form(
-              key: keyForm,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  width: size * 0.5,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: numeroTroquelController,
-                        enabled: false,
-                        decoration: InputDecorations.authInputDescoration(
-                          hintText: '3678',
-                          labelText: 'Numero de troquel',
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: clienteController,
-                        enabled: false,
-                        decoration: InputDecorations.authInputDescoration(
-                            hintText: 'Plasticos Rimax', labelText: 'Cliente'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: referenciaController,
-                        decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Ingrese la referencia del troquel',
-                          labelText: 'Referencia CAD',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Ingrese la referencia';
-                          }
-                          if (double.tryParse(value) == null) {
-                            return 'la referencia debe ser un valor numerico';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        controller: maquinaController,
-                        enabled: false,
-                        decoration: InputDecorations.authInputDescoration(
-                            hintText: 'Holandeza', labelText: 'Maquina'),
-                      ),
-                      TextFormField(
-                        validator: (value) {
-                          if(value == null || value.isEmpty){
-                            return 'Ingrese la clave del troquel';
-                          }
-                          return null;
-                        },
-                        controller: claveController,
-                        decoration: InputDecorations.authInputDescoration(
-                            hintText: 'Ingrese la clave', labelText: 'Clave'),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: largoController,
-                              decoration: InputDecorations.authInputDescoration(
-                                hintText: 'Ingrese el largo del troquel',
-                                labelText: 'Largo',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Ingrese el largo del troquel';
-                                }
-                                if (double.tryParse(value) == null) {
-                                  return 'el largo debe de ser un valor numerico';
-                                }
-                                return null;
-                              },
-                            ),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: double.infinity,
+          height: size * 0.5,
+          child: Column(
+            children: [
+              const Text(
+                  'A continuación ingrese toda la información del troquel nuevo'),
+              const SizedBox(height: 10),
+              Form(
+                key: keyForm,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    width: size * 0.5,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: numeroTroquelController,
+                          enabled: false,
+                          decoration: InputDecorations.authInputDescoration(
+                            hintText: '3678',
+                            labelText: 'Numero de troquel',
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextFormField(
-                              controller: anchoController,
-                              decoration: InputDecorations.authInputDescoration(
-                                hintText: 'Ingrese el ancho del troquel',
-                                labelText: 'Ancho',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Ingrese el ancho del troquel';
-                                }
-                                if (double.tryParse(value) == null) {
-                                  return 'el ancho debe de ser un valor numerico';
-                                }
-                                return null;
-                              },
-                            ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: clienteController,
+                          enabled: false,
+                          decoration: InputDecorations.authInputDescoration(
+                              hintText: 'Plasticos Rimax', labelText: 'Cliente'),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: referenciaController,
+                          decoration: InputDecorations.authInputDescoration(
+                            hintText: 'Ingrese la referencia del troquel',
+                            labelText: 'Referencia CAD',
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextFormField(
-                              controller: altoController,
-                              decoration: InputDecorations.authInputDescoration(
-                                hintText: 'Ingrese el Alto del troquel',
-                                labelText: 'Alto',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Ingrese la referencia';
+                            }
+                            if (double.tryParse(value) == null) {
+                              return 'la referencia debe ser un valor numerico';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: maquinaController,
+                          enabled: false,
+                          decoration: InputDecorations.authInputDescoration(
+                              hintText: 'Holandeza', labelText: 'Maquina'),
+                        ),
+                        TextFormField(
+                          validator: (value) {
+                            if(value == null || value.isEmpty){
+                              return 'Ingrese la clave del troquel';
+                            }
+                            return null;
+                          },
+                          controller: claveController,
+                          decoration: InputDecorations.authInputDescoration(
+                              hintText: 'Ingrese la clave', labelText: 'Clave'),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: largoController,
+                                decoration: InputDecorations.authInputDescoration(
+                                  hintText: 'Ingrese el largo del troquel',
+                                  labelText: 'Largo',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Ingrese el largo del troquel';
+                                  }
+                                  if (double.tryParse(value) == null) {
+                                    return 'el largo debe de ser un valor numerico';
+                                  }
+                                  return null;
+                                },
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Ingrese el alto del troquel';
-                                }
-                                if (double.tryParse(value) == null) {
-                                  return 'el alto debe de ser un valor numerico';
-                                }
-                                return null;
-                              },
                             ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: TextFormField(
+                                controller: anchoController,
+                                decoration: InputDecorations.authInputDescoration(
+                                  hintText: 'Ingrese el ancho del troquel',
+                                  labelText: 'Ancho',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Ingrese el ancho del troquel';
+                                  }
+                                  if (double.tryParse(value) == null) {
+                                    return 'el ancho debe de ser un valor numerico';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: TextFormField(
+                                controller: altoController,
+                                decoration: InputDecorations.authInputDescoration(
+                                  hintText: 'Ingrese el Alto del troquel',
+                                  labelText: 'Alto',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Ingrese el alto del troquel';
+                                  }
+                                  if (double.tryParse(value) == null) {
+                                    return 'el alto debe de ser un valor numerico';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: cabidaController,
+                          decoration: InputDecorations.authInputDescoration(
+                            hintText: 'Ingrese la cabida del troquel',
+                            labelText: 'Cabida',
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: cabidaController,
-                        decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Ingrese la cabida del troquel',
-                          labelText: 'Cabida',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Ingrese una cantidad';
+                            }
+                            if (double.tryParse(value) == null) {
+                              return 'Ingrese un número válido';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Ingrese una cantidad';
-                          }
-                          if (double.tryParse(value) == null) {
-                            return 'Ingrese un número válido';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: estiloController,
-                        decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Ingrese el estilo del troquel',
-                          labelText: 'Estilo',
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: estiloController,
+                          decoration: InputDecorations.authInputDescoration(
+                            hintText: 'Ingrese el estilo del troquel',
+                            labelText: 'Estilo',
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: descripcionController,
-                        decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Ingrese una descripcion del troquel',
-                          labelText: 'Descripcion',
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: descripcionController,
+                          decoration: InputDecorations.authInputDescoration(
+                            hintText: 'Ingrese una descripcion del troquel',
+                            labelText: 'Descripcion',
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

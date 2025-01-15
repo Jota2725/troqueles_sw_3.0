@@ -186,19 +186,46 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
       print('No hay material seleccionado');
       return;
     }
-    ref.read(materialProvider.notifier).addMaterialToSelected(selectedMaterial);
-    print('Material Agregado  ${selectedMaterial.codigo} ');
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.black,
+            title: Text("Confirmar material agregado"),
+            content: Text(
+                ' Se va a agregar a la lista el material  ${selectedMaterial.codigo} - ${selectedMaterial.descripcion}, con la cantidad consumida de ${cantidadController.text}'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancelar')),
+              TextButton(
+                  onPressed: () {
+                    ref
+                        .read(materialProvider.notifier)
+                        .addMaterialToSelected(selectedMaterial);
+                    print('Material Agregado  ${selectedMaterial.codigo} ');
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Confirmar'))
+            ],
+          );
+        });
   }
 
   Future<void> _handleFinalizeConsumptions() async {
     if (keyForm.currentState!.validate()) {
       final selectedMaterials =
           ref.read(materialProvider.notifier).selectedMaterials;
+
       if (selectedMaterials.isEmpty) {
         print('Se tiene que ingresar un consumo como mínimo');
         return;
       }
 
+      // Preparar el objeto consumo con los materiales seleccionados
       final consumo = Consumo(
         int.parse(cantidadController.text),
         nTroquel: widget.ntroquel,
@@ -210,14 +237,62 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
         consumo.materiales.add(material);
       }
 
-      await ref.read(consumoProvider.notifier).addConsumo(consumo);
-      ref.read(materialProvider.notifier).clearSelectedMaterials();
-      print('Se ha guardado con éxito');
+      // Mostrar el diálogo con los materiales del consumo ya preparados
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.black,
+            title: const Text(
+              "Confirmar Finalización de consumos",
+              style: TextStyle(color: Colors.white),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Se van a ingresar los siguientes materiales:  $selectedMaterials',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 10),
+                    ...selectedMaterials.map((material) {
+                      return Text(
+                          'Código: ${material.codigo}, Descripción: ${material.descripcion}');
+                    }).toList(),
+                  ]),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancelar',
+                    style: TextStyle(color: Colors.white)),
+              ),
+              TextButton(
+                onPressed: () async {
+                  // Confirmar y guardar el consumo
+                  await ref.read(consumoProvider.notifier).addConsumo(consumo);
+                  ref.read(materialProvider.notifier).clearSelectedMaterials();
 
-      widget.pageController.animateToPage(
-        0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.ease,
+                  print('Se ha guardado con éxito');
+                  Navigator.of(context).pop();
+
+                  // Volver a la página principal
+                  widget.pageController.animateToPage(
+                    0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.ease,
+                  );
+                },
+                child: const Text('Confirmar',
+                    style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          );
+        },
       );
     }
   }

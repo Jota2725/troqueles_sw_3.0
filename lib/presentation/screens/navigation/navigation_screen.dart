@@ -4,7 +4,7 @@ import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco/bibliaco_pa
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
 import '../../widgets/Tablas/completados_tabla.dart';
 import '../Troqueles/EnProceso/troquel_view_pages.dart';
-import '../materiales/materialesScreen.dart';
+import '../materiales/materiales_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   static const name = 'Navegation_Screen';
@@ -115,7 +115,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           PaneItem(
             icon: const Icon(Icons.widgets),
-            body: MaterialesScreen(),
+            body: const MaterialesScreen(),
             title: const Text('Materiales'),
           ),
           PaneItem(

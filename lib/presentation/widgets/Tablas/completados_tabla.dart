@@ -44,10 +44,14 @@ class _TablaCompletados extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 100,
       child: Material(
-        child: DataTable(
+        child: PaginatedDataTable(
+        
+          showEmptyRows: false,
+          showFirstLastButtons: true,
           columnSpacing: 12, // Reduce el espacio entre columnas
           horizontalMargin: 5,
-          dividerThickness: 1,
+          source: CompletadosDataRow(completados),
+          rowsPerPage: 20,
           sortColumnIndex: 0,
           sortAscending: true,
           columns: const <DataColumn>[
@@ -66,33 +70,52 @@ class _TablaCompletados extends StatelessWidget {
             DataColumn(
                 label: DataColums(icon: Icons.comment, text: 'Observaciones')),
             DataColumn(label: DataColums(icon: Icons.flag, text: 'Estado')),
-            
           ],
-          rows: completados.map<DataRow>((proceso) {
-            return DataRow(
-              color: WidgetStateProperty.resolveWith<Color?>((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return Colors.blue.withOpacity(0.3);
-                }
-                return Colors.green.withOpacity(0.3);
-              }),
-              cells: <DataCell>[
-                DataCell(Text(proceso.ntroquel)),
-                DataCell(
-                    Text('${proceso.fechaIngreso.toLocal()}'.split(' ')[0])),
-                DataCell(
-                    Text('${proceso.fechaEstimada.toLocal()}'.split(' ')[0])),
-                DataCell(Text(proceso.planta)),
-                DataCell(Text(proceso.cliente)),
-                DataCell(Text(proceso.maquina)),
-                DataCell(Text(proceso.ingeniero)),
-                DataCell(Text(proceso.observaciones)),
-                DataCell(Text(proceso.estado.name)),
-              ],
-            );
-          }).toList(),
         ),
       ),
     );
   }
+}
+
+class CompletadosDataRow extends DataTableSource {
+  final List<Proceso> procesos;
+  CompletadosDataRow(this.procesos);
+
+  @override
+  DataRow? getRow(int index) {
+    if (index >= procesos.length) return null;
+    final proceso = procesos[index];
+
+    final Color? rowColor = WidgetStateProperty.resolveWith<Color?>(
+      (states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.blue.withOpacity(0.3);
+        }
+        return Colors.green.withOpacity(0.3);
+      },
+    ).resolve({});
+    return DataRow(
+      color: WidgetStateProperty.all(rowColor),
+      cells: <DataCell>[
+        DataCell(Text(proceso.ntroquel)),
+        DataCell(Text('${proceso.fechaIngreso.toLocal()}'.split(' ')[0])),
+        DataCell(Text('${proceso.fechaEstimada.toLocal()}'.split(' ')[0])),
+        DataCell(Text(proceso.planta)),
+        DataCell(Text(proceso.cliente)),
+        DataCell(Text(proceso.maquina)),
+        DataCell(Text(proceso.ingeniero)),
+        DataCell(Text(proceso.observaciones)),
+        DataCell(Text(proceso.estado.name)),
+      ],
+    );
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => procesos.length;
+
+  @override
+  int get selectedRowCount => 0;
 }

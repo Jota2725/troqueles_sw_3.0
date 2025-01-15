@@ -17,7 +17,7 @@ class AppTheme {
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         iconTheme: const IconThemeData(color: Color(0xFF00205B)),
         dialogTheme: const ContentDialogThemeData(
-          barrierColor: Color(0xFFF5F5F5),
+          barrierColor: Color.fromARGB(255, 255, 255, 255),
         ),
         navigationPaneTheme: NavigationPaneThemeData(
           backgroundColor: const Color(0xFFF5F5F5),
@@ -34,13 +34,13 @@ class AppTheme {
   FluentThemeData getDarkFluentTheme() => FluentThemeData(
         brightness: Brightness.dark,
         accentColor: customAccentColor,
-        scaffoldBackgroundColor: const Color(0xFF141414),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 0, 0, 0),
         iconTheme: const IconThemeData(color: Color(0xFF0BAFFE)),
         dialogTheme: const ContentDialogThemeData(
-          barrierColor: Color(0xFF141414),
+          barrierColor: Color.fromARGB(255, 0, 0, 0),
         ),
         navigationPaneTheme: NavigationPaneThemeData(
-          backgroundColor: const Color(0xFF141414),
+          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
           selectedIconColor: WidgetStateProperty.all(customAccentColor),
           selectedTextStyle: WidgetStateProperty.all(
               TextStyle(color: customAccentColor)),
@@ -57,13 +57,14 @@ class AppTheme {
           backgroundColor: material.Colors.white, // Fondo opaco
           elevation: 10, // Sin transparencia
         ),
-        cardColor: isDarkMode ? const Color(0xFF1E1E1E) : const Color(0xFFFFFFFF),
+        cardColor: isDarkMode ? const Color.fromARGB(255, 0, 0, 0) : const Color(0xFFFFFFFF),
         scaffoldBackgroundColor: isDarkMode
-            ? const Color(0xFF141414)
+            ? const Color.fromARGB(255, 0, 0, 0)
             : const Color(0xFFF5F5F5),
         colorScheme: material.ColorScheme.fromSwatch(
           primarySwatch: material.Colors.blue,
           brightness: isDarkMode ? material.Brightness.dark : material.Brightness.light,
         ),
+        
       );
 }
