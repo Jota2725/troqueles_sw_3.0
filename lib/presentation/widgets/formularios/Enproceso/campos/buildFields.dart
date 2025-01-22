@@ -47,7 +47,7 @@ class _ProcesoFieldsState extends State<ProcesoFields> {
           buildComboBox(
             label: 'Planta',
             selectedValue: widget.controller.selectedPlanta,
-            items: const ['Cali', 'Bogota', 'Medellin', 'Barranquilla', 'Corrumed','Packing','P.Bogota','R.Dominicana','Costa Rica'],
+            items: const ['CALI', 'BOGOTA', 'MEDELLIN', 'BARRANQUILLA', 'CORRUMED','PACKING','P.BOGOTA','R.DOMINICANA','COSTA RICA'],
             onChanged: (value) {
               setState(() {
                 widget.controller.selectedPlanta = value;
@@ -159,7 +159,7 @@ class _ProcesoFieldsState extends State<ProcesoFields> {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: children
-          .expand((child) => [Expanded(child: child),const SizedBox(width: 20) ]) // Asegura que cada widget se expanda
+          .expand((child) => [Expanded(child: child),const SizedBox(width: 10) ]) // Asegura que cada widget se expanda
           .toList(),
     ),
   );

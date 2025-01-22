@@ -2,25 +2,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../domain/entities/consumo.dart';
-import '../../../../domain/entities/materiales.dart';
-import '../../../../utils/input_decorations.dart';
 import '../../../providers/consumos_provider.dart';
 import '../../../providers/materials_provider.dart';
-import '../../../widgets/search/search_materials.dart';
+import '../../../widgets/formularios/consumos/consumos _form.dart';
 
 class ConsumosPage extends ConsumerStatefulWidget {
   const ConsumosPage({
     super.key,
+    required this.planta,
     required this.ntroquel,
     required this.cliente,
     required this.tipoTrabajo,
-    required this.pageController,
+    this.pageController,
   });
 
-  final PageController pageController;
+  final PageController? pageController;
   final String ntroquel;
   final String cliente;
   final String tipoTrabajo;
+  final String planta;
 
   @override
   ConsumerState<ConsumosPage> createState() => _ConsumosPageState();
@@ -39,18 +39,10 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
   @override
   Widget build(BuildContext context) {
     final selectedMaterial = ref.watch(selectedMaterialProvider);
-    final size = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Agregar consumos al troquel ${widget.ntroquel}'),
+        title: Text('TROQUEL ${widget.ntroquel} - ${widget.planta}'),
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            _confirmExit(context);
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -63,9 +55,11 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildClientAndJobInfo(),
-                    const SizedBox(height: 20),
-                    _buildForm(size, selectedMaterial),
+                    ConsumosForm(
+                      selectedMaterial: selectedMaterial,
+                      cliente: widget.cliente,
+                      tipoTrabajo: widget.tipoTrabajo,
+                    ),
                     _buildActionButtons(),
                   ],
                 ),
@@ -77,106 +71,18 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
     );
   }
 
-  Widget _buildClientAndJobInfo() {
-    return Column(
-      children: [
-        Text(
-          'CLIENTE : ${widget.cliente}',
-          style: const TextStyle(fontSize: 16),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 10),
-        Text(
-          'TIPO DE TRABAJO : ${widget.tipoTrabajo}',
-          style: const TextStyle(fontSize: 16),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildForm(double size, Materiales? selectedMaterial) {
-    return Form(
-      key: keyForm,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SizedBox(
-          width: size * 0.5,
-          child: Column(
-            children: [
-              const SearchMaterials(),
-              const SizedBox(height: 10),
-              _buildDisabledTextField('Descripción',
-                  selectedMaterial?.descripcion ?? 'Sin descripción'),
-              const SizedBox(height: 10),
-              _buildDisabledTextField(
-                  'Tipo', selectedMaterial?.tipo.name ?? 'Sin tipo'),
-              const SizedBox(height: 10),
-              _buildDisabledTextField('Conversión',
-                  selectedMaterial?.conversion.toString() ?? 'Sin conversión'),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: cantidadController,
-                decoration: InputDecorations.authInputDescoration(
-                  hintText: 'Cantidad',
-                  labelText: 'Cantidad',
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Ingrese una cantidad';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Ingrese un número válido';
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDisabledTextField(String label, String value) {
-    return TextFormField(
-      enabled: false,
-      controller: TextEditingController(text: value),
-      decoration: InputDecorations.authInputDescoration(
-        hintText: label,
-        labelText: label,
-      ),
-    );
-  }
-
   Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        FilledButton.icon(
-          style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(Colors.blueGrey),
-          ),
-          icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-          onPressed: _handleAddMaterial,
-          label: const Text(
-            'Agregar Material',
-            style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ),
-        const SizedBox(width: 10),
-        FilledButton.icon(
-          icon: const Icon(Icons.send, color: Colors.white),
-          onPressed: _handleFinalizeConsumptions,
-          label: const Text(
-            'Finalizar Consumos',
-            style: TextStyle(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
+    return FilledButton.icon(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(Colors.blueGrey),
+      ),
+      icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+      onPressed: _handleAddMaterial,
+      label: const Text(
+        'Agregar Material',
+        style: TextStyle(
+            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
     );
   }
 
@@ -192,15 +98,10 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
         builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: Colors.black,
-            title: Text("Confirmar material agregado"),
+            title: const Text("Confirmar material agregado"),
             content: Text(
                 ' Se va a agregar a la lista el material  ${selectedMaterial.codigo} - ${selectedMaterial.descripcion}, con la cantidad consumida de ${cantidadController.text}'),
             actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Cancelar')),
               TextButton(
                   onPressed: () {
                     ref
@@ -209,7 +110,13 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                     print('Material Agregado  ${selectedMaterial.codigo} ');
                     Navigator.of(context).pop();
                   },
-                  child: Text('Confirmar'))
+                  child: const Text('Seguir agregando')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _handleFinalizeConsumptions();
+                  },
+                  child: const Text('Finalizar Consumos'))
             ],
           );
         });
@@ -221,6 +128,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
           ref.read(materialProvider.notifier).selectedMaterials;
 
       if (selectedMaterials.isEmpty) {
+        _addedEmptyConsuption(context);
         print('Se tiene que ingresar un consumo como mínimo');
         return;
       }
@@ -244,7 +152,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
           return AlertDialog(
             backgroundColor: Colors.black,
             title: const Text(
-              "Confirmar Finalización de consumos",
+              "Confirmar",
               style: TextStyle(color: Colors.white),
             ),
             content: SingleChildScrollView(
@@ -252,15 +160,15 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Se van a ingresar los siguientes materiales:  $selectedMaterials',
+                    const Text(
+                      'Se van a ingresar los siguientes materiales: ',
                       style: TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 10),
                     ...selectedMaterials.map((material) {
                       return Text(
                           'Código: ${material.codigo}, Descripción: ${material.descripcion}');
-                    }).toList(),
+                    }),
                   ]),
             ),
             actions: [
@@ -281,7 +189,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                   Navigator.of(context).pop();
 
                   // Volver a la página principal
-                  widget.pageController.animateToPage(
+                  widget.pageController?.animateToPage(
                     0,
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.ease,
@@ -297,34 +205,23 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
     }
   }
 
-  void _confirmExit(BuildContext context) {
+  void _addedEmptyConsuption(BuildContext context) {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('¿Está seguro?'),
-          actions: [
-            TextButton.icon(
-              label: const Text('Salir'),
-              onPressed: () {
-                widget.pageController.previousPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.ease,
-                );
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(Icons.exit_to_app),
-            ),
-            TextButton.icon(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              label: const Text('Permanecer'),
-              icon: const Icon(Icons.health_and_safety_sharp),
-            ),
-          ],
-        );
-      },
-    );
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              backgroundColor: Colors.black,
+              title: const Text('¿Sin materiales? '),
+              content: const Text(
+                  'Debe ingresar como minimo un material para poder finalizar el consumo'),
+              actions: [
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  label: const Text('Aceptaar'),
+                  icon: const Icon(Icons.health_and_safety_sharp),
+                ),
+              ],
+            ));
   }
 }

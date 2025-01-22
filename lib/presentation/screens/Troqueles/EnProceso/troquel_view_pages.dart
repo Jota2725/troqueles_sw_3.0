@@ -4,9 +4,10 @@ import 'package:troqueles_sw/domain/entities/proceso.dart';
 import '../../../../infrastructure/datasource/isar_datasource.dart';
 import '../../../providers/completados_provider.dart';
 import '../../../providers/process_provider.dart';
-import '../../../widgets/Tablas/proceso_table.dart';
+
 import '../../../widgets/search/troquel_search_delegate.dart';
 
+import '../../procesos/procesos_screen.dart';
 import '../consumos/consumos_page.dart';
 import 'pages_addtroquel.dart';
 
@@ -55,8 +56,10 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
     final proceso = ref.watch(troquelProviderInProceso.notifier);
     final troqueles = procesos.map((proceso) => proceso.ntroquel).toList();
     final selectedTroquel = ref.watch(selectedTroquelProvider);
+    
 
     final numeroTroquel = selectedTroquel['numeroTroquel'] ?? 'Desconocido';
+    final planta = selectedTroquel['planta']?? 'Desconocido';
     final cliente = selectedTroquel['cliente'] ?? 'Desconocido';
     final maquina = selectedTroquel['maquina'] ?? 'Desconocido';
 
@@ -93,7 +96,7 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
               controller: _pageController,
               scrollDirection: Axis.horizontal,
               children: [
-                ProcesoTable(pageController: _pageController),
+                ProcesosScreen(pageController: _pageController),
                 PageAddTroquel(
                   numeroTroquel: numeroTroquel,
                   cliente: cliente,
@@ -101,10 +104,12 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
                   pageController: _pageController,
                 ),
                 ConsumosPage(
+                  planta: planta ,
                   pageController: _pageController,
                   ntroquel: numeroTroquel,
                   cliente: cliente,
                   tipoTrabajo: maquina,
+                  
                 )
 
                 // Agregar Consumos

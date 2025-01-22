@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco/bibliaco_pages.dart';
+import 'package:troqueles_sw/presentation/screens/consumos_tiempos/consumos_and_times.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
 import '../../widgets/Tablas/completados_tabla.dart';
 import '../Troqueles/EnProceso/troquel_view_pages.dart';
@@ -14,9 +15,11 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
+  
   int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
+    final size  = MediaQuery.of(context).size;
     return NavigationView(
       appBar: const NavigationAppBar(
           leading: Center(
@@ -28,7 +31,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
             'SW TROQUELES 1.0 ',
             style: TextStyle(fontSize: 30),
           ))),
+        
       pane: NavigationPane(
+      size: NavigationPaneSize(openMaxWidth: size.width* 0.20),
+      
         header: const Padding(
           padding: EdgeInsets.only(left: 20),
         ),
@@ -103,6 +109,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
             title: const Text('Troqueles Obsoletos'),
           ),
           PaneItemHeader(header: const Text('Consumos  y materiales ')),
+          PaneItem(
+            icon: const Icon(Icons.document_scanner),
+            body: const ConsumosAndTimes(),
+            title: const Text('Consumos y tiempos'),
+          ),
           PaneItem(
             icon: const Icon(Icons.document_scanner),
             body: const Text('General'),

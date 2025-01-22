@@ -4,10 +4,17 @@ import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
 
 import '../../domain/entities/proceso.dart';
 
+
+final selectedProcesoProvider = StateProvider<Proceso?>((ref) => null);
+
 class TroquelNotifierInProceso extends StateNotifier<List<Proceso>> {
   final IsarDatasource _isarDatasource;
 
   TroquelNotifierInProceso(this._isarDatasource) : super([]);
+
+
+
+  final selectedProcesoProvider = StateProvider<Proceso?>((ref) => null);
 
   // Inicializar y cargar troqueles por maquina
   Future<void> loadTroquelesInProcces() async {

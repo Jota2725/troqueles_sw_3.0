@@ -5,57 +5,15 @@ import '../../providers/completados_provider.dart';
 import '../../providers/process_provider.dart';
 import '../widgets.dart';
 
-class ProcesoTable extends ConsumerWidget {
-  final PageController pageController;
 
-  const ProcesoTable({
-    super.key,
-    required this.pageController,
-  });
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final procesos = ref.watch(troquelProviderInProceso);
-    final proceso = ref.watch(troquelProviderInProceso.notifier);
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        children: [
-          ActionsIcons(
-            actions: [
-              ActionIcon(
-                  label: 'Agregar',
-                  icon: const Icon(Icons.add_circle),
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const AddProcesos();
-                        });
-                  }),
-              ActionIcon(
-                  label: 'Refrescar',
-                  icon: const Icon(Icons.refresh_outlined),
-                  onPressed: () => proceso.loadTroquelesInProcces()),
-            ],
-          ),
-          _TablaEnProceso(
-            procesos: procesos,
-            pageController: pageController,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TablaEnProceso extends ConsumerWidget {
-  const _TablaEnProceso({
+class TablaEnProceso extends ConsumerWidget {
+  const TablaEnProceso({super.key, 
     required this.procesos,
     required this.pageController,
   });
 
-  final PageController pageController;
+  final PageController? pageController;
 
   final List<Proceso> procesos;
 
@@ -63,121 +21,129 @@ class _TablaEnProceso extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 100,
+      
       child: Material(
-        child: DataTable(
-          columnSpacing: 12, // Reduce el espacio entre columnas
-          horizontalMargin: 5,
-          dividerThickness: 1,
-          sortColumnIndex: 0,
-          sortAscending: true,
-          columns: const <DataColumn>[
-            DataColumn(label: DataColums(icon: Icons.numbers, text: 'Troquel')),
-            DataColumn(
-                label: DataColums(icon: Icons.calendar_today, text: 'Ingreso')),
-            DataColumn(
-                label: DataColums(icon: Icons.date_range, text: 'Estimada')),
-            DataColumn(
-                label: DataColums(icon: Icons.location_city, text: 'Planta')),
-            DataColumn(label: DataColums(icon: Icons.person, text: 'Cliente')),
-            DataColumn(
-                label: DataColums(icon: Icons.settings, text: 'Máquina')),
-            DataColumn(
-                label: DataColums(icon: Icons.engineering, text: 'Ingeniero')),
-            DataColumn(
-                label: DataColums(icon: Icons.comment, text: 'Observaciones')),
-            DataColumn(label: DataColums(icon: Icons.flag, text: 'Estado')),
-            DataColumn(label: DataColums(text: 'Acciones')),
-          ],
-          rows: procesos.map<DataRow>((proceso) {
-            // Determinar color según el estado del proceso
-            final rowColor = proceso.estado == Estado.enProceso
-                ? Colors.yellow.withOpacity(0.3)
-                : proceso.estado == Estado.suspendido
-                    ? Colors.red.withOpacity(0.3)
-                    : Colors.green.withOpacity(0.3);
+        child: SingleChildScrollView(
+          child: DataTable(
+            columnSpacing: 12, // Reduce el espacio entre columnas
+            horizontalMargin: 5,
+            dividerThickness: 1,
+            sortColumnIndex: 0,
+            sortAscending: true,
+            columns: const <DataColumn>[
+              DataColumn(
+                  label: DataColums(icon: Icons.numbers, text: 'Troquel')),
+              DataColumn(
+                  label:
+                      DataColums(icon: Icons.calendar_today, text: 'Ingreso')),
+              DataColumn(
+                  label: DataColums(icon: Icons.date_range, text: 'Estimada')),
+              DataColumn(
+                  label: DataColums(icon: Icons.location_city, text: 'Planta')),
+              DataColumn(
+                  label: DataColums(icon: Icons.person, text: 'Cliente')),
+              DataColumn(
+                  label: DataColums(icon: Icons.settings, text: 'Máquina')),
+              DataColumn(
+                  label:
+                      DataColums(icon: Icons.engineering, text: 'Ingeniero')),
+              DataColumn(
+                  label:
+                      DataColums(icon: Icons.comment, text: 'Observaciones')),
+              DataColumn(label: DataColums(icon: Icons.flag, text: 'Estado')),
+              DataColumn(label: DataColums(text: 'Acciones')),
+            ],
+            rows: procesos.map<DataRow>((proceso) {
+              // Determinar color según el estado del proceso
+              final rowColor = proceso.estado == Estado.enProceso
+                  ? Colors.yellow.withOpacity(0.3)
+                  : proceso.estado == Estado.suspendido
+                      ? Colors.red.withOpacity(0.3)
+                      : Colors.green.withOpacity(0.3);
 
-            return DataRow(
-              color: WidgetStateProperty.resolveWith<Color?>((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return Colors.blue.withOpacity(0.3);
-                }
-                return rowColor;
-              }),
-              cells: <DataCell>[
-                DataCell(Text(proceso.ntroquel)),
-                DataCell(
-                    Text('${proceso.fechaIngreso.toLocal()}'.split(' ')[0])),
-                DataCell(
-                    Text('${proceso.fechaEstimada.toLocal()}'.split(' ')[0])),
-                DataCell(Text(proceso.planta)),
-                DataCell(Text(proceso.cliente)),
-                DataCell(Text(proceso.maquina)),
-                DataCell(Text(proceso.ingeniero)),
-                DataCell(Text(proceso.observaciones)),
-                DataCell(
-                  DropdownCell(
-                    proceso: proceso,
-                    currentValue: proceso.estado,
-                    onChanged: (newEstado) {
-                      if (newEstado == Estado.completado) {
+              return DataRow(
+                color: WidgetStateProperty.resolveWith<Color?>((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return Colors.blue.withOpacity(0.3);
+                  }
+                  return rowColor;
+                }),
+                cells: <DataCell>[
+                  DataCell(Text(proceso.ntroquel)),
+                  DataCell(
+                      Text('${proceso.fechaIngreso.toLocal()}'.split(' ')[0])),
+                  DataCell(
+                      Text('${proceso.fechaEstimada.toLocal()}'.split(' ')[0])),
+                  DataCell(Text(proceso.planta)),
+                  DataCell(Text(proceso.cliente)),
+                  DataCell(Text(proceso.maquina)),
+                  DataCell(Text(proceso.ingeniero)),
+                  DataCell(Text(proceso.observaciones)),
+                  DataCell(
+                    DropdownCell(
+                      proceso: proceso,
+                      currentValue: proceso.estado,
+                      onChanged: (newEstado) {
+                        if (newEstado == Estado.completado) {
+                          // Borrar troquel de la tabla de procesos
+                          final provider =
+                              ref.read(troquelProviderInProceso.notifier);
+                          provider.deleteTroquelInProcees(proceso.isarId!);
 
-                        // Borrar troquel de la tabla de procesos
-                        final provider =
-                            ref.read(troquelProviderInProceso.notifier);
-                        provider.deleteTroquelInProcees(proceso.isarId!);
+                          // Agregar a la tabla de completados
+                          final completadosProvider =
+                              ref.read(troquelProviderCompletados.notifier);
+                          completadosProvider.addProcesoCompletado(proceso);
 
-                        // Agregar a la tabla de completados
-                        final completadosProvider =
-                            ref.read(troquelProviderCompletados.notifier);
-                        completadosProvider.addProcesoCompletado(proceso);
-
-                        ref.read(selectedTroquelProvider.notifier).state = {
-                          'numeroTroquel': proceso.ntroquel,
-                          'cliente': proceso.cliente,
-                          'maquina': proceso.maquina,
-                        };
-                         // Navegar a la siguiente página si la planta es Cali
-                        if (proceso.planta == "Cali") {
-                          pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
+                          ref.read(selectedTroquelProvider.notifier).state = {
+                            'numeroTroquel': proceso.ntroquel,
+                            'cliente': proceso.cliente,
+                            'maquina': proceso.maquina,
+                          };
+                          // Navegar a la siguiente página si la planta es Cali
+                          if (proceso.planta == "Cali") {
+                            pageController?.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          }
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
-                DataCell(Row(
-                  children: [
-                    IconButton(
-                      tooltip: 'Editar',
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AddProcesos(
-                                proceso: proceso,
-                              );
-                            });
-                        // Acción de editar
-                      },
-                      icon: const Icon(Icons.edit),
-                    ),
-                    IconButton(
-                      tooltip: 'Eliminar',
-                      onPressed: () async {
-                        final provider =
-                            ref.read(troquelProviderInProceso.notifier);
-                        await provider.deleteTroquelInProcees(proceso.isarId!);
-                        // Acción de eliminar
-                      },
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                    ),
-                  ],
-                )),
-              ],
-            );
-          }).toList(),
+                  DataCell(Row(
+                    children: [
+                      IconButton(
+                        tooltip: 'Editar',
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AddProcesos(
+                                  proceso: proceso,
+                                );
+                              });
+                          // Acción de editar
+                        },
+                        icon: const Icon(Icons.edit),
+                      ),
+                      IconButton(
+                        tooltip: 'Eliminar',
+                        onPressed: () async {
+                          final provider =
+                              ref.read(troquelProviderInProceso.notifier);
+                          await provider
+                              .deleteTroquelInProcees(proceso.isarId!);
+                          // Acción de eliminar
+                        },
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                      ),
+                    ],
+                  )),
+                ],
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
