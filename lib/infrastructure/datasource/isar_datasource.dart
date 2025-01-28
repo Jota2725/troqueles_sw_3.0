@@ -5,7 +5,9 @@ import 'package:troqueles_sw/domain/entities/consumo.dart';
 import 'package:troqueles_sw/domain/entities/materiales.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
 
+import '../../domain/entities/operario.dart';
 import '../../domain/entities/proceso.dart';
+import '../../domain/entities/tiempos.dart';
 
 class IsarDatasource extends LocalStorageDatasource {
   late Future<Isar> db;
@@ -216,11 +218,42 @@ class IsarDatasource extends LocalStorageDatasource {
       consumo.materiales.save();
     }
 
+
     });
+
+    
   }
 
-  
+  Future<List<Tiempos>> getAllTiempos()async{
+      final isar = await db;
+      return await isar.tiempos.where().findAll();
+    } 
+
+    Future<void> addNewTiempo(List<Tiempos> tiempos) async {
+      final isar = await db;
+      await isar.writeTxn(() async{
+        await isar.tiempos.putAll(tiempos);
+      });
+
+
+    }
+ 
+  Future <List<Operario>>getAllOperarios()async{
+    final isar = await db;
+    return await isar.operarios.where().findAll();
+  }    
+  Future <void>addNewOperarios( List<Operario> operarios)async{
+    final isar = await db;
+     await isar.writeTxn(() async {
+        await isar.operarios.putAll(operarios);
+     });
+     
+     
+  }    
+
+
 
 
 
 }
+

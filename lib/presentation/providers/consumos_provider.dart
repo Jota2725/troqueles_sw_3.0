@@ -9,6 +9,11 @@ final consumoProvider =
   return ConsumoNotifier(isarDatasource);
 });
 
+
+
+
+
+
 class ConsumoNotifier extends StateNotifier<List<Consumo>> {
   final IsarDatasource _isarDatasource;
 

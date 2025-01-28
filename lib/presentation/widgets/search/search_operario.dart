@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/entities/operario.dart';
 
 
+
 class SearchOperario extends ConsumerWidget {
   const SearchOperario({super.key});
   @override
@@ -20,6 +21,12 @@ class SearchOperario extends ConsumerWidget {
       Operario(ficha:  3, nombre: 'Carlos'),
       Operario(ficha:  1, nombre: 'Juan'),
     ];
+
+
+
+
+    
+       
 
     // Filtrar operarios según el texto ingresado
     final filteredOperarios = operarios.where((operario) {

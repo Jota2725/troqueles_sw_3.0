@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/presentation/widgets/forms/Bibliaco/texfields_widgtes.dart';
 import '../../../../utils/input_decorations.dart';
 import '../../../providers/process_provider.dart';
+
 import '../../search/search_operario.dart';
 
 class FormTiempos extends ConsumerWidget {
@@ -66,11 +67,14 @@ class FormTiempos extends ConsumerWidget {
                     //HORAS
                     //OBSERVACION
                     TextFormField(
+                      
                       enabled: true,
                       controller: TextEditingController(),
                       decoration: InputDecorations.authInputDescoration(
                         hintText: 'Tiempo',
                         labelText: 'Tiempo',
+
+
                       ),
                     ),
                     const SizedBox(
@@ -83,7 +87,13 @@ class FormTiempos extends ConsumerWidget {
                       ),
                       icon: const Icon(Icons.add_circle_outline,
                           color: Colors.white),
-                      onPressed: () {},
+                      onPressed: () {
+
+                        
+                       
+
+
+                      },
                       label: const Text(
                         'Agregar Tiempo',
                         style: TextStyle(

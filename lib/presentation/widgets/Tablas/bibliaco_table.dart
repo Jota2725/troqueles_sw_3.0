@@ -97,12 +97,10 @@ class _TablaTroqueles extends ConsumerWidget {
       width: double.infinity,
       child: Material(
         child: PaginatedDataTable(
-          
-          
           showEmptyRows: false,
           showFirstLastButtons: true,
           columns: const <DataColumn>[
-
+            DataColumn(label: Text('Nota')),
             DataColumn(label: Text('Ubicación')),
             DataColumn(label: Text('GICO')),
             DataColumn(label: Text('Cliente')),
@@ -129,6 +127,7 @@ class _TroquelesDataSource extends DataTableSource {
   DataRow getRow(int index) {
     final troquel = troqueles[index];
     return DataRow(cells: [
+      DataCell(Text('${troquel.nota}')),
       DataCell(Text('${troquel.ubicacion}')),
       DataCell(Text('${troquel.gico}')),
       DataCell(Text(troquel.cliente)),

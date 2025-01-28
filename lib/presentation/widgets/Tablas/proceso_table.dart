@@ -101,7 +101,7 @@ class TablaEnProceso extends ConsumerWidget {
                             'maquina': proceso.maquina,
                           };
                           // Navegar a la siguiente página si la planta es Cali
-                          if (proceso.planta == "Cali") {
+                          if (proceso.planta == "CALI") {
                             pageController?.nextPage(
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeInOut,

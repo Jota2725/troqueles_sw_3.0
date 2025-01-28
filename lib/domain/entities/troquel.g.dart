@@ -67,13 +67,18 @@ const TroquelSchema = CollectionSchema(
       name: r'maquina',
       type: IsarType.string,
     ),
-    r'referencia': PropertySchema(
+    r'nota': PropertySchema(
       id: 10,
+      name: r'nota',
+      type: IsarType.string,
+    ),
+    r'referencia': PropertySchema(
+      id: 11,
       name: r'referencia',
       type: IsarType.long,
     ),
     r'ubicacion': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'ubicacion',
       type: IsarType.string,
     )
@@ -119,6 +124,12 @@ int _troquelEstimateSize(
   }
   bytesCount += 3 + object.maquina.length * 3;
   {
+    final value = object.nota;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.ubicacion;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -143,8 +154,9 @@ void _troquelSerialize(
   writer.writeLong(offsets[7], object.gico);
   writer.writeLong(offsets[8], object.largo);
   writer.writeString(offsets[9], object.maquina);
-  writer.writeLong(offsets[10], object.referencia);
-  writer.writeString(offsets[11], object.ubicacion);
+  writer.writeString(offsets[10], object.nota);
+  writer.writeLong(offsets[11], object.referencia);
+  writer.writeString(offsets[12], object.ubicacion);
 }
 
 Troquel _troquelDeserialize(
@@ -164,8 +176,9 @@ Troquel _troquelDeserialize(
     gico: reader.readLong(offsets[7]),
     largo: reader.readLongOrNull(offsets[8]),
     maquina: reader.readString(offsets[9]),
-    referencia: reader.readLong(offsets[10]),
-    ubicacion: reader.readStringOrNull(offsets[11]),
+    nota: reader.readStringOrNull(offsets[10]),
+    referencia: reader.readLong(offsets[11]),
+    ubicacion: reader.readStringOrNull(offsets[12]),
   );
   object.isarId = id;
   return object;
@@ -199,8 +212,10 @@ P _troquelDeserializeProp<P>(
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
-      return (reader.readLong(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 11:
+      return (reader.readLong(offset)) as P;
+    case 12:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1393,6 +1408,152 @@ extension TroquelQueryFilter
     });
   }
 
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'nota',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'nota',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nota',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'nota',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'nota',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'nota',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'nota',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'nota',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'nota',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'nota',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nota',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'nota',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -1720,6 +1881,18 @@ extension TroquelQuerySortBy on QueryBuilder<Troquel, Troquel, QSortBy> {
     });
   }
 
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> sortByNota() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nota', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> sortByNotaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nota', Sort.desc);
+    });
+  }
+
   QueryBuilder<Troquel, Troquel, QAfterSortBy> sortByReferencia() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'referencia', Sort.asc);
@@ -1879,6 +2052,18 @@ extension TroquelQuerySortThenBy
     });
   }
 
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> thenByNota() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nota', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> thenByNotaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'nota', Sort.desc);
+    });
+  }
+
   QueryBuilder<Troquel, Troquel, QAfterSortBy> thenByReferencia() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'referencia', Sort.asc);
@@ -1971,6 +2156,13 @@ extension TroquelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctByNota(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'nota', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Troquel, Troquel, QDistinct> distinctByReferencia() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'referencia');
@@ -2050,6 +2242,12 @@ extension TroquelQueryProperty
   QueryBuilder<Troquel, String, QQueryOperations> maquinaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'maquina');
+    });
+  }
+
+  QueryBuilder<Troquel, String?, QQueryOperations> notaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'nota');
     });
   }
 
