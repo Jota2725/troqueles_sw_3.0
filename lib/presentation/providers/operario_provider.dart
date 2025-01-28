@@ -14,7 +14,6 @@ class OperarioNotifier extends StateNotifier<List<Operario>> {
   OperarioNotifier(this._isarDatasource) : super([]);
 
   Future<void> loadOperario() async {
-    final IsarDatasource _isarDatasource = IsarDatasource();
     await _isarDatasource.getAllOperarios();
   }
 }
