@@ -9,7 +9,7 @@ class Troquel {
   final int gico;
   final String referencia;
   final String cliente;
-  final int? no_cad;
+  final String? no_cad;
   final String maquina;
   final String? clave;
   final int? alto;

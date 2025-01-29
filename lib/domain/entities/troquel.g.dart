@@ -70,7 +70,7 @@ const TroquelSchema = CollectionSchema(
     r'no_cad': PropertySchema(
       id: 10,
       name: r'no_cad',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'nota': PropertySchema(
       id: 11,
@@ -134,6 +134,12 @@ int _troquelEstimateSize(
   }
   bytesCount += 3 + object.maquina.length * 3;
   {
+    final value = object.no_cad;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.nota;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -171,7 +177,7 @@ void _troquelSerialize(
   writer.writeLong(offsets[7], object.gico);
   writer.writeLong(offsets[8], object.largo);
   writer.writeString(offsets[9], object.maquina);
-  writer.writeLong(offsets[10], object.no_cad);
+  writer.writeString(offsets[10], object.no_cad);
   writer.writeString(offsets[11], object.nota);
   writer.writeString(offsets[12], object.referencia);
   writer.writeString(offsets[13], object.sector);
@@ -195,7 +201,7 @@ Troquel _troquelDeserialize(
     gico: reader.readLong(offsets[7]),
     largo: reader.readLongOrNull(offsets[8]),
     maquina: reader.readString(offsets[9]),
-    no_cad: reader.readLongOrNull(offsets[10]),
+    no_cad: reader.readStringOrNull(offsets[10]),
     nota: reader.readStringOrNull(offsets[11]),
     referencia: reader.readString(offsets[12]),
     sector: reader.readStringOrNull(offsets[13]),
@@ -233,7 +239,7 @@ P _troquelDeserializeProp<P>(
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 11:
       return (reader.readStringOrNull(offset)) as P;
     case 12:
@@ -1450,46 +1456,54 @@ extension TroquelQueryFilter
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadEqualTo(
-      int? value) {
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'no_cad',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadGreaterThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'no_cad',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadLessThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'no_cad',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadBetween(
-    int? lower,
-    int? upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1498,6 +1512,75 @@ extension TroquelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'no_cad',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'no_cad',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'no_cad',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'no_cad',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'no_cad',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'no_cad',
+        value: '',
       ));
     });
   }
@@ -2521,9 +2604,10 @@ extension TroquelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Troquel, Troquel, QDistinct> distinctByNo_cad() {
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctByNo_cad(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'no_cad');
+      return query.addDistinctBy(r'no_cad', caseSensitive: caseSensitive);
     });
   }
 
@@ -2624,7 +2708,7 @@ extension TroquelQueryProperty
     });
   }
 
-  QueryBuilder<Troquel, int?, QQueryOperations> no_cadProperty() {
+  QueryBuilder<Troquel, String?, QQueryOperations> no_cadProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'no_cad');
     });

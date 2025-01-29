@@ -34,12 +34,12 @@ class TroquelDatasourceImpl implements TroquelDatasource {
       for (var row in sheet.rows.skip(1)) {
         troqueles.add(
         Troquel(
-          nota:  (row[0]?.value.toString() ?? '' ),
+          nota:  row[0]?.value.toString() ?? '' ,
           ubicacion: (row[1]?.value.toString() ?? ''),
           gico: int.tryParse(row[2]?.value.toString() ?? '0') ?? 0,
           referencia: (row[3]?.value.toString() ?? '0') ,
           cliente: row[4]?.value.toString() ?? '',
-          no_cad: int.tryParse(row[5]?.value.toString() ?? '0')??0,
+          no_cad: row[5]?.value.toString() ?? '0',
           maquina: row[6]?.value.toString() ?? '',
           clave: row[7]?.value?.toString(),
           largo: row[8] != null
