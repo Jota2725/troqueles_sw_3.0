@@ -78,7 +78,7 @@ class _PageAddTroquelState extends ConsumerState<PageAddTroquel> {
                   final nuevoTroquel = Troquel(
                       gico: int.parse(numeroTroquelController.text),
                       cliente: clienteController.text,
-                      referencia: int.parse(referenciaController.text),
+                      referencia: (referenciaController.text),
                       maquina: maquinaController.text,
                       alto: int.parse(altoController.text),
                       ancho: int.parse(anchoController.text),

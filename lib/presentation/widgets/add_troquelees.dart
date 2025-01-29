@@ -196,7 +196,7 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
               ubicacion: controllers['ubicacion']!.text,
               gico: int.parse(controllers['gico']!.text),
               cliente: controllers['cliente']!.text,
-              referencia: int.parse(controllers['referencia']!.text),
+              referencia: controllers['referencia']!.text,
               maquina: selectedValue!,
               clave: controllers['clave']!.text,
               alto: int.parse(controllers['alto']!.text),

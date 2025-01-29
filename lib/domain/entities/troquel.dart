@@ -7,7 +7,7 @@ class Troquel {
   final String? nota;
   final String? ubicacion;
   final int gico;
-  final int referencia;
+  final String referencia;
   final String cliente;
   final int? no_cad;
   final String maquina;

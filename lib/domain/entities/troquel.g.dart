@@ -80,7 +80,7 @@ const TroquelSchema = CollectionSchema(
     r'referencia': PropertySchema(
       id: 12,
       name: r'referencia',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'sector': PropertySchema(
       id: 13,
@@ -139,6 +139,7 @@ int _troquelEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.referencia.length * 3;
   {
     final value = object.sector;
     if (value != null) {
@@ -172,7 +173,7 @@ void _troquelSerialize(
   writer.writeString(offsets[9], object.maquina);
   writer.writeLong(offsets[10], object.no_cad);
   writer.writeString(offsets[11], object.nota);
-  writer.writeLong(offsets[12], object.referencia);
+  writer.writeString(offsets[12], object.referencia);
   writer.writeString(offsets[13], object.sector);
   writer.writeString(offsets[14], object.ubicacion);
 }
@@ -196,7 +197,7 @@ Troquel _troquelDeserialize(
     maquina: reader.readString(offsets[9]),
     no_cad: reader.readLongOrNull(offsets[10]),
     nota: reader.readStringOrNull(offsets[11]),
-    referencia: reader.readLong(offsets[12]),
+    referencia: reader.readString(offsets[12]),
     sector: reader.readStringOrNull(offsets[13]),
     ubicacion: reader.readStringOrNull(offsets[14]),
   );
@@ -236,7 +237,7 @@ P _troquelDeserializeProp<P>(
     case 11:
       return (reader.readStringOrNull(offset)) as P;
     case 12:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 13:
       return (reader.readStringOrNull(offset)) as P;
     case 14:
@@ -1648,46 +1649,54 @@ extension TroquelQueryFilter
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaEqualTo(
-      int value) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'referencia',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaGreaterThan(
-    int value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'referencia',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaLessThan(
-    int value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'referencia',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaBetween(
-    int lower,
-    int upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1696,6 +1705,75 @@ extension TroquelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'referencia',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'referencia',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'referencia',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'referencia',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'referencia',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> referenciaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'referencia',
+        value: '',
       ));
     });
   }
@@ -2456,9 +2534,10 @@ extension TroquelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Troquel, Troquel, QDistinct> distinctByReferencia() {
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctByReferencia(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'referencia');
+      return query.addDistinctBy(r'referencia', caseSensitive: caseSensitive);
     });
   }
 
@@ -2557,7 +2636,7 @@ extension TroquelQueryProperty
     });
   }
 
-  QueryBuilder<Troquel, int, QQueryOperations> referenciaProperty() {
+  QueryBuilder<Troquel, String, QQueryOperations> referenciaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'referencia');
     });

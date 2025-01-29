@@ -37,7 +37,7 @@ class TroquelDatasourceImpl implements TroquelDatasource {
           nota:  (row[0]?.value.toString() ?? '' ),
           ubicacion: (row[1]?.value.toString() ?? ''),
           gico: int.tryParse(row[2]?.value.toString() ?? '0') ?? 0,
-          referencia: int.tryParse(row[3]?.value.toString() ?? '0') ?? 0,
+          referencia: (row[3]?.value.toString() ?? '0') ,
           cliente: row[4]?.value.toString() ?? '',
           no_cad: int.tryParse(row[5]?.value.toString() ?? '0')??0,
           maquina: row[6]?.value.toString() ?? '',
