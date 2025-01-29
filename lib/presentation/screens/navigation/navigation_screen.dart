@@ -20,7 +20,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final size  = MediaQuery.of(context).size;
-    return NavigationView(
+    return NavigationView( 
       appBar: const NavigationAppBar(
           leading: Center(
               child: Image(

@@ -37,24 +37,26 @@ class TroquelDatasourceImpl implements TroquelDatasource {
           nota:  (row[0]?.value.toString() ?? '' ),
           ubicacion: (row[1]?.value.toString() ?? ''),
           gico: int.tryParse(row[2]?.value.toString() ?? '0') ?? 0,
-          cliente: row[3]?.value.toString() ?? '',
-          referencia: int.tryParse(row[4]?.value.toString() ?? '0') ?? 0,
-          maquina: row[5]?.value.toString() ?? '',
-          clave: row[6]?.value?.toString(),
-          largo: row[7] != null
-              ? int.tryParse(row[7]?.value.toString() ?? '')
-              : null,
-          ancho: row[8] != null
+          referencia: int.tryParse(row[3]?.value.toString() ?? '0') ?? 0,
+          cliente: row[4]?.value.toString() ?? '',
+          no_cad: int.tryParse(row[5]?.value.toString() ?? '0')??0,
+          maquina: row[6]?.value.toString() ?? '',
+          clave: row[7]?.value?.toString(),
+          largo: row[8] != null
               ? int.tryParse(row[8]?.value.toString() ?? '')
               : null,
-          alto: row[9] != null
+          ancho: row[9] != null
               ? int.tryParse(row[9]?.value.toString() ?? '')
               : null,
-          cabida: row[10] != null
+          alto: row[10] != null
               ? int.tryParse(row[10]?.value.toString() ?? '')
               : null,
-          estilo: row[11]?.value?.toString(),
-          descripcion: row[12]?.value?.toString(),
+          cabida: row[11] != null
+              ? int.tryParse(row[11]?.value.toString() ?? '')
+              : null,
+          estilo: row[12]?.value?.toString(),
+          descripcion: row[13]?.value?.toString(),
+          sector: row[14]?.value?.toString()
         ));
       }
     }

@@ -67,18 +67,28 @@ const TroquelSchema = CollectionSchema(
       name: r'maquina',
       type: IsarType.string,
     ),
-    r'nota': PropertySchema(
+    r'no_cad': PropertySchema(
       id: 10,
+      name: r'no_cad',
+      type: IsarType.long,
+    ),
+    r'nota': PropertySchema(
+      id: 11,
       name: r'nota',
       type: IsarType.string,
     ),
     r'referencia': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'referencia',
       type: IsarType.long,
     ),
+    r'sector': PropertySchema(
+      id: 13,
+      name: r'sector',
+      type: IsarType.string,
+    ),
     r'ubicacion': PropertySchema(
-      id: 12,
+      id: 14,
       name: r'ubicacion',
       type: IsarType.string,
     )
@@ -130,6 +140,12 @@ int _troquelEstimateSize(
     }
   }
   {
+    final value = object.sector;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.ubicacion;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -154,9 +170,11 @@ void _troquelSerialize(
   writer.writeLong(offsets[7], object.gico);
   writer.writeLong(offsets[8], object.largo);
   writer.writeString(offsets[9], object.maquina);
-  writer.writeString(offsets[10], object.nota);
-  writer.writeLong(offsets[11], object.referencia);
-  writer.writeString(offsets[12], object.ubicacion);
+  writer.writeLong(offsets[10], object.no_cad);
+  writer.writeString(offsets[11], object.nota);
+  writer.writeLong(offsets[12], object.referencia);
+  writer.writeString(offsets[13], object.sector);
+  writer.writeString(offsets[14], object.ubicacion);
 }
 
 Troquel _troquelDeserialize(
@@ -176,9 +194,11 @@ Troquel _troquelDeserialize(
     gico: reader.readLong(offsets[7]),
     largo: reader.readLongOrNull(offsets[8]),
     maquina: reader.readString(offsets[9]),
-    nota: reader.readStringOrNull(offsets[10]),
-    referencia: reader.readLong(offsets[11]),
-    ubicacion: reader.readStringOrNull(offsets[12]),
+    no_cad: reader.readLongOrNull(offsets[10]),
+    nota: reader.readStringOrNull(offsets[11]),
+    referencia: reader.readLong(offsets[12]),
+    sector: reader.readStringOrNull(offsets[13]),
+    ubicacion: reader.readStringOrNull(offsets[14]),
   );
   object.isarId = id;
   return object;
@@ -212,10 +232,14 @@ P _troquelDeserializeProp<P>(
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 11:
-      return (reader.readLong(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 12:
+      return (reader.readLong(offset)) as P;
+    case 13:
+      return (reader.readStringOrNull(offset)) as P;
+    case 14:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1408,6 +1432,75 @@ extension TroquelQueryFilter
     });
   }
 
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'no_cad',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'no_cad',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'no_cad',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'no_cad',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'no_cad',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> no_cadBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'no_cad',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> notaIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1603,6 +1696,152 @@ extension TroquelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'sector',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'sector',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'sector',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'sector',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sector',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> sectorIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'sector',
+        value: '',
       ));
     });
   }
@@ -1881,6 +2120,18 @@ extension TroquelQuerySortBy on QueryBuilder<Troquel, Troquel, QSortBy> {
     });
   }
 
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> sortByNo_cad() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'no_cad', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> sortByNo_cadDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'no_cad', Sort.desc);
+    });
+  }
+
   QueryBuilder<Troquel, Troquel, QAfterSortBy> sortByNota() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nota', Sort.asc);
@@ -1902,6 +2153,18 @@ extension TroquelQuerySortBy on QueryBuilder<Troquel, Troquel, QSortBy> {
   QueryBuilder<Troquel, Troquel, QAfterSortBy> sortByReferenciaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'referencia', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> sortBySector() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sector', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> sortBySectorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sector', Sort.desc);
     });
   }
 
@@ -2052,6 +2315,18 @@ extension TroquelQuerySortThenBy
     });
   }
 
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> thenByNo_cad() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'no_cad', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> thenByNo_cadDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'no_cad', Sort.desc);
+    });
+  }
+
   QueryBuilder<Troquel, Troquel, QAfterSortBy> thenByNota() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nota', Sort.asc);
@@ -2073,6 +2348,18 @@ extension TroquelQuerySortThenBy
   QueryBuilder<Troquel, Troquel, QAfterSortBy> thenByReferenciaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'referencia', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> thenBySector() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sector', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterSortBy> thenBySectorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sector', Sort.desc);
     });
   }
 
@@ -2156,6 +2443,12 @@ extension TroquelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctByNo_cad() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'no_cad');
+    });
+  }
+
   QueryBuilder<Troquel, Troquel, QDistinct> distinctByNota(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2166,6 +2459,13 @@ extension TroquelQueryWhereDistinct
   QueryBuilder<Troquel, Troquel, QDistinct> distinctByReferencia() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'referencia');
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctBySector(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sector', caseSensitive: caseSensitive);
     });
   }
 
@@ -2245,6 +2545,12 @@ extension TroquelQueryProperty
     });
   }
 
+  QueryBuilder<Troquel, int?, QQueryOperations> no_cadProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'no_cad');
+    });
+  }
+
   QueryBuilder<Troquel, String?, QQueryOperations> notaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nota');
@@ -2254,6 +2560,12 @@ extension TroquelQueryProperty
   QueryBuilder<Troquel, int, QQueryOperations> referenciaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'referencia');
+    });
+  }
+
+  QueryBuilder<Troquel, String?, QQueryOperations> sectorProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sector');
     });
   }
 

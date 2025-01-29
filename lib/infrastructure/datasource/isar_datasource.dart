@@ -1,3 +1,5 @@
+
+
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:troqueles_sw/domain/datasource/local_storage_datasource.dart';
@@ -12,6 +14,8 @@ import '../../domain/entities/tiempos.dart';
 class IsarDatasource extends LocalStorageDatasource {
   late Future<Isar> db;
 
+
+
   IsarDatasource() {
     db = openDB();
   }
@@ -25,6 +29,15 @@ class IsarDatasource extends LocalStorageDatasource {
     }
     return Future.value(Isar.getInstance());
   }
+
+
+
+
+
+
+    
+    
+
   // -----------------------------------------CRUD DE TROQUELES ----------------------------------------------
 
   // GUARDAR TROQUEL
@@ -90,7 +103,7 @@ class IsarDatasource extends LocalStorageDatasource {
         alto: troquel.alto,
         cabida: troquel.cabida,
         estilo: troquel.estilo,
-        descripcion: troquel.descripcion,
+        descripcion: troquel.descripcion, 
       )..isarId = troquel.isarId;
 
       await isar.troquels.put(updatedTroquel);
@@ -253,7 +266,6 @@ class IsarDatasource extends LocalStorageDatasource {
 
 
 
-
-
 }
+
 

@@ -1,41 +1,39 @@
-
 import 'package:isar/isar.dart';
 part 'troquel.g.dart';
 
 @collection
 class Troquel {
-
   Id? isarId;
   final String? nota;
   final String? ubicacion;
-  //GICO ES ID
   final int gico;
-  final String cliente;
   final int referencia;
+  final String cliente;
+  final int? no_cad;
   final String maquina;
   final String? clave;
+  final int? alto;
   final int? largo;
   final int? ancho;
-  final int? alto;
   final int? cabida;
   final String? estilo;
   final String? descripcion;
+  final String? sector;
 
-
- Troquel( {
-  this.nota,
-  this.ubicacion,
-  required this.gico, 
-  required this.cliente, 
-  required this.referencia,
-   required this.maquina, 
-   this.clave, 
-   this.largo, 
-   this.ancho, 
-   this.alto, 
-   this.cabida, 
-   this.estilo, 
-   this.descripcion, 
-
- });
+  Troquel(
+      { this.nota,
+       this.ubicacion,
+      required this.gico,
+      required this.referencia,
+      required this.cliente,
+      this.no_cad,
+      required this.maquina,
+      this.alto,
+       this.clave,
+       this.largo,
+       this.ancho,
+       this.cabida,
+       this.estilo,
+       this.descripcion,
+       this.sector});
 }
