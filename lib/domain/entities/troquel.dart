@@ -21,19 +21,19 @@ class Troquel {
   final String? sector;
 
   Troquel(
-      { this.nota,
-       this.ubicacion,
+      {this.nota,
+      this.ubicacion,
       required this.gico,
       required this.referencia,
       required this.cliente,
       this.no_cad,
       required this.maquina,
       this.alto,
-       this.clave,
-       this.largo,
-       this.ancho,
-       this.cabida,
-       this.estilo,
-       this.descripcion,
-       this.sector});
+      this.clave,
+      this.largo,
+      this.ancho,
+      this.cabida,
+      this.estilo,
+      this.descripcion,
+      this.sector});
 }

@@ -41,7 +41,7 @@ class TroquelDatasourceImpl implements TroquelDatasource {
           cliente: row[4]?.value.toString() ?? '',
           no_cad: row[5]?.value.toString() ?? '0',
           maquina: row[6]?.value.toString() ?? '',
-          clave: row[7]?.value?.toString(),
+          clave: row[7]?.value?.toString() ?? '',
           largo: row[8] != null
               ? int.tryParse(row[8]?.value.toString() ?? '')
               : null,
@@ -54,12 +54,13 @@ class TroquelDatasourceImpl implements TroquelDatasource {
           cabida: row[11] != null
               ? int.tryParse(row[11]?.value.toString() ?? '')
               : null,
-          estilo: row[12]?.value?.toString(),
-          descripcion: row[13]?.value?.toString(),
-          sector: row[14]?.value?.toString()
+          estilo: row[12]?.value?.toString() ?? '' ,
+          descripcion: row[13]?.value?.toString() ?? '',
+          sector: row[14]?.value?.toString() ?? ''
         ));
       }
     }
+    
     await _isarDatasource.saveTroqueles(troqueles);
     return troqueles;
   }
