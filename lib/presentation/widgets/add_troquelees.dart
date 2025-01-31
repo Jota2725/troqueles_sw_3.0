@@ -30,9 +30,11 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
   void initState() {
     super.initState();
     final fields = [
+      'nota',
       'ubicacion',
       'gico',
       'cliente',
+      'no_cad',
       'referencia',
       'clave',
       'alto',
@@ -49,18 +51,20 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
 
     if (widget.troquel != null) {
       final troquel = widget.troquel!;
+      controllers['nota']!.text = troquel.nota.toString();
       controllers['ubicacion']!.text = troquel.ubicacion.toString();
       controllers['gico']!.text = troquel.gico.toString();
-      controllers['cliente']!.text = troquel.cliente;
-      controllers['referencia']!.text = troquel.referencia.toString();
+      controllers['cliente']?.text = troquel.cliente;
+      controllers['no_cad']!.text = troquel.no_cad.toString();
+      controllers['referencia']?.text = troquel.referencia.toString();
       selectedValue = troquel.maquina;
-      controllers['clave']!.text = troquel.clave ?? '';
-      controllers['alto']!.text = troquel.alto.toString();
-      controllers['ancho']!.text = troquel.ancho.toString();
-      controllers['largo']!.text = troquel.largo.toString();
-      controllers['cabida']!.text = troquel.cabida.toString();
-      controllers['estilo']!.text = troquel.estilo ?? '';
-      controllers['descripcion']!.text = troquel.descripcion ?? '';
+      controllers['clave']?.text = troquel.clave ?? '';
+      controllers['alto']?.text = troquel.alto.toString();
+      controllers['ancho']?.text = troquel.ancho.toString();
+      controllers['largo']?.text = troquel.largo.toString();
+      controllers['cabida']?.text = troquel.cabida.toString();
+      controllers['estilo']?.text = troquel.estilo ?? '';
+      controllers['descripcion']?.text = troquel.descripcion ?? '';
     }
   }
 
@@ -104,11 +108,17 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
   }
 
   Widget buildTextField(String label, String key, {TextInputType? type}) {
-    return TextBox(
-      controller: controllers[key],
-      placeholder: label,
-      keyboardType: type,
+    return Column(
+      children:[ 
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+      TextBox(
+        controller: controllers[key],
+        placeholder: label,
+        keyboardType: type,
+      ),
+      ]
     );
+
   }
 
   Widget buildRow(List<Widget> children) {
@@ -136,29 +146,39 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
             const Text(
                 'A continuación ingrese toda la información del Troquel'),
             const SizedBox(height: 20),
-            buildRow([
+
+            buildTextField('Nota', 'nota'),
+            const SizedBox(height: 20,),
+                       buildRow([
               buildTextField('Ubicación', 'ubicacion',
                   type: TextInputType.number),
               buildTextField('GICO', 'gico', type: TextInputType.number),
             ]),
-            buildTextField('Cliente', 'cliente'),
-            const SizedBox(height: 20),
-            buildTextField('Número CAD', 'referencia',
+            buildTextField('Referencia', 'referencia',
                 type: TextInputType.number),
             const SizedBox(height: 20),
+            buildTextField('Cliente', 'cliente'),
+            const SizedBox(height: 20),
+            buildTextField('Numero CAD', 'no_cad'),
+            const SizedBox(height: 20),
             buildRow([
-              ComboBox<String>(
-                placeholder: const Text('máquina'),
-                value: selectedValue,
-                items: const [
-                  ComboBoxItem(value: 'WA', child: Text('WARD')),
-                  ComboBoxItem(value: 'TW', child: Text('HOLANDEZA')),
-                  ComboBoxItem(value: 'FW', child: Text('FLEXPOWARD')),
-                  ComboBoxItem(value: 'ML', child: Text('MINILINE')),
-                  ComboBoxItem(value: 'DF', child: Text('DONFANG')),
-                  ComboBoxItem(value: 'JS', child: Text('JS MACHINE')),
+              Column(
+                children: [
+                   const Text('Máquina', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ComboBox<String>(
+                    placeholder: const Text('máquina'),
+                    value: selectedValue,
+                    items: const [
+                      ComboBoxItem(value: 'WA', child: Text('WARD')),
+                      ComboBoxItem(value: 'TW', child: Text('HOLANDEZA')),
+                      ComboBoxItem(value: 'FW', child: Text('FLEXPOWARD')),
+                      ComboBoxItem(value: 'ML', child: Text('MINILINE')),
+                      ComboBoxItem(value: 'DF', child: Text('DONFANG')),
+                      ComboBoxItem(value: 'JS', child: Text('JS MACHINE')),
+                    ],
+                    onChanged: (value) => setState(() => selectedValue = value),
+                  ),
                 ],
-                onChanged: (value) => setState(() => selectedValue = value),
               ),
               buildTextField('Clave', 'clave'),
             ]),
@@ -193,16 +213,18 @@ class _AddTroquelesState extends ConsumerState<AddTroquelees> {
             if (!validateFields(context)) return;
 
             final nuevoTroquel = Troquel(
+              nota: controllers['nota']!.text,
               ubicacion: controllers['ubicacion']!.text,
               gico: int.parse(controllers['gico']!.text),
               cliente: controllers['cliente']!.text,
+              no_cad: controllers['no_cad']!.text,
               referencia: controllers['referencia']!.text,
               maquina: selectedValue!,
               clave: controllers['clave']!.text,
-              alto: int.parse(controllers['alto']!.text),
-              ancho: int.parse(controllers['ancho']!.text),
-              largo: int.parse(controllers['largo']!.text),
-              cabida: int.parse(controllers['cabida']!.text),
+              alto: (controllers['alto']!.text),
+              ancho: (controllers['ancho']!.text),
+              largo: (controllers['largo']!.text),
+              cabida: (controllers['cabida']!.text),
               estilo: controllers['estilo']!.text,
               descripcion: controllers['descripcion']!.text,
             );

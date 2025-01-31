@@ -20,17 +20,17 @@ const TroquelSchema = CollectionSchema(
     r'alto': PropertySchema(
       id: 0,
       name: r'alto',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'ancho': PropertySchema(
       id: 1,
       name: r'ancho',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'cabida': PropertySchema(
       id: 2,
       name: r'cabida',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'clave': PropertySchema(
       id: 3,
@@ -60,7 +60,7 @@ const TroquelSchema = CollectionSchema(
     r'largo': PropertySchema(
       id: 8,
       name: r'largo',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'maquina': PropertySchema(
       id: 9,
@@ -114,6 +114,24 @@ int _troquelEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
+    final value = object.alto;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.ancho;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.cabida;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.clave;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -128,6 +146,12 @@ int _troquelEstimateSize(
   }
   {
     final value = object.estilo;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.largo;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -167,15 +191,15 @@ void _troquelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.alto);
-  writer.writeLong(offsets[1], object.ancho);
-  writer.writeLong(offsets[2], object.cabida);
+  writer.writeString(offsets[0], object.alto);
+  writer.writeString(offsets[1], object.ancho);
+  writer.writeString(offsets[2], object.cabida);
   writer.writeString(offsets[3], object.clave);
   writer.writeString(offsets[4], object.cliente);
   writer.writeString(offsets[5], object.descripcion);
   writer.writeString(offsets[6], object.estilo);
   writer.writeLong(offsets[7], object.gico);
-  writer.writeLong(offsets[8], object.largo);
+  writer.writeString(offsets[8], object.largo);
   writer.writeString(offsets[9], object.maquina);
   writer.writeString(offsets[10], object.no_cad);
   writer.writeString(offsets[11], object.nota);
@@ -191,15 +215,15 @@ Troquel _troquelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Troquel(
-    alto: reader.readLongOrNull(offsets[0]),
-    ancho: reader.readLongOrNull(offsets[1]),
-    cabida: reader.readLongOrNull(offsets[2]),
+    alto: reader.readStringOrNull(offsets[0]),
+    ancho: reader.readStringOrNull(offsets[1]),
+    cabida: reader.readStringOrNull(offsets[2]),
     clave: reader.readStringOrNull(offsets[3]),
     cliente: reader.readString(offsets[4]),
     descripcion: reader.readStringOrNull(offsets[5]),
     estilo: reader.readStringOrNull(offsets[6]),
     gico: reader.readLong(offsets[7]),
-    largo: reader.readLongOrNull(offsets[8]),
+    largo: reader.readStringOrNull(offsets[8]),
     maquina: reader.readString(offsets[9]),
     no_cad: reader.readStringOrNull(offsets[10]),
     nota: reader.readStringOrNull(offsets[11]),
@@ -219,11 +243,11 @@ P _troquelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
@@ -235,7 +259,7 @@ P _troquelDeserializeProp<P>(
     case 7:
       return (reader.readLong(offset)) as P;
     case 8:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
@@ -360,46 +384,54 @@ extension TroquelQueryFilter
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoEqualTo(
-      int? value) {
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'alto',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoGreaterThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'alto',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoLessThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'alto',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoBetween(
-    int? lower,
-    int? upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -408,6 +440,75 @@ extension TroquelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'alto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'alto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'alto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'alto',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'alto',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> altoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'alto',
+        value: '',
       ));
     });
   }
@@ -429,46 +530,54 @@ extension TroquelQueryFilter
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoEqualTo(
-      int? value) {
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'ancho',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoGreaterThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'ancho',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoLessThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'ancho',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoBetween(
-    int? lower,
-    int? upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -477,6 +586,75 @@ extension TroquelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'ancho',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'ancho',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'ancho',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'ancho',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ancho',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> anchoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'ancho',
+        value: '',
       ));
     });
   }
@@ -498,46 +676,54 @@ extension TroquelQueryFilter
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaEqualTo(
-      int? value) {
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'cabida',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaGreaterThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'cabida',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaLessThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'cabida',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaBetween(
-    int? lower,
-    int? upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -546,6 +732,75 @@ extension TroquelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'cabida',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'cabida',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'cabida',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'cabida',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'cabida',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> cabidaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'cabida',
+        value: '',
       ));
     });
   }
@@ -1257,46 +1512,54 @@ extension TroquelQueryFilter
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoEqualTo(
-      int? value) {
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'largo',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoGreaterThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'largo',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoLessThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'largo',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoBetween(
-    int? lower,
-    int? upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1305,6 +1568,75 @@ extension TroquelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'largo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'largo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'largo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'largo',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'largo',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Troquel, Troquel, QAfterFilterCondition> largoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'largo',
+        value: '',
       ));
     });
   }
@@ -2539,21 +2871,24 @@ extension TroquelQuerySortThenBy
 
 extension TroquelQueryWhereDistinct
     on QueryBuilder<Troquel, Troquel, QDistinct> {
-  QueryBuilder<Troquel, Troquel, QDistinct> distinctByAlto() {
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctByAlto(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'alto');
+      return query.addDistinctBy(r'alto', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Troquel, Troquel, QDistinct> distinctByAncho() {
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctByAncho(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'ancho');
+      return query.addDistinctBy(r'ancho', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Troquel, Troquel, QDistinct> distinctByCabida() {
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctByCabida(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'cabida');
+      return query.addDistinctBy(r'cabida', caseSensitive: caseSensitive);
     });
   }
 
@@ -2591,9 +2926,10 @@ extension TroquelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Troquel, Troquel, QDistinct> distinctByLargo() {
+  QueryBuilder<Troquel, Troquel, QDistinct> distinctByLargo(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'largo');
+      return query.addDistinctBy(r'largo', caseSensitive: caseSensitive);
     });
   }
 
@@ -2648,19 +2984,19 @@ extension TroquelQueryProperty
     });
   }
 
-  QueryBuilder<Troquel, int?, QQueryOperations> altoProperty() {
+  QueryBuilder<Troquel, String?, QQueryOperations> altoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'alto');
     });
   }
 
-  QueryBuilder<Troquel, int?, QQueryOperations> anchoProperty() {
+  QueryBuilder<Troquel, String?, QQueryOperations> anchoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ancho');
     });
   }
 
-  QueryBuilder<Troquel, int?, QQueryOperations> cabidaProperty() {
+  QueryBuilder<Troquel, String?, QQueryOperations> cabidaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cabida');
     });
@@ -2696,7 +3032,7 @@ extension TroquelQueryProperty
     });
   }
 
-  QueryBuilder<Troquel, int?, QQueryOperations> largoProperty() {
+  QueryBuilder<Troquel, String?, QQueryOperations> largoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'largo');
     });

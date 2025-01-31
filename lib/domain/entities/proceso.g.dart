@@ -120,7 +120,7 @@ Proceso _procesoDeserialize(
     cliente: reader.readString(offsets[0]),
     estado: _ProcesoestadoValueEnumMap[reader.readByteOrNull(offsets[1])] ??
         Estado.suspendido,
-    fechaEstimada: reader.readDateTime(offsets[2]),
+    fechaEstimada: reader.readDateTimeOrNull(offsets[2]),
     fechaIngreso: reader.readDateTime(offsets[3]),
     ingeniero: reader.readString(offsets[4]),
     maquina: reader.readString(offsets[5]),
@@ -145,7 +145,7 @@ P _procesoDeserializeProp<P>(
       return (_ProcesoestadoValueEnumMap[reader.readByteOrNull(offset)] ??
           Estado.suspendido) as P;
     case 2:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 3:
       return (reader.readDateTime(offset)) as P;
     case 4:
@@ -449,8 +449,25 @@ extension ProcesoQueryFilter
     });
   }
 
+  QueryBuilder<Proceso, Proceso, QAfterFilterCondition> fechaEstimadaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'fechaEstimada',
+      ));
+    });
+  }
+
+  QueryBuilder<Proceso, Proceso, QAfterFilterCondition>
+      fechaEstimadaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'fechaEstimada',
+      ));
+    });
+  }
+
   QueryBuilder<Proceso, Proceso, QAfterFilterCondition> fechaEstimadaEqualTo(
-      DateTime value) {
+      DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'fechaEstimada',
@@ -461,7 +478,7 @@ extension ProcesoQueryFilter
 
   QueryBuilder<Proceso, Proceso, QAfterFilterCondition>
       fechaEstimadaGreaterThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -474,7 +491,7 @@ extension ProcesoQueryFilter
   }
 
   QueryBuilder<Proceso, Proceso, QAfterFilterCondition> fechaEstimadaLessThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -487,8 +504,8 @@ extension ProcesoQueryFilter
   }
 
   QueryBuilder<Proceso, Proceso, QAfterFilterCondition> fechaEstimadaBetween(
-    DateTime lower,
-    DateTime upper, {
+    DateTime? lower,
+    DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -1601,7 +1618,7 @@ extension ProcesoQueryProperty
     });
   }
 
-  QueryBuilder<Proceso, DateTime, QQueryOperations> fechaEstimadaProperty() {
+  QueryBuilder<Proceso, DateTime?, QQueryOperations> fechaEstimadaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'fechaEstimada');
     });

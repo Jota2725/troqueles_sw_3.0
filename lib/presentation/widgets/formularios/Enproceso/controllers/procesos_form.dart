@@ -36,7 +36,7 @@ class ProcesoFormController {
     return Proceso(
       ntroquel: controllers['Troquel']!.text,
       fechaIngreso: selectedFechaIngreso!,
-      fechaEstimada: selectedFechaEstimada!,
+      fechaEstimada: selectedFechaEstimada ??= null ,
       planta: selectedPlanta!,
       cliente: controllers['cliente']!.text,
       maquina: selectedValue!,
@@ -57,15 +57,11 @@ class ProcesoFormController {
       showError(context, 'Todos los campos deben estar completos.');
       return false;
     }
-    if (selectedFechaIngreso == null || selectedFechaEstimada == null) {
+    if (selectedFechaIngreso == null ) {
       showError(context, 'Debe seleccionar las fechas correspondientes.');
       return false;
     }
-    if (selectedFechaEstimada!.isBefore(selectedFechaIngreso!)) {
-      showError(context,
-          'La fecha estimada debe ser posterior a la fecha de ingreso.');
-      return false;
-    }
+    
     return true;
   }
 

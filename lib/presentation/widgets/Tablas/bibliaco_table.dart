@@ -103,8 +103,8 @@ class _TablaTroqueles extends ConsumerWidget {
             DataColumn(label: Text('Nota')),
             DataColumn(label: Text('Ubicación')),
             DataColumn(label: Text('GICO')),
-            DataColumn(label: Text('Cliente')),
             DataColumn(label: Text('Referencia')),
+            DataColumn(label: Text('Cliente')),
             DataColumn(label: Text('Máquina')),
             DataColumn(label: Text('Acciones')),
           ],
@@ -130,8 +130,8 @@ class _TroquelesDataSource extends DataTableSource {
       DataCell(Text('${troquel.nota}')),
       DataCell(Text('${troquel.ubicacion}')),
       DataCell(Text('${troquel.gico}')),
-      DataCell(Text(troquel.cliente)),
       DataCell(Text('${troquel.referencia}')),
+      DataCell(Text(troquel.cliente)),
       DataCell(Text(troquel.maquina)),
       DataCell(Row(
         children: [

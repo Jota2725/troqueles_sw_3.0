@@ -92,9 +92,11 @@ class IsarDatasource extends LocalStorageDatasource {
     final isar = await db;
     return await isar.writeTxn(() async {
       final updatedTroquel = Troquel(
+        nota: troquel.nota,
         ubicacion: troquel.ubicacion,
         gico: troquel.gico,
         cliente: troquel.cliente,
+        no_cad: troquel.no_cad,
         referencia: troquel.referencia,
         maquina: troquel.maquina,
         clave: troquel.clave,

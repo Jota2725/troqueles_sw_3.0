@@ -11,7 +11,7 @@ class Proceso {
   
 
   final DateTime fechaIngreso;
-  final DateTime fechaEstimada;
+  final DateTime? fechaEstimada;
   final String planta;
   final String cliente;
   final String maquina;
@@ -24,7 +24,7 @@ class Proceso {
   Proceso( 
       {required this.ntroquel,
       required this.fechaIngreso,
-      required this.fechaEstimada,
+      this.fechaEstimada,
       required this.planta,
       required this.cliente,
       required this.maquina,

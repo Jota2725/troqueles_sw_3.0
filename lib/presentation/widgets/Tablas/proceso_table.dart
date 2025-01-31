@@ -73,7 +73,7 @@ class TablaEnProceso extends ConsumerWidget {
                   DataCell(
                       Text('${proceso.fechaIngreso.toLocal()}'.split(' ')[0])),
                   DataCell(
-                      Text('${proceso.fechaEstimada.toLocal()}'.split(' ')[0])),
+                      Text('${proceso.fechaEstimada?.toLocal()}'.split(' ')[0])),
                   DataCell(Text(proceso.planta)),
                   DataCell(Text(proceso.cliente)),
                   DataCell(Text(proceso.maquina)),

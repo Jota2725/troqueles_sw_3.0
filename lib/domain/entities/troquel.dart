@@ -12,10 +12,10 @@ class Troquel {
   final String? no_cad;
   final String maquina;
   final String? clave;
-  final int? alto;
-  final int? largo;
-  final int? ancho;
-  final int? cabida;
+  final String? alto;
+  final String? largo;
+  final String? ancho;
+  final String? cabida;
   final String? estilo;
   final String? descripcion;
   final String? sector;
