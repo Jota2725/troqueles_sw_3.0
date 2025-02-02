@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/presentation/widgets/forms/Bibliaco/texfields_widgtes.dart';
+import '../../../../domain/entities/operario.dart';
+import '../../../../domain/entities/tiempos.dart';
 import '../../../../utils/input_decorations.dart';
+import '../../../providers/operario_provider.dart';
 import '../../../providers/process_provider.dart';
 
 import '../../search/search_operario.dart';
@@ -11,12 +14,24 @@ class FormTiempos extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Actividad? actividadSeleccionada;
     final GlobalKey<FormState> keyForm = GlobalKey<FormState>();
     final size = MediaQuery.of(context).size.width;
     final selectedProceso = ref.watch(selectedProcesoProvider);
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          TextButton.icon(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const AddOperarios();
+                    });
+              },
+              label: Text('Agregar nuevo operario'))
+        ],
         title: Text('TIEMPOS - ${selectedProceso?.ntroquel} '),
         centerTitle: true,
       ),
@@ -54,27 +69,34 @@ class FormTiempos extends ConsumerWidget {
                       height: 10,
                     ),
                     //ACTIVIDAD
+
                     DropdownButtonFormField(
-                        decoration: InputDecorations.authInputDescoration(
-                          hintText: 'Actividad',
-                          labelText: 'Actividad',
-                        ),
-                        items: const [DropdownMenuItem(child: Text(''))],
-                        onChanged: (value) {}),
+                      dropdownColor: Colors.black,
+                      items: getDropdownItemsActivity(),
+                      onChanged: (value) {
+                        actividadSeleccionada = value;
+                      },
+                      decoration: InputDecorations.authInputDescoration(
+                          hintText: 'Seleccione la actividad',
+                          labelText: 'Selecione la actividad'),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Por favor seleccione una unidad';
+                        }
+                        return null;
+                      },
+                    ),
                     const SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
                     //HORAS
                     //OBSERVACION
                     TextFormField(
-                      
                       enabled: true,
                       controller: TextEditingController(),
                       decoration: InputDecorations.authInputDescoration(
                         hintText: 'Tiempo',
                         labelText: 'Tiempo',
-
-
                       ),
                     ),
                     const SizedBox(
@@ -87,13 +109,7 @@ class FormTiempos extends ConsumerWidget {
                       ),
                       icon: const Icon(Icons.add_circle_outline,
                           color: Colors.white),
-                      onPressed: () {
-
-                        
-                       
-
-
-                      },
+                      onPressed: () {},
                       label: const Text(
                         'Agregar Tiempo',
                         style: TextStyle(
@@ -108,5 +124,105 @@ class FormTiempos extends ConsumerWidget {
             )),
       ),
     );
+  }
+
+  List<DropdownMenuItem<Actividad>> getDropdownItemsActivity() {
+    return Actividad.values
+        .map((unidad) => DropdownMenuItem(
+              value: unidad,
+              child: Text(
+                  unidad.name.toUpperCase()), // O usa toString() si prefieres
+            ))
+        .toList();
+  }
+}
+
+class AddOperarios extends ConsumerStatefulWidget {
+  const AddOperarios({super.key});
+
+  @override
+  _AddOperariosState createState() => _AddOperariosState();
+}
+
+class _AddOperariosState extends ConsumerState<AddOperarios> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _fichaController = TextEditingController();
+  final TextEditingController _nombreController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Agregar nuevo operario'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Ajusta el tamaño del diálogo
+          children: [
+            // Campo de Ficha (Solo números)
+            TextFormField(
+              controller: _fichaController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Ficha',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Ingrese una ficha válida';
+                }
+                if (int.tryParse(value) == null) {
+                  return 'Solo números permitidos';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Campo de Nombre
+            TextFormField(
+              controller: _nombreController,
+              decoration: const InputDecoration(
+                labelText: 'Nombre',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Ingrese un nombre válido';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Botón Guardar
+            ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  final operario = Operario(
+                      ficha: int.tryParse(_fichaController.text)!,
+                      nombre: _nombreController.text);
+                  await ref
+                      .read(operarioProvider.notifier)
+                      .addNewOperarios(operario);
+                  // Aquí puedes manejar el guardado del operario
+                  print('Ficha: ${_fichaController.text}');
+                  print('Nombre: ${_nombreController.text}');
+
+                  Navigator.of(context).pop(); // Cierra el diálogo
+                }
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _fichaController.dispose();
+    _nombreController.dispose();
+    super.dispose();
   }
 }

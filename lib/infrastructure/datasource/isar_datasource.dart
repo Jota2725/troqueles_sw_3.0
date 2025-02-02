@@ -24,7 +24,7 @@ class IsarDatasource extends LocalStorageDatasource {
     final dir = await getApplicationDocumentsDirectory();
 
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([TroquelSchema, ProcesoSchema,ConsumoSchema,MaterialesSchema],
+      return await Isar.open([TroquelSchema,ProcesoSchema,ConsumoSchema,MaterialesSchema,OperarioSchema ],
           inspector: true, directory: dir.path);
     }
     return Future.value(Isar.getInstance());

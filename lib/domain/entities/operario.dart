@@ -1,6 +1,7 @@
 
 import 'package:isar/isar.dart';
 part 'operario.g.dart';
+
 @collection
 class Operario {
   Id? isarId;
