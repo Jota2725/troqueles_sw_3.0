@@ -63,7 +63,14 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+
+
 [Code]
+procedure InitializeWizard;
+begin
+  // No es necesario declarar InstallDir, usa directamente {app} cuando sea necesario
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   ConfigFile: string;
@@ -71,8 +78,9 @@ var
 begin
   if CurStep = ssPostInstall then
   begin
+    // Aquí ya podemos estar seguros de que {app} ha sido resuelto
     ConfigFile := ExpandConstant('{app}\config.ini');
-    ConfigText := 'InstallDir=' + InstallDir;
+    ConfigText := 'InstallDir=' + ExpandConstant('{app}');
     SaveStringToFile(ConfigFile, ConfigText, False);
   end;
 end;

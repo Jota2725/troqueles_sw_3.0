@@ -23,8 +23,11 @@ class IsarDatasource extends LocalStorageDatasource {
 
   String getInstallDir() {
     try {
-      final configFile = File(
-          'C:\\Program Files\\Troqueles SW 1.0\\config.ini'); // Ruta por defecto
+      
+    final installDir = Directory.current.path;
+    final configFile = File('$installDir\\config.ini');  // Config.ini está en el directorio de instalación
+
+      
       if (configFile.existsSync()) {
         final lines = configFile.readAsLinesSync();
         for (var line in lines) {
@@ -33,11 +36,12 @@ class IsarDatasource extends LocalStorageDatasource {
           }
         }
       }
+      return installDir;
     } catch (e) {
       print(
           "⚠️ No se pudo leer el directorio de instalación, usando la predeterminada.");
     }
-    return 'C:\\Program Files\\Troqueles SW 1.0'; // Ruta predeterminada si no se encuentra el archivo
+    return ''; // Ruta predeterminada si no se encuentra el archivo
   }
 
   // ABRIR BASE DE DATOS EN LA RUTA ESPECIFICADA
