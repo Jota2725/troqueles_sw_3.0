@@ -13,6 +13,14 @@ final operarioProvider =
 class OperarioNotifier extends StateNotifier<List<Operario>> {
   final IsarDatasource _isarDatasource;
 
+  Operario? _selectedOperario;
+  Operario? get selectedOperario => _selectedOperario;
+
+  final List<Operario> selectOperario = [];
+  List<Operario> get selectedOpeario => List.unmodifiable(selectOperario);
+
+
+
   OperarioNotifier(this._isarDatasource) : super([]);
 
   Future<void> loadOperario() async {
@@ -24,3 +32,5 @@ class OperarioNotifier extends StateNotifier<List<Operario>> {
     await _isarDatasource.addNewOperarios([operario]);
   }
 }
+final selectedOperarioProvider =
+    StateProvider<Operario?>((ref) => null);

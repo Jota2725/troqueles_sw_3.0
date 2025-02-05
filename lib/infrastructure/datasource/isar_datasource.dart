@@ -1,5 +1,3 @@
-
-
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:troqueles_sw/domain/datasource/local_storage_datasource.dart';
@@ -14,8 +12,6 @@ import '../../domain/entities/tiempos.dart';
 class IsarDatasource extends LocalStorageDatasource {
   late Future<Isar> db;
 
-
-
   IsarDatasource() {
     db = openDB();
   }
@@ -24,19 +20,17 @@ class IsarDatasource extends LocalStorageDatasource {
     final dir = await getApplicationDocumentsDirectory();
 
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([TroquelSchema,ProcesoSchema,ConsumoSchema,MaterialesSchema,OperarioSchema ],
-          inspector: true, directory: dir.path);
+      return await Isar.open([
+        TroquelSchema,
+        ProcesoSchema,
+        ConsumoSchema,
+        MaterialesSchema,
+        OperarioSchema,
+        TiemposSchema
+      ], inspector: true, directory: dir.path);
     }
     return Future.value(Isar.getInstance());
   }
-
-
-
-
-
-
-    
-    
 
   // -----------------------------------------CRUD DE TROQUELES ----------------------------------------------
 
@@ -105,7 +99,7 @@ class IsarDatasource extends LocalStorageDatasource {
         alto: troquel.alto,
         cabida: troquel.cabida,
         estilo: troquel.estilo,
-        descripcion: troquel.descripcion, 
+        descripcion: troquel.descripcion,
       )..isarId = troquel.isarId;
 
       await isar.troquels.put(updatedTroquel);
@@ -148,18 +142,16 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   Future<List<Proceso>> getTroquelesByEstado(Estado estado) async {
-  final isar = await db;
-  final procesos = await isar.procesos.where().filter().estadoEqualTo(estado).findAll();
-  return procesos;
-}
-
-
-  
-  Future<Proceso?> getTroquelInProcess(String troquel) async {
     final isar = await db;
-    return await isar.procesos.filter().ntroquelEqualTo(troquel).findFirst() ;
+    final procesos =
+        await isar.procesos.where().filter().estadoEqualTo(estado).findAll();
+    return procesos;
   }
 
+  Future<Proceso?> getTroquelInProcess(String troquel) async {
+    final isar = await db;
+    return await isar.procesos.filter().ntroquelEqualTo(troquel).findFirst();
+  }
 
   @override
   Future<void> addNewTroquelInProcess(List<Proceso> proceso) async {
@@ -201,73 +193,56 @@ class IsarDatasource extends LocalStorageDatasource {
   Future<List<Consumo>> getAllConsumos() async {
     final isar = await db;
     return await isar.consumos.where().findAll();
-
-   
   }
 
-
   //----------------------MATERIALES---------------------------------------
-  @override 
+  @override
   Future<List<Materiales>> gettAllMateriles() async {
     final isar = await db;
     return await isar.materiales.where().findAll();
   }
 
-
-   Future<void> addNewMaterial(List<Materiales> materiales) async {
+  Future<void> addNewMaterial(List<Materiales> materiales) async {
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.materiales.putAll(materiales);
     });
   }
 
-
-   Future<void> addNewConsumo(List<Consumo> consumos) async {
+  Future<void> addNewConsumo(List<Consumo> consumos) async {
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.consumos.putAll(consumos);
 
       for (var i = 0; i < consumos.length; i++) {
-      final consumo = consumos[i];
-      // Asegúrate de que los materiales estén asociados al consumo correcto
-      consumo.materiales.save();
-    }
-
-
+        final consumo = consumos[i];
+        // Asegúrate de que los materiales estén asociados al consumo correcto
+        consumo.materiales.save();
+      }
     });
-
-    
   }
 
-  Future<List<Tiempos>> getAllTiempos()async{
-      final isar = await db;
-      return await isar.tiempos.where().findAll();
-    } 
+  Future<List<Tiempos>> getAllTiempos() async {
+    final isar = await db;
+    return await isar.tiempos.where().findAll();
+  }
 
-    Future<void> addNewTiempo(List<Tiempos> tiempos) async {
-      final isar = await db;
-      await isar.writeTxn(() async{
-        await isar.tiempos.putAll(tiempos);
-      });
+  Future<void> addNewTiempo(List<Tiempos> tiempos) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.tiempos.putAll(tiempos);
+    });
+  }
 
-
-    }
- 
-  Future <List<Operario>>getAllOperarios()async{
+  Future<List<Operario>> getAllOperarios() async {
     final isar = await db;
     return await isar.operarios.where().findAll();
-  }    
-  Future <void>addNewOperarios( List<Operario> operarios)async{
+  }
+
+  Future<void> addNewOperarios(List<Operario> operarios) async {
     final isar = await db;
-     await isar.writeTxn(() async {
-        await isar.operarios.putAll(operarios);
-     });
-     
-     
-  }    
-
-
-
+    await isar.writeTxn(() async {
+      await isar.operarios.putAll(operarios);
+    });
+  }
 }
-
-

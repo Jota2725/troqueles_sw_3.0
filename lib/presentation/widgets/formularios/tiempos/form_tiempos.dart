@@ -7,6 +7,7 @@ import '../../../../utils/input_decorations.dart';
 import '../../../providers/operario_provider.dart';
 import '../../../providers/process_provider.dart';
 
+import '../../../providers/timepos_provider.dart';
 import '../../search/search_operario.dart';
 
 class FormTiempos extends ConsumerWidget {
@@ -18,6 +19,10 @@ class FormTiempos extends ConsumerWidget {
     final GlobalKey<FormState> keyForm = GlobalKey<FormState>();
     final size = MediaQuery.of(context).size.width;
     final selectedProceso = ref.watch(selectedProcesoProvider);
+
+    final TextEditingController dateController = TextEditingController();
+    final TextEditingController timeController = TextEditingController();
+    final selectedOpeer = ref.watch(selectedOperarioProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -47,10 +52,20 @@ class FormTiempos extends ConsumerWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    InputDatePickerFormField(
-                        firstDate: DateTime(2023, 1, 1),
-                        lastDate: DateTime(2030, 1, 1)),
-
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Ingrese una fecha válida';
+                        }
+                        return null;
+                      },
+                      controller: dateController,
+                      enabled: true,
+                      decoration: InputDecorations.authInputDescoration(
+                        hintText: 'Seleccione la fecha',
+                        labelText: 'Fecha',
+                      ),
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -59,9 +74,9 @@ class FormTiempos extends ConsumerWidget {
                       height: 10,
                     ),
                     //NOMBRE
-                    const CustomTextField(
+                    CustomTextField(
                       enabled: false,
-                      value: 'Operario',
+                      value: selectedOpeer?.nombre ?? 'Sin nombre',
                       label: 'Operario',
                     ),
 
@@ -92,13 +107,24 @@ class FormTiempos extends ConsumerWidget {
                     //HORAS
                     //OBSERVACION
                     TextFormField(
-                      enabled: true,
-                      controller: TextEditingController(),
+                      controller: timeController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecorations.authInputDescoration(
-                        hintText: 'Tiempo',
-                        labelText: 'Tiempo',
+                        hintText: 'Ingrese el tiempo en horas',
+                        labelText: 'Tiempo (horas)',
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Ingrese el tiempo correspondiente';
+                        }
+                        final num? tiempo = num.tryParse(value);
+                        if (tiempo == null || tiempo <= 0) {
+                          return 'Ingrese un tiempo válido en horas';
+                        }
+                        return null;
+                      },
                     ),
+
                     const SizedBox(
                       height: 10,
                     ),
@@ -109,7 +135,22 @@ class FormTiempos extends ConsumerWidget {
                       ),
                       icon: const Icon(Icons.add_circle_outline,
                           color: Colors.white),
-                      onPressed: () {},
+                      onPressed: () async {
+                        if (keyForm.currentState!.validate()) {
+                         
+
+                          final newtiempo = Tiempos(
+                              fecha: dateController.text,
+                              tiempo: int.parse(timeController.text),
+                              actividad: actividadSeleccionada!,
+                              ntroquel: selectedProceso!.ntroquel,
+                              operarios: selectedOpeer!.nombre);
+                        
+                          await ref
+                              .read(timeProvider.notifier)
+                              .addTiempos(newtiempo);
+                        }
+                      },
                       label: const Text(
                         'Agregar Tiempo',
                         style: TextStyle(

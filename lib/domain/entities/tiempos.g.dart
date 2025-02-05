@@ -26,17 +26,22 @@ const TiemposSchema = CollectionSchema(
     r'fecha': PropertySchema(
       id: 1,
       name: r'fecha',
-      type: IsarType.dateTime,
+      type: IsarType.string,
     ),
     r'ntroquel': PropertySchema(
       id: 2,
       name: r'ntroquel',
       type: IsarType.string,
     ),
-    r'tiempo': PropertySchema(
+    r'operarios': PropertySchema(
       id: 3,
+      name: r'operarios',
+      type: IsarType.string,
+    ),
+    r'tiempo': PropertySchema(
+      id: 4,
       name: r'tiempo',
-      type: IsarType.dateTime,
+      type: IsarType.long,
     )
   },
   estimateSize: _tiemposEstimateSize,
@@ -45,14 +50,7 @@ const TiemposSchema = CollectionSchema(
   deserializeProp: _tiemposDeserializeProp,
   idName: r'isarId',
   indexes: {},
-  links: {
-    r'operario': LinkSchema(
-      id: -2464893099689157114,
-      name: r'operario',
-      target: r'Operario',
-      single: false,
-    )
-  },
+  links: {},
   embeddedSchemas: {},
   getId: _tiemposGetId,
   getLinks: _tiemposGetLinks,
@@ -66,7 +64,14 @@ int _tiemposEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.fecha.length * 3;
   bytesCount += 3 + object.ntroquel.length * 3;
+  {
+    final value = object.operarios;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -77,9 +82,10 @@ void _tiemposSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeByte(offsets[0], object.actividad.index);
-  writer.writeDateTime(offsets[1], object.fecha);
+  writer.writeString(offsets[1], object.fecha);
   writer.writeString(offsets[2], object.ntroquel);
-  writer.writeDateTime(offsets[3], object.tiempo);
+  writer.writeString(offsets[3], object.operarios);
+  writer.writeLong(offsets[4], object.tiempo);
 }
 
 Tiempos _tiemposDeserialize(
@@ -92,9 +98,10 @@ Tiempos _tiemposDeserialize(
     actividad:
         _TiemposactividadValueEnumMap[reader.readByteOrNull(offsets[0])] ??
             Actividad.Dibujo,
-    fecha: reader.readDateTime(offsets[1]),
+    fecha: reader.readString(offsets[1]),
     ntroquel: reader.readString(offsets[2]),
-    tiempo: reader.readDateTime(offsets[3]),
+    operarios: reader.readStringOrNull(offsets[3]),
+    tiempo: reader.readLong(offsets[4]),
   );
   object.isarId = id;
   return object;
@@ -111,11 +118,13 @@ P _tiemposDeserializeProp<P>(
       return (_TiemposactividadValueEnumMap[reader.readByteOrNull(offset)] ??
           Actividad.Dibujo) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
+    case 4:
+      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -147,12 +156,11 @@ Id _tiemposGetId(Tiempos object) {
 }
 
 List<IsarLinkBase<dynamic>> _tiemposGetLinks(Tiempos object) {
-  return [object.operario];
+  return [];
 }
 
 void _tiemposAttach(IsarCollection<dynamic> col, Id id, Tiempos object) {
   object.isarId = id;
-  object.operario.attach(col, col.isar.collection<Operario>(), r'operario', id);
 }
 
 extension TiemposQueryWhereSort on QueryBuilder<Tiempos, Tiempos, QWhere> {
@@ -287,46 +295,54 @@ extension TiemposQueryFilter
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaEqualTo(
-      DateTime value) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'fecha',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaGreaterThan(
-    DateTime value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'fecha',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaLessThan(
-    DateTime value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'fecha',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaBetween(
-    DateTime lower,
-    DateTime upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -335,6 +351,75 @@ extension TiemposQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'fecha',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'fecha',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'fecha',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'fecha',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'fecha',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fechaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'fecha',
+        value: '',
       ));
     });
   }
@@ -538,8 +623,154 @@ extension TiemposQueryFilter
     });
   }
 
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'operarios',
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'operarios',
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'operarios',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'operarios',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'operarios',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'operarios',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'operarios',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'operarios',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'operarios',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'operarios',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'operarios',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operariosIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'operarios',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> tiempoEqualTo(
-      DateTime value) {
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'tiempo',
@@ -549,7 +780,7 @@ extension TiemposQueryFilter
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> tiempoGreaterThan(
-    DateTime value, {
+    int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -562,7 +793,7 @@ extension TiemposQueryFilter
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> tiempoLessThan(
-    DateTime value, {
+    int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -575,8 +806,8 @@ extension TiemposQueryFilter
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> tiempoBetween(
-    DateTime lower,
-    DateTime upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -596,64 +827,7 @@ extension TiemposQueryObject
     on QueryBuilder<Tiempos, Tiempos, QFilterCondition> {}
 
 extension TiemposQueryLinks
-    on QueryBuilder<Tiempos, Tiempos, QFilterCondition> {
-  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operario(
-      FilterQuery<Operario> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.link(q, r'operario');
-    });
-  }
-
-  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operarioLengthEqualTo(
-      int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'operario', length, true, length, true);
-    });
-  }
-
-  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operarioIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'operario', 0, true, 0, true);
-    });
-  }
-
-  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operarioIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'operario', 0, false, 999999, true);
-    });
-  }
-
-  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operarioLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'operario', 0, true, length, include);
-    });
-  }
-
-  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition>
-      operarioLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'operario', length, include, 999999, true);
-    });
-  }
-
-  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> operarioLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(
-          r'operario', lower, includeLower, upper, includeUpper);
-    });
-  }
-}
+    on QueryBuilder<Tiempos, Tiempos, QFilterCondition> {}
 
 extension TiemposQuerySortBy on QueryBuilder<Tiempos, Tiempos, QSortBy> {
   QueryBuilder<Tiempos, Tiempos, QAfterSortBy> sortByActividad() {
@@ -689,6 +863,18 @@ extension TiemposQuerySortBy on QueryBuilder<Tiempos, Tiempos, QSortBy> {
   QueryBuilder<Tiempos, Tiempos, QAfterSortBy> sortByNtroquelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ntroquel', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterSortBy> sortByOperarios() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'operarios', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterSortBy> sortByOperariosDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'operarios', Sort.desc);
     });
   }
 
@@ -755,6 +941,18 @@ extension TiemposQuerySortThenBy
     });
   }
 
+  QueryBuilder<Tiempos, Tiempos, QAfterSortBy> thenByOperarios() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'operarios', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterSortBy> thenByOperariosDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'operarios', Sort.desc);
+    });
+  }
+
   QueryBuilder<Tiempos, Tiempos, QAfterSortBy> thenByTiempo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tiempo', Sort.asc);
@@ -776,9 +974,10 @@ extension TiemposQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Tiempos, Tiempos, QDistinct> distinctByFecha() {
+  QueryBuilder<Tiempos, Tiempos, QDistinct> distinctByFecha(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'fecha');
+      return query.addDistinctBy(r'fecha', caseSensitive: caseSensitive);
     });
   }
 
@@ -786,6 +985,13 @@ extension TiemposQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'ntroquel', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QDistinct> distinctByOperarios(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'operarios', caseSensitive: caseSensitive);
     });
   }
 
@@ -810,7 +1016,7 @@ extension TiemposQueryProperty
     });
   }
 
-  QueryBuilder<Tiempos, DateTime, QQueryOperations> fechaProperty() {
+  QueryBuilder<Tiempos, String, QQueryOperations> fechaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'fecha');
     });
@@ -822,7 +1028,13 @@ extension TiemposQueryProperty
     });
   }
 
-  QueryBuilder<Tiempos, DateTime, QQueryOperations> tiempoProperty() {
+  QueryBuilder<Tiempos, String?, QQueryOperations> operariosProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'operarios');
+    });
+  }
+
+  QueryBuilder<Tiempos, int, QQueryOperations> tiempoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tiempo');
     });

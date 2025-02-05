@@ -1,16 +1,16 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:isar/isar.dart';
-import 'package:troqueles_sw/domain/entities/operario.dart';
+
 part 'tiempos.g.dart';
 
 @collection
 class Tiempos {
   Id? isarId;
-  final DateTime fecha;
+  final String fecha;
   final String ntroquel;
-  final IsarLinks<Operario> operario = IsarLinks<Operario>();
-  final DateTime tiempo;
+  final String? operarios;
+  final int tiempo;
   @enumerated
   final Actividad actividad;
 
@@ -18,6 +18,7 @@ class Tiempos {
       {required this.fecha,
       required this.ntroquel,
       required this.tiempo,
+      this.operarios,
       required this.actividad});
 }
 
