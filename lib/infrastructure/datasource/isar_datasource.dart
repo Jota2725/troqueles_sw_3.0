@@ -1,5 +1,7 @@
+import 'dart:io';
+
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:troqueles_sw/domain/datasource/local_storage_datasource.dart';
 import 'package:troqueles_sw/domain/entities/consumo.dart';
 import 'package:troqueles_sw/domain/entities/materiales.dart';
@@ -11,13 +13,42 @@ import '../../domain/entities/tiempos.dart';
 
 class IsarDatasource extends LocalStorageDatasource {
   late Future<Isar> db;
+  late String installDir;
+  late String lockFilePath;
 
   IsarDatasource() {
+    installDir = getInstallDir();
     db = openDB();
   }
-  // ABRIR BASE DE DATOS
+
+  String getInstallDir() {
+    try {
+      final configFile = File(
+          'C:\\Program Files\\Troqueles SW 1.0\\config.ini'); // Ruta por defecto
+      if (configFile.existsSync()) {
+        final lines = configFile.readAsLinesSync();
+        for (var line in lines) {
+          if (line.startsWith("InstallDir=")) {
+            return line.split("=")[1];
+          }
+        }
+      }
+    } catch (e) {
+      print(
+          "⚠️ No se pudo leer el directorio de instalación, usando la predeterminada.");
+    }
+    return 'C:\\Program Files\\Troqueles SW 1.0'; // Ruta predeterminada si no se encuentra el archivo
+  }
+
+  // ABRIR BASE DE DATOS EN LA RUTA ESPECIFICADA
   Future<Isar> openDB() async {
-    final dir = await getApplicationDocumentsDirectory();
+    lockFilePath = '$installDir/lockfile.lock';
+
+    if (await isDatabaseLocked()) {
+      print("⚠️ Base de datos en uso por otro usuario.");
+      throw Exception("Base de datos bloqueada.");
+    }
+    await createLockFile();
 
     if (Isar.instanceNames.isEmpty) {
       return await Isar.open([
@@ -27,10 +58,36 @@ class IsarDatasource extends LocalStorageDatasource {
         MaterialesSchema,
         OperarioSchema,
         TiemposSchema
-      ], inspector: true, directory: dir.path);
+      ], inspector: true, directory: installDir);
     }
     return Future.value(Isar.getInstance());
   }
+
+  Future<bool> isDatabaseLocked() async {
+    final lockFile = File(lockFilePath);
+    return await lockFile.exists();
+  }
+
+  Future<void> createLockFile() async {
+    final lockFile = File(lockFilePath);
+    await lockFile.create();
+  }
+
+  Future<void> releaseDatabase() async {
+    final lockFile = File(lockFilePath);
+    if (await lockFile.exists()) {
+      await lockFile.delete();
+      print("✅ Base de datos liberada.");
+    }
+  }
+
+  Future<void> closeDatabase() async {
+    final isar = await db;
+    await isar.close();
+    await releaseDatabase();
+  }
+
+  // ABRIR BASE DE DATOS
 
   // -----------------------------------------CRUD DE TROQUELES ----------------------------------------------
 

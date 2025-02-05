@@ -62,3 +62,17 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ConfigFile: string;
+  ConfigText: AnsiString;
+begin
+  if CurStep = ssPostInstall then
+  begin
+    ConfigFile := ExpandConstant('{app}\config.ini');
+    ConfigText := 'InstallDir=' + InstallDir;
+    SaveStringToFile(ConfigFile, ConfigText, False);
+  end;
+end;
