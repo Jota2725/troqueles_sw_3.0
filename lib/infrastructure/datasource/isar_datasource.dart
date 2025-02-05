@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:isar/isar.dart';
@@ -12,21 +13,25 @@ import '../../domain/entities/proceso.dart';
 import '../../domain/entities/tiempos.dart';
 
 class IsarDatasource extends LocalStorageDatasource {
-  late Future<Isar> db;
+  static Completer<Isar>? _dbCompleter;
   late String installDir;
-  late String lockFilePath;
 
   IsarDatasource() {
     installDir = getInstallDir();
-    db = openDB();
+  }
+
+  Future<Isar> get db async {
+    if (_dbCompleter == null) {
+      _dbCompleter = Completer();
+      _dbCompleter!.complete(_openDB());
+    }
+    return _dbCompleter!.future;
   }
 
   String getInstallDir() {
     try {
       final installDir = Directory.current.path;
-      final configFile = File(
-          '$installDir\\config.ini'); // Config.ini está en el directorio de instalación
-
+      final configFile = File('$installDir\config.ini');
       if (configFile.existsSync()) {
         final lines = configFile.readAsLinesSync();
         for (var line in lines) {
@@ -40,25 +45,32 @@ class IsarDatasource extends LocalStorageDatasource {
       print(
           "⚠️ No se pudo leer el directorio de instalación, usando la predeterminada.");
     }
-    return ''; // Ruta predeterminada si no se encuentra el archivo
+    return '';
   }
 
-  // ABRIR BASE DE DATOS EN LA RUTA ESPECIFICADA
-  Future<Isar> openDB() async {
-    if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([
+  Future<Isar> _openDB() async {
+    if (Isar.instanceNames.isNotEmpty) {
+      return Future.value(Isar.getInstance());
+    }
+    return await Isar.open(
+      [
         TroquelSchema,
         ProcesoSchema,
         ConsumoSchema,
         MaterialesSchema,
         OperarioSchema,
         TiemposSchema
-      ], inspector: true, directory: installDir);
-    }
-    return Future.value(Isar.getInstance());
+      ],
+      inspector: true,
+      directory: installDir,
+    );
   }
 
-  // ABRIR BASE DE DATOS
+  Future<void> closeDatabase() async {
+    final isar = await db;
+    await isar.close();
+    _dbCompleter = null;
+  }
 
   // -----------------------------------------CRUD DE TROQUELES ----------------------------------------------
 
