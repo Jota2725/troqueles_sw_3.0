@@ -23,11 +23,10 @@ class IsarDatasource extends LocalStorageDatasource {
 
   String getInstallDir() {
     try {
-      
-    final installDir = Directory.current.path;
-    final configFile = File('$installDir\\config.ini');  // Config.ini está en el directorio de instalación
+      final installDir = Directory.current.path;
+      final configFile = File(
+          '$installDir\\config.ini'); // Config.ini está en el directorio de instalación
 
-      
       if (configFile.existsSync()) {
         final lines = configFile.readAsLinesSync();
         for (var line in lines) {
@@ -46,14 +45,6 @@ class IsarDatasource extends LocalStorageDatasource {
 
   // ABRIR BASE DE DATOS EN LA RUTA ESPECIFICADA
   Future<Isar> openDB() async {
-    lockFilePath = '$installDir/lockfile.lock';
-
-    if (await isDatabaseLocked()) {
-      print("⚠️ Base de datos en uso por otro usuario.");
-      throw Exception("Base de datos bloqueada.");
-    }
-    await createLockFile();
-
     if (Isar.instanceNames.isEmpty) {
       return await Isar.open([
         TroquelSchema,
@@ -65,30 +56,6 @@ class IsarDatasource extends LocalStorageDatasource {
       ], inspector: true, directory: installDir);
     }
     return Future.value(Isar.getInstance());
-  }
-
-  Future<bool> isDatabaseLocked() async {
-    final lockFile = File(lockFilePath);
-    return await lockFile.exists();
-  }
-
-  Future<void> createLockFile() async {
-    final lockFile = File(lockFilePath);
-    await lockFile.create();
-  }
-
-  Future<void> releaseDatabase() async {
-    final lockFile = File(lockFilePath);
-    if (await lockFile.exists()) {
-      await lockFile.delete();
-      print("✅ Base de datos liberada.");
-    }
-  }
-
-  Future<void> closeDatabase() async {
-    final isar = await db;
-    await isar.close();
-    await releaseDatabase();
   }
 
   // ABRIR BASE DE DATOS
