@@ -15,9 +15,19 @@ import '../../domain/entities/tiempos.dart';
 class IsarDatasource extends LocalStorageDatasource {
   static Completer<Isar>? _dbCompleter;
   late String installDir;
+  late File lockFile;
+  bool isReadOnly = false;
 
   IsarDatasource() {
     installDir = getInstallDir();
+    lockFile = File('$installDir/app.lock');
+    
+    if (lockFile.existsSync()) {
+      print('🔒 Modo solo lectura. Otro usuario está usando la base de datos.');
+      isReadOnly = true;
+    } else {
+      _acquireLock();
+    }
   }
 
   Future<Isar> get db async {
@@ -29,30 +39,30 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   String getInstallDir() {
+    final installDir = Directory.current.path;
+    return installDir;
+  }
+
+  void _acquireLock() {
     try {
-      final installDir = Directory.current.path;
-      final configFile = File('$installDir\config.ini');
-      if (configFile.existsSync()) {
-        final lines = configFile.readAsLinesSync();
-        for (var line in lines) {
-          if (line.startsWith("InstallDir=")) {
-            return line.split("=")[1];
-          }
-        }
-      }
-      return installDir;
+      lockFile.writeAsStringSync('LOCKED');
     } catch (e) {
-      print(
-          "⚠️ No se pudo leer el directorio de instalación, usando la predeterminada.");
+      print('⚠️ Error al crear el archivo de bloqueo: $e');
     }
-    return '';
+  }
+
+  void releaseLock() {
+    try {
+      if (lockFile.existsSync()) {
+        lockFile.deleteSync();
+      }
+    } catch (e) {
+      print('⚠️ Error al liberar el bloqueo: $e');
+    }
   }
 
   Future<Isar> _openDB() async {
-    if (Isar.instanceNames.isNotEmpty) {
-      return Future.value(Isar.getInstance());
-    }
-    return await Isar.open(
+    final isar = await Isar.open(
       [
         TroquelSchema,
         ProcesoSchema,
@@ -61,16 +71,23 @@ class IsarDatasource extends LocalStorageDatasource {
         OperarioSchema,
         TiemposSchema
       ],
-      inspector: true,
       directory: installDir,
+      inspector: true,
+      relaxedDurability: isReadOnly, // Permitir lectura en modo seguro
     );
+    return isar;
   }
 
   Future<void> closeDatabase() async {
     final isar = await db;
     await isar.close();
+    if (!isReadOnly) {
+      releaseLock();
+    }
     _dbCompleter = null;
   }
+
+
 
   // -----------------------------------------CRUD DE TROQUELES ----------------------------------------------
 
