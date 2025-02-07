@@ -21,7 +21,7 @@ class IsarDatasource extends LocalStorageDatasource {
   IsarDatasource() {
     installDir = getInstallDir();
     lockFile = File('$installDir/app.lock');
-    
+
     if (lockFile.existsSync()) {
       print('🔒 Modo solo lectura. Otro usuario está usando la base de datos.');
       isReadOnly = true;
@@ -31,12 +31,14 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   Future<Isar> get db async {
-    if (_dbCompleter == null) {
-      _dbCompleter = Completer();
-      _dbCompleter!.complete(_openDB());
-    }
-    return _dbCompleter!.future;
+  if (_dbCompleter == null) {
+    _dbCompleter = Completer<Isar>();
+    _dbCompleter!.complete(_openDB());
   }
+  return _dbCompleter!.future;
+
+}
+
 
   String getInstallDir() {
     final installDir = Directory.current.path;
@@ -44,22 +46,32 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   void _acquireLock() {
-    try {
-      lockFile.writeAsStringSync('LOCKED');
-    } catch (e) {
-      print('⚠️ Error al crear el archivo de bloqueo: $e');
+  try {
+    if (!lockFile.existsSync()) {
+      final raf = lockFile.openSync(mode: FileMode.write);
+      raf.writeStringSync('LOCKED');
+      raf.close();
+    } else {
+      print('⚠️ Archivo de bloqueo ya existe. Otra instancia podría estar en ejecución.');
     }
+  } catch (e) {
+    print('⚠️ Error al crear el archivo de bloqueo: $e');
   }
+}
 
-  void releaseLock() {
-    try {
-      if (lockFile.existsSync()) {
-        lockFile.deleteSync();
-      }
-    } catch (e) {
-      print('⚠️ Error al liberar el bloqueo: $e');
+
+ void releaseLock() {
+  try {
+    if (lockFile.existsSync()) {
+      lockFile.deleteSync();
+      print('🔓 Archivo de bloqueo eliminado.');
+    } else {
+      print('⚠️ No se encontró archivo de bloqueo para eliminar.');
     }
+  } catch (e) {
+    print('⚠️ Error al liberar el bloqueo: $e');
   }
+}
 
   Future<Isar> _openDB() async {
     final isar = await Isar.open(
@@ -72,7 +84,7 @@ class IsarDatasource extends LocalStorageDatasource {
         TiemposSchema
       ],
       directory: installDir,
-      inspector: true,
+      inspector: false,
       relaxedDurability: isReadOnly, // Permitir lectura en modo seguro
     );
     return isar;
@@ -86,8 +98,6 @@ class IsarDatasource extends LocalStorageDatasource {
     }
     _dbCompleter = null;
   }
-
-
 
   // -----------------------------------------CRUD DE TROQUELES ----------------------------------------------
 
