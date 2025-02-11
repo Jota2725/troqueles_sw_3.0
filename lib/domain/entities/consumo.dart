@@ -14,5 +14,9 @@ class Consumo {
   final String tipo;
   final int cantidad;
 
-  Consumo(this.cantidad, {required this.nTroquel, required this.cliente, required this.tipo});
+  Consumo(
+      {required this.nTroquel,
+      required this.cliente,
+      required this.tipo,
+      required this.cantidad});
 }

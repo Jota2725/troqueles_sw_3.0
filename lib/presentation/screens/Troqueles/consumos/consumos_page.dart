@@ -30,6 +30,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
   final TextEditingController cantidadController = TextEditingController();
   final GlobalKey<FormState> keyForm = GlobalKey<FormState>();
 
+
   @override
   void dispose() {
     cantidadController.dispose();
@@ -56,6 +57,8 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ConsumosForm(
+                      keyForm: keyForm ,
+                      cantidadController: cantidadController,
                       selectedMaterial: selectedMaterial,
                       cliente: widget.cliente,
                       tipoTrabajo: widget.tipoTrabajo,
@@ -135,7 +138,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
 
       // Preparar el objeto consumo con los materiales seleccionados
       final consumo = Consumo(
-        int.parse(cantidadController.text),
+        cantidad: int.parse(cantidadController.text),
         nTroquel: widget.ntroquel,
         cliente: widget.cliente,
         tipo: widget.tipoTrabajo,

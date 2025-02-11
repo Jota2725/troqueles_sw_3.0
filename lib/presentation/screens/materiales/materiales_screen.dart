@@ -14,7 +14,7 @@ class MaterialesScreen extends ConsumerWidget {
     final formKey = GlobalKey<FormState>();
     final TextEditingController codigoController = TextEditingController();
     final TextEditingController descripcionController = TextEditingController();
-    final TextEditingController cantidadController = TextEditingController();
+    
     final TextEditingController conversionController = TextEditingController();
     Unidad? unidadSeleccionada;
     Tipo? tipoSeleccionado;
@@ -142,30 +142,6 @@ class MaterialesScreen extends ConsumerWidget {
                                     ),
                                     TextFormField(
                                       enabled: true,
-                                      controller: cantidadController,
-                                      decoration:
-                                          InputDecorations.authInputDescoration(
-                                        hintText:
-                                            'Ingrese la cantidad del material',
-                                        labelText:
-                                            'Ingrese la cantidad del material',
-                                      ),
-                                      keyboardType: TextInputType.number,
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value.isEmpty ||
-                                            double.tryParse(value) == null) {
-                                          return 'Por favor ingrese una cantidad válida';
-                                        }
-
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    TextFormField(
-                                      enabled: true,
                                       controller: conversionController,
                                       decoration:
                                           InputDecorations.authInputDescoration(
@@ -211,22 +187,23 @@ class MaterialesScreen extends ConsumerWidget {
                                                         "Unidad: ${unidadSeleccionada?.name}"),
                                                     Text(
                                                         "Descripción: ${descripcionController.text}"),
-                                                    Text(
-                                                        "Cantidad: ${cantidadController.text}"),
+                                                    
                                                     Text(
                                                         "Conversión: ${conversionController.text}"),
                                                   ],
                                                 ),
                                                 actions: <Widget>[
                                                   TextButton(
-                                                    child: const Text("Cancelar"),
+                                                    child:
+                                                        const Text("Cancelar"),
                                                     onPressed: () {
                                                       Navigator.of(context)
                                                           .pop(); // Cerrar el diálogo
                                                     },
                                                   ),
                                                   TextButton(
-                                                    child: const Text("Confirmar"),
+                                                    child:
+                                                        const Text("Confirmar"),
                                                     onPressed: () {
                                                       Navigator.of(context)
                                                           .pop(); // Cerrar el diálogo
@@ -248,9 +225,6 @@ class MaterialesScreen extends ConsumerWidget {
                                                         descripcion:
                                                             descripcionController
                                                                 .text,
-                                                        cantidad: int.parse(
-                                                            cantidadController
-                                                                .text),
                                                         conversion: double.parse(
                                                             conversionController
                                                                 .text),
@@ -263,8 +237,7 @@ class MaterialesScreen extends ConsumerWidget {
                                                       codigoController.clear();
                                                       descripcionController
                                                           .clear();
-                                                      cantidadController
-                                                          .clear();
+                                                      
                                                       conversionController
                                                           .clear();
                                                       unidadSeleccionada = null;

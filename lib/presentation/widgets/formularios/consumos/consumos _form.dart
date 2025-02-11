@@ -8,20 +8,21 @@ import '../../search/search_materials.dart';
 class ConsumosForm extends StatelessWidget {
   const ConsumosForm(
       {super.key,
-      
       this.selectedMaterial,
       required this.cliente,
-      required this.tipoTrabajo});
+      required this.tipoTrabajo,
+      required this.keyForm,
+      required this.cantidadController});
 
   final String cliente;
   final String tipoTrabajo;
-  
   final Materiales? selectedMaterial;
+  final GlobalKey<FormState> keyForm;
+  final TextEditingController cantidadController;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size.width;
-    final GlobalKey<FormState> keyForm = GlobalKey<FormState>();
-    final TextEditingController cantidadController = TextEditingController();
     return Form(
       key: keyForm,
       child: Padding(
@@ -41,9 +42,9 @@ class ConsumosForm extends StatelessWidget {
                 enabled: false,
               ),
               const SearchMaterials(),
-
-              const SizedBox(height: 10,),
-
+              const SizedBox(
+                height: 10,
+              ),
               CustomTextField(
                 label: 'Descripción',
                 value: selectedMaterial?.descripcion ?? 'Sin descripción',
@@ -66,12 +67,11 @@ class ConsumosForm extends StatelessWidget {
                   hintText: 'Cantidad',
                   labelText: 'Cantidad',
                 ),
-                keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Ingrese una cantidad';
                   }
-                  if (double.tryParse(value) == null) {
+                  if (int.tryParse(value) == null) {
                     return 'Ingrese un número válido';
                   }
                   return null;

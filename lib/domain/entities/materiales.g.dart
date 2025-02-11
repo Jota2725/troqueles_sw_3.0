@@ -17,34 +17,29 @@ const MaterialesSchema = CollectionSchema(
   name: r'Materiales',
   id: 4101931933247461375,
   properties: {
-    r'cantidad': PropertySchema(
-      id: 0,
-      name: r'cantidad',
-      type: IsarType.long,
-    ),
     r'codigo': PropertySchema(
-      id: 1,
+      id: 0,
       name: r'codigo',
       type: IsarType.long,
     ),
     r'conversion': PropertySchema(
-      id: 2,
+      id: 1,
       name: r'conversion',
       type: IsarType.double,
     ),
     r'descripcion': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'descripcion',
       type: IsarType.string,
     ),
     r'tipo': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'tipo',
       type: IsarType.byte,
       enumMap: _MaterialestipoEnumValueMap,
     ),
     r'unidad': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'unidad',
       type: IsarType.byte,
       enumMap: _MaterialesunidadEnumValueMap,
@@ -87,12 +82,11 @@ void _materialesSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.cantidad);
-  writer.writeLong(offsets[1], object.codigo);
-  writer.writeDouble(offsets[2], object.conversion);
-  writer.writeString(offsets[3], object.descripcion);
-  writer.writeByte(offsets[4], object.tipo.index);
-  writer.writeByte(offsets[5], object.unidad.index);
+  writer.writeLong(offsets[0], object.codigo);
+  writer.writeDouble(offsets[1], object.conversion);
+  writer.writeString(offsets[2], object.descripcion);
+  writer.writeByte(offsets[3], object.tipo.index);
+  writer.writeByte(offsets[4], object.unidad.index);
 }
 
 Materiales _materialesDeserialize(
@@ -102,13 +96,12 @@ Materiales _materialesDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Materiales(
-    cantidad: reader.readLong(offsets[0]),
-    codigo: reader.readLong(offsets[1]),
-    conversion: reader.readDouble(offsets[2]),
-    descripcion: reader.readString(offsets[3]),
-    tipo: _MaterialestipoValueEnumMap[reader.readByteOrNull(offsets[4])] ??
+    codigo: reader.readLong(offsets[0]),
+    conversion: reader.readDouble(offsets[1]),
+    descripcion: reader.readString(offsets[2]),
+    tipo: _MaterialestipoValueEnumMap[reader.readByteOrNull(offsets[3])] ??
         Tipo.maderas,
-    unidad: _MaterialesunidadValueEnumMap[reader.readByteOrNull(offsets[5])] ??
+    unidad: _MaterialesunidadValueEnumMap[reader.readByteOrNull(offsets[4])] ??
         Unidad.mts,
   );
   object.isarId = id;
@@ -125,15 +118,13 @@ P _materialesDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
-    case 2:
       return (reader.readDouble(offset)) as P;
-    case 3:
+    case 2:
       return (reader.readString(offset)) as P;
-    case 4:
+    case 3:
       return (_MaterialestipoValueEnumMap[reader.readByteOrNull(offset)] ??
           Tipo.maderas) as P;
-    case 5:
+    case 4:
       return (_MaterialesunidadValueEnumMap[reader.readByteOrNull(offset)] ??
           Unidad.mts) as P;
     default:
@@ -284,60 +275,6 @@ extension MaterialesQueryWhere
 
 extension MaterialesQueryFilter
     on QueryBuilder<Materiales, Materiales, QFilterCondition> {
-  QueryBuilder<Materiales, Materiales, QAfterFilterCondition> cantidadEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cantidad',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Materiales, Materiales, QAfterFilterCondition>
-      cantidadGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cantidad',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Materiales, Materiales, QAfterFilterCondition> cantidadLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cantidad',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Materiales, Materiales, QAfterFilterCondition> cantidadBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cantidad',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
   QueryBuilder<Materiales, Materiales, QAfterFilterCondition> codigoEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -789,18 +726,6 @@ extension MaterialesQueryLinks
 
 extension MaterialesQuerySortBy
     on QueryBuilder<Materiales, Materiales, QSortBy> {
-  QueryBuilder<Materiales, Materiales, QAfterSortBy> sortByCantidad() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'cantidad', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Materiales, Materiales, QAfterSortBy> sortByCantidadDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'cantidad', Sort.desc);
-    });
-  }
-
   QueryBuilder<Materiales, Materiales, QAfterSortBy> sortByCodigo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codigo', Sort.asc);
@@ -864,18 +789,6 @@ extension MaterialesQuerySortBy
 
 extension MaterialesQuerySortThenBy
     on QueryBuilder<Materiales, Materiales, QSortThenBy> {
-  QueryBuilder<Materiales, Materiales, QAfterSortBy> thenByCantidad() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'cantidad', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Materiales, Materiales, QAfterSortBy> thenByCantidadDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'cantidad', Sort.desc);
-    });
-  }
-
   QueryBuilder<Materiales, Materiales, QAfterSortBy> thenByCodigo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codigo', Sort.asc);
@@ -951,12 +864,6 @@ extension MaterialesQuerySortThenBy
 
 extension MaterialesQueryWhereDistinct
     on QueryBuilder<Materiales, Materiales, QDistinct> {
-  QueryBuilder<Materiales, Materiales, QDistinct> distinctByCantidad() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'cantidad');
-    });
-  }
-
   QueryBuilder<Materiales, Materiales, QDistinct> distinctByCodigo() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'codigo');
@@ -994,12 +901,6 @@ extension MaterialesQueryProperty
   QueryBuilder<Materiales, int, QQueryOperations> isarIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isarId');
-    });
-  }
-
-  QueryBuilder<Materiales, int, QQueryOperations> cantidadProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'cantidad');
     });
   }
 

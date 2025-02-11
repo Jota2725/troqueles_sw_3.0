@@ -91,7 +91,7 @@ Consumo _consumoDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Consumo(
-    reader.readLong(offsets[0]),
+    cantidad: reader.readLong(offsets[0]),
     cliente: reader.readString(offsets[1]),
     nTroquel: reader.readString(offsets[2]),
     tipo: reader.readString(offsets[3]),

@@ -14,7 +14,7 @@ class Materiales {
   @enumerated
   final Tipo tipo;
 
-  final int cantidad;
+  
   final double conversion;
   final IsarLink<Consumo> consumo =
       IsarLink<Consumo>(); // Relación hacia Consumo.
@@ -24,7 +24,7 @@ class Materiales {
       required this.unidad,
       required this.descripcion,
       required this.tipo,
-      required this.cantidad,
+      
       required this.conversion});
 }
 
