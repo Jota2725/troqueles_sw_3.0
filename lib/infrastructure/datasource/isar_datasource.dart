@@ -7,96 +7,41 @@ import 'package:troqueles_sw/domain/datasource/local_storage_datasource.dart';
 import 'package:troqueles_sw/domain/entities/consumo.dart';
 import 'package:troqueles_sw/domain/entities/materiales.dart';
 import 'package:troqueles_sw/domain/entities/troquel.dart';
-
 import '../../domain/entities/operario.dart';
 import '../../domain/entities/proceso.dart';
 import '../../domain/entities/tiempos.dart';
 
 class IsarDatasource extends LocalStorageDatasource {
-  static Completer<Isar>? _dbCompleter;
+  late Future<Isar> db;
   late String installDir;
-  late File lockFile;
-  bool isReadOnly = false;
 
   IsarDatasource() {
     installDir = getInstallDir();
-    lockFile = File('$installDir/app.lock');
+    db = openDB();
+  }
 
-    if (lockFile.existsSync()) {
-      print('🔒 Modo solo lectura. Otro usuario está usando la base de datos.');
-      isReadOnly = true;
-    } else {
-      _acquireLock();
+  Future<Isar> openDB() async {
+    if (Isar.instanceNames.isEmpty) {
+      return await Isar.open(
+        [
+          TroquelSchema,
+          ProcesoSchema,
+          ConsumoSchema,
+          MaterialesSchema,
+          OperarioSchema,
+          TiemposSchema
+        ],
+        directory: installDir,
+        inspector: true,
+        // Permitir lectura en modo seguro
+      );
     }
+    return Future.value(Isar.getInstance());
   }
-
-  Future<Isar> get db async {
-  if (_dbCompleter == null) {
-    _dbCompleter = Completer<Isar>();
-    _dbCompleter!.complete(_openDB());
-  }
-  return _dbCompleter!.future;
-
-}
-
 
   String getInstallDir() {
     final installDir = Directory.current.path;
     return installDir;
-  }
-
-  void _acquireLock() {
-  try {
-    if (!lockFile.existsSync()) {
-      final raf = lockFile.openSync(mode: FileMode.write);
-      raf.writeStringSync('LOCKED');
-      raf.close();
-    } else {
-      print('⚠️ Archivo de bloqueo ya existe. Otra instancia podría estar en ejecución.');
-    }
-  } catch (e) {
-    print('⚠️ Error al crear el archivo de bloqueo: $e');
-  }
-}
-
-
- void releaseLock() {
-  try {
-    if (lockFile.existsSync()) {
-      lockFile.deleteSync();
-      print('🔓 Archivo de bloqueo eliminado.');
-    } else {
-      print('⚠️ No se encontró archivo de bloqueo para eliminar.');
-    }
-  } catch (e) {
-    print('⚠️ Error al liberar el bloqueo: $e');
-  }
-}
-
-  Future<Isar> _openDB() async {
-    final isar = await Isar.open(
-      [
-        TroquelSchema,
-        ProcesoSchema,
-        ConsumoSchema,
-        MaterialesSchema,
-        OperarioSchema,
-        TiemposSchema
-      ],
-      directory: installDir,
-      inspector: false,
-      relaxedDurability: isReadOnly, // Permitir lectura en modo seguro
-    );
-    return isar;
-  }
-
-  Future<void> closeDatabase() async {
-    final isar = await db;
-    await isar.close();
-    if (!isReadOnly) {
-      releaseLock();
-    }
-    _dbCompleter = null;
   }
 
   // -----------------------------------------CRUD DE TROQUELES ----------------------------------------------

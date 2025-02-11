@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco/bibliaco_pages.dart';
 import 'package:troqueles_sw/presentation/screens/consumos_tiempos/consumos_and_times.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
+import 'package:troqueles_sw/presentation/screens/tiempos/tiempos_screen.dart';
+import '../../../infrastructure/datasource/isar_datasource.dart';
 import '../../widgets/Tablas/completados_tabla.dart';
 import '../Troqueles/EnProceso/troquel_view_pages.dart';
 import '../materiales/materiales_screen.dart';
@@ -15,12 +19,23 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
-  
+    
+
+    
   int _currentIndex = 0;
+
+
+
+  void closeOnExit(IsarDatasource isarDatasource) async {
+    exit(0);
+  }
+  
+  
   @override
   Widget build(BuildContext context) {
-    final size  = MediaQuery.of(context).size;
-    return NavigationView( 
+    
+    final size = MediaQuery.of(context).size;
+    return NavigationView(
       appBar: const NavigationAppBar(
           leading: Center(
               child: Image(
@@ -31,10 +46,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
             'SW TROQUELES 1.0 ',
             style: TextStyle(fontSize: 30),
           ))),
-        
       pane: NavigationPane(
-      size: NavigationPaneSize(openMaxWidth: size.width* 0.20),
-      
+        size: NavigationPaneSize(openMaxWidth: size.width * 0.20),
         header: const Padding(
           padding: EdgeInsets.only(left: 20),
         ),
@@ -102,7 +115,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             body: const CompletadosTable(),
             title: const Text('Troqueles terminados'),
           ),
-          
           PaneItem(
             icon: const Icon(Icons.delete_forever),
             body: const Text(''),
@@ -121,7 +133,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           PaneItem(
             icon: const Icon(Icons.access_time_outlined),
-            body: const Text('Screen3'),
+            body: const TiemposScreen(),
             title: const Text('Tiempos'),
           ),
           PaneItem(
@@ -150,6 +162,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
             body: const Text('Ajustes'),
             title: const Text('Ajustes'),
           ),
+          PaneItem(
+            icon:  Icon(Icons.exit_to_app, color:Color.fromRGBO(255,0,0,1)),
+            title: const Text('Salir'),
+            body: const Text(''),
+            onTap:(){   
+              final isarDatasource = IsarDatasource();
+            
+              closeOnExit(isarDatasource);})
         ],
         selected: _currentIndex,
         displayMode: PaneDisplayMode.auto,

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
+import 'package:troqueles_sw/presentation/providers/materials_provider.dart';
+import '../../../domain/entities/materiales.dart';
+import '../../../domain/entities/operario.dart';
+import '../../providers/operario_provider.dart';
 import '../../providers/process_provider.dart';
 import '../../widgets/formularios/tiempos/form_tiempos.dart';
 import '../../widgets/widgets.dart';
@@ -65,6 +69,49 @@ class _TablaEnProceso extends ConsumerStatefulWidget {
 
 class _TablaEnProcesoState extends ConsumerState<_TablaEnProceso> {
   Proceso? selectedProceso;
+  late Future<List<Proceso>> futureProceso;
+  late Future<List<Operario>> futureTiempo;
+  late Future<List<Materiales>> futureMateriales;
+
+  @override
+  void initState() {
+    super.initState();
+    futureProceso = _cargarDatosProceso();
+
+    futureTiempo = _cargarDatosOperario();
+    futureMateriales = _cargarDatosMateriales();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  // Método para cargar los datos desde ISAR al iniciar la pantalla
+  Future<List<Proceso>> _cargarDatosProceso() async {
+    final procesoNotifier = ref.read(troquelProviderInProceso.notifier);
+    await procesoNotifier
+        .getAllTroquelesInProcess(); // Carga los troqueles por máquina
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    return procesoNotifier.state;
+    // Retorna el estado actualizado
+  }
+
+  Future<List<Operario>> _cargarDatosOperario() async {
+    final procesoNotifier = ref.read(operarioProvider.notifier);
+    await procesoNotifier.loadOperario(); // Carga los troqueles por máquina
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    return procesoNotifier.state;
+    // Retorna el estado actualizado
+  }
+
+  Future<List<Materiales>> _cargarDatosMateriales() async {
+    final procesoNotifier = ref.read(materialProvider.notifier);
+    await procesoNotifier.loadMateriales(); // Carga los troqueles por máquina
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    return procesoNotifier.state;
+    // Retorna el estado actualizado
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,8 +175,8 @@ class _TablaEnProcesoState extends ConsumerState<_TablaEnProceso> {
                   DataCell(Text(proceso.ntroquel)),
                   DataCell(
                       Text('${proceso.fechaIngreso.toLocal()}'.split(' ')[0])),
-                  DataCell(
-                      Text('${proceso.fechaEstimada?.toLocal()}'.split(' ')[0])),
+                  DataCell(Text(
+                      '${proceso.fechaEstimada?.toLocal()}'.split(' ')[0])),
                   DataCell(Text(proceso.planta)),
                   DataCell(Text(proceso.cliente)),
                   DataCell(Text(proceso.maquina)),

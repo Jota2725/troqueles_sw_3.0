@@ -11,83 +11,49 @@ class SearchMaterials extends ConsumerWidget {
     final materiales = ref.watch(materialProvider);
     final materialesNotifier = ref.read(materialProvider.notifier);
 
-    return SizedBox(
-      width: double.infinity,
-      child: SearchAnchor(
-        viewBackgroundColor: Colors.black,
-        viewHintText: 'Buscar material por código',
-        builder: (BuildContext context, SearchController controller) {
-          return SearchBar(
-            hintText: 'Buscar material por código',
-            elevation: const WidgetStatePropertyAll(0),
-            controller: controller,
-            padding: const WidgetStatePropertyAll<EdgeInsets>(
-              EdgeInsets.symmetric(horizontal: 5.0),
+    // Escuchar cambios en la lista de materiales y recargar si hay modificaciones
+    ref.listen(materialProvider, (previous, next) {
+      if (previous != next) {
+        materialesNotifier.loadMateriales();
+      }
+    });
+
+    return SearchAnchor.bar(
+      barHintText: 'Buscar material por código',
+      viewBackgroundColor: Colors.black,
+      suggestionsBuilder: (BuildContext context, SearchController controller) {
+        final String input = controller.value.text.toLowerCase().trim();
+
+        // Filtrar materiales dinámicamente
+        final filteredMaterials = materiales.where((material) {
+          final codigoMaterial = material.codigo.toString().toLowerCase();
+          return codigoMaterial.contains(input);
+        }).toList();
+
+        if (filteredMaterials.isEmpty) {
+          return [
+            const ListTile(
+              title: Text('No se encontraron materiales.'),
             ),
-            leading: const Icon(Icons.search),
-            onChanged: (query) async {
-              await _buscarMaterial(query, materialesNotifier);
-              controller.openView();
-            },
-            onTap: () async {
-              if (materiales.isEmpty) {
-                await materialesNotifier.loadMateriales();
-              }
-              controller.openView();
-            },
-            onSubmitted: (query) async {
-              await _buscarMaterial(query, materialesNotifier);
-              controller.openView();
+          ];
+        }
+
+        return filteredMaterials.map((material) {
+          return ListTile(
+            title: Text(
+              'Código: ${material.codigo} - ${_truncarDescripcion(material.descripcion, 50)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text('Tipo: ${material.tipo.name}'),
+            onTap: () {
+              ref.read(selectedMaterialProvider.notifier).state = material;
+              controller.closeView(material.codigo.toString());
             },
           );
-        },
-        suggestionsBuilder:
-            (BuildContext context, SearchController controller) {
-          final query = controller.text.trim();
-          if (query.isEmpty) {
-            return const [];
-          }
-
-          // Filtrar materiales dinámicamente
-          final filteredMaterials = materiales.where((material) {
-            return material.codigo.toString().contains(query);
-          }).toList();
-
-          if (filteredMaterials.isEmpty) {
-            return [
-              const ListTile(
-                title: Text('No se encontraron materiales.'),
-              ),
-            ];
-          }
-
-          return filteredMaterials.map((material) {
-            return ListTile(
-              title: Text(
-                'Código: ${material.codigo}\n'
-                'Material: ${_truncarDescripcion(material.descripcion, 50)}\n'
-                'Tipo: ${material.tipo.name}',
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              onTap: () {
-                ref.read(selectedMaterialProvider.notifier).state = material;
-                controller.closeView(material.codigo.toString());
-              },
-            );
-          }).toList();
-        },
-      ),
+        }).toList();
+      },
     );
-  }
-
-  /// Lógica centralizada para buscar materiales
-  Future<void> _buscarMaterial(String query, MaterialNotifier notifier) async {
-    if (query.isNotEmpty && int.tryParse(query) != null) {
-      await notifier.searchMaterial(query);
-    } else {
-      await notifier.loadMateriales();
-    }
   }
 
   /// Método para truncar descripciones largas

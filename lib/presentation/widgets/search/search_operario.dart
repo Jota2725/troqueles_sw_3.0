@@ -12,12 +12,12 @@ class SearchOperario extends ConsumerWidget {
     final operarios = ref.watch(operarioProvider);
     final operarioNotifier = ref.read(operarioProvider.notifier);
 
-    // Cargar operarios si la lista está vacía
-    if (operarios.isEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Escuchar cambios en la lista y recargar datos cuando haya modificaciones
+    ref.listen(operarioProvider, (previous, next) {
+      if (previous != next) {
         operarioNotifier.loadOperario();
-      });
-    }
+      }
+    });
 
     return SearchAnchor.bar(
       barHintText: 'Ingrese la ficha del Maestro Troquelero',

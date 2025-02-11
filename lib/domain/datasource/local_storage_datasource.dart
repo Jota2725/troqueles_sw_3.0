@@ -8,9 +8,13 @@ abstract class LocalStorageDatasource {
 
   // TODO TROQUELES BIBILIACO
   Future<void> saveTroqueles(List<Troquel> troqueles);
+
   Future<List<Troquel>> getAllTroqueles();
+
   Future<Troquel?> getTroquelByGicoAndMaquina(int gico, String maquina );
+
   Future<void> updateTroquel(Troquel troquel);
+  
   Future<void> deleteTroquel(int id);
   Future<void> deleteAllTroqueles();
   Future<void>deleteAllTroquelesbyMachine(String maquina);
