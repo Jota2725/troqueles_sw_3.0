@@ -14,7 +14,7 @@ class MaterialesScreen extends ConsumerWidget {
     final formKey = GlobalKey<FormState>();
     final TextEditingController codigoController = TextEditingController();
     final TextEditingController descripcionController = TextEditingController();
-    
+
     final TextEditingController conversionController = TextEditingController();
     Unidad? unidadSeleccionada;
     Tipo? tipoSeleccionado;
@@ -187,7 +187,6 @@ class MaterialesScreen extends ConsumerWidget {
                                                         "Unidad: ${unidadSeleccionada?.name}"),
                                                     Text(
                                                         "Descripción: ${descripcionController.text}"),
-                                                    
                                                     Text(
                                                         "Conversión: ${conversionController.text}"),
                                                   ],
@@ -237,7 +236,7 @@ class MaterialesScreen extends ConsumerWidget {
                                                       codigoController.clear();
                                                       descripcionController
                                                           .clear();
-                                                      
+
                                                       conversionController
                                                           .clear();
                                                       unidadSeleccionada = null;

@@ -107,15 +107,10 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
             actions: [
               TextButton(
                   onPressed: () {
-                    ref
+                  ref
                         .read(materialProvider.notifier)
                         .addMaterialToSelected(selectedMaterial);
                     print('Material Agregado  ${selectedMaterial.codigo} ');
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Seguir agregando')),
-              TextButton(
-                  onPressed: () {
                     Navigator.of(context).pop();
                     _handleFinalizeConsumptions();
                   },

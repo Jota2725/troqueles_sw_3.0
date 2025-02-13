@@ -9,6 +9,7 @@ import 'package:troqueles_sw/presentation/screens/tiempos/tiempos_screen.dart';
 import '../../../infrastructure/datasource/isar_datasource.dart';
 import '../../widgets/Tablas/completados_tabla.dart';
 import '../Troqueles/EnProceso/troquel_view_pages.dart';
+import '../consumos/consumos_screen.dart';
 import '../materiales/materiales_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -19,21 +20,10 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
-    
-
-    
   int _currentIndex = 0;
 
-
-
-  void closeOnExit(IsarDatasource isarDatasource) async {
-    exit(0);
-  }
-  
-  
   @override
   Widget build(BuildContext context) {
-    
     final size = MediaQuery.of(context).size;
     return NavigationView(
       appBar: const NavigationAppBar(
@@ -143,7 +133,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           PaneItem(
             icon: const Icon(Icons.inventory),
-            body: const Text('Consumos de material'),
+            body: const ConsumoScreen(),
             title: const Text('Consumos de material'),
           ),
           PaneItem(
@@ -163,13 +153,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
             title: const Text('Ajustes'),
           ),
           PaneItem(
-            icon:  Icon(Icons.exit_to_app, color:Color.fromRGBO(255,0,0,1)),
-            title: const Text('Salir'),
-            body: const Text(''),
-            onTap:(){   
-              final isarDatasource = IsarDatasource();
-            
-              closeOnExit(isarDatasource);})
+              icon:
+                  Icon(Icons.exit_to_app, color: Color.fromRGBO(255, 0, 0, 1)),
+              title: const Text('Salir'),
+              body: const Text(''),
+              onTap: () {
+                final isarDatasource = IsarDatasource();
+                isarDatasource.closeDB;
+                exit(0);
+              })
         ],
         selected: _currentIndex,
         displayMode: PaneDisplayMode.auto,
