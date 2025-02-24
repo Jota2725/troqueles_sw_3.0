@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:troqueles_sw/domain/datasource/materiales.datasource.dart';
 import 'package:troqueles_sw/domain/entities/materiales.dart';
+import 'package:troqueles_sw/infrastructure/datasource/materiales_datasource.dart';
 import '../../infrastructure/datasource/isar_datasource.dart';
 
 class MaterialNotifier extends StateNotifier<List<Materiales>> {
@@ -38,6 +40,17 @@ class MaterialNotifier extends StateNotifier<List<Materiales>> {
     state = List.from(state); // Notificar cambios.
   }
 
+
+Future<void> addMaterialesFromList(List<Materiales> materiales) async {
+    try {
+      await _isarDatasource.addNewMaterial(materiales);
+      // Recargar la lista de materiales después de agregar nuevos
+      await loadMateriales();
+    } catch (e) {
+      // Manejar errores
+      print('Error al agregar materiales desde la lista: $e');
+    }
+  }
   // Buscar materiales
   Future<void> searchMaterial(String query) async {
     final result = await _isarDatasource.gettAllMateriles(); // Ajusta la lógica según tu base de datos
@@ -57,3 +70,8 @@ final materialProvider =
 // Proveedor para el material seleccionado
 final selectedMaterialProvider =
     StateProvider<Materiales?>((ref) => null);
+
+
+final materialesDatasourceProvider = Provider<MaterialesDatasource>((ref) {
+  return MaterialesDatasourceImpl();
+});

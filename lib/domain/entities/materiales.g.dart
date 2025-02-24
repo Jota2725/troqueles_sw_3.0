@@ -139,6 +139,7 @@ const _MaterialestipoEnumValueMap = {
   'gomas': 3,
   'herramientas': 4,
   'prealistamientos': 5,
+  'aros': 6,
 };
 const _MaterialestipoValueEnumMap = {
   0: Tipo.maderas,
@@ -147,6 +148,7 @@ const _MaterialestipoValueEnumMap = {
   3: Tipo.gomas,
   4: Tipo.herramientas,
   5: Tipo.prealistamientos,
+  6: Tipo.aros,
 };
 const _MaterialesunidadEnumValueMap = {
   'mts': 0,

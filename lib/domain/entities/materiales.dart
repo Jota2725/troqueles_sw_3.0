@@ -42,4 +42,4 @@ enum Unidad<String> {
   tiras_plan,
 }
 
-enum Tipo { maderas, cuchillas, escores, gomas, herramientas, prealistamientos }
+enum Tipo { maderas, cuchillas, escores, gomas, herramientas, prealistamientos,aros }

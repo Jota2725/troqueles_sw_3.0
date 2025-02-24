@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:isar/isar.dart';
-
 import 'package:troqueles_sw/domain/datasource/local_storage_datasource.dart';
 import 'package:troqueles_sw/domain/entities/consumo.dart';
 import 'package:troqueles_sw/domain/entities/materiales.dart';
@@ -23,8 +21,6 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   Future<Isar> openDB() async {
-    
-
     if (Isar.instanceNames.isEmpty) {
       return await Isar.open(
         [
@@ -81,56 +77,42 @@ class IsarDatasource extends LocalStorageDatasource {
   // GUARDAR TROQUEL
   @override
   Future<void> saveTroqueles(List<Troquel> troqueles) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.troquels.putAll(troqueles);
     });
-    await deleteLockfile();
   }
 
   //OBTENER TODOS LOS TROQUELES
   @override
   Future<List<Troquel>> getAllTroqueles() async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     final troqueles = await isar.troquels.where().findAll();
-    await deleteLockfile();
+
     return troqueles;
   }
 
   // ELIMINAR TODOS LOS TROQUELES
   @override
   Future<void> deleteAllTroqueles() async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.troquels.clear();
     });
-    await deleteLockfile();
   }
 
   // BORRAR TROQUEL
   @override
   Future<void> deleteTroquel(int id) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.troquels.delete(id);
     });
-    await deleteLockfile();
   }
 
   // OBTENER TROQUEL POR ID
   @override
   Future<Troquel?> getTroquelByGicoAndMaquina(int gico, String maquina) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
-
     final isar = await db;
     final troquel = await isar.troquels
         .filter()
@@ -139,15 +121,12 @@ class IsarDatasource extends LocalStorageDatasource {
         .maquinaEqualTo(maquina)
         .findFirst();
 
-    await deleteLockfile();
     return troquel;
   }
 
   //ACTUALIZAR TROQUEL
   @override
   Future<void> updateTroquel(Troquel troquel) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       final updatedTroquel = Troquel(
@@ -169,35 +148,27 @@ class IsarDatasource extends LocalStorageDatasource {
 
       await isar.troquels.put(updatedTroquel);
     });
-    await deleteLockfile();
   }
 
   @override
   Future<void> deleteAllTroquelesbyMachine(String maquina) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.troquels.filter().maquinaEqualTo(maquina).deleteAll();
     });
-    await deleteLockfile();
   }
 
   @override
   Future<List<Troquel>> getAllTroquelesPorMaquina(String maquina) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     final troqueles =
         await isar.troquels.filter().maquinaEqualTo(maquina).findAll();
-    await deleteLockfile();
+
     return troqueles;
   }
 
   @override
   Future<List<Troquel>> getTroquelesLibres(String maquina) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     final query = isar.troquels
         .where()
@@ -208,70 +179,56 @@ class IsarDatasource extends LocalStorageDatasource {
         .and()
         .maquinaEqualTo(maquina);
     final troqueles = await query.findAll();
-    await deleteLockfile();
+
     return troqueles;
   }
 
 //-------------------------------------------------------Troqueles en proceso------------------------------------------------------------------------------------------------------
   @override
   Future<List<Proceso>> getAllTroquelesInProcess() async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
 
-   final procesos = await isar.procesos.where().findAll();
+    final procesos = await isar.procesos.where().findAll();
 
-    await deleteLockfile();
-
-    return  procesos;
+    return procesos;
   }
 
-
   Future<List<Proceso>> getTroquelesByEstado(Estado estado) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     final procesos =
         await isar.procesos.where().filter().estadoEqualTo(estado).findAll();
-        await deleteLockfile();
+
     return procesos;
   }
 
   Future<Proceso?> getTroquelInProcess(String troquel) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
-    final proceso = await isar.procesos.filter().ntroquelEqualTo(troquel).findFirst();
-    await deleteLockfile();
+    final proceso =
+        await isar.procesos.filter().ntroquelEqualTo(troquel).findFirst();
+
     return proceso;
   }
 
   @override
   Future<void> addNewTroquelInProcess(List<Proceso> proceso) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.procesos.putAll(proceso);
     });
-    await deleteLockfile();
   }
 
   @override
   Future<void> deleteTroquelInProcees(int id) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.procesos.delete(id);
     });
-    await deleteLockfile();
   }
 
   @override
   Future<void> updatedTroquelInProcess(Proceso proceso) async {
     final isar = await db;
-    return await isar.writeTxn(() async {
+    await isar.writeTxn(() async {
       final updatedProceso = Proceso(
           ntroquel: proceso.ntroquel,
           fechaIngreso: proceso.fechaIngreso,
@@ -290,24 +247,22 @@ class IsarDatasource extends LocalStorageDatasource {
 
   @override
   Future<List<Consumo>> getAllConsumos() async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
-    return await isar.consumos.where().findAll();
+    final consumos = await isar.consumos.where().findAll();
+
+    return consumos;
   }
 
   //----------------------MATERIALES---------------------------------------
   @override
   Future<List<Materiales>> gettAllMateriles() async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
-    return await isar.materiales.where().findAll();
+    final materiales = await isar.materiales.where().findAll();
+
+    return materiales;
   }
 
   Future<void> addNewMaterial(List<Materiales> materiales) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.materiales.putAll(materiales);
@@ -315,8 +270,6 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   Future<void> addNewConsumo(List<Consumo> consumos) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.consumos.putAll(consumos);
@@ -330,15 +283,13 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   Future<List<Tiempos>> getAllTiempos() async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
-    return await isar.tiempos.where().findAll();
+    final tiempos = await isar.tiempos.where().findAll();
+
+    return tiempos;
   }
 
   Future<void> addNewTiempo(List<Tiempos> tiempos) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.tiempos.putAll(tiempos);
@@ -346,15 +297,13 @@ class IsarDatasource extends LocalStorageDatasource {
   }
 
   Future<List<Operario>> getAllOperarios() async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
-    return await isar.operarios.where().findAll();
+    final operario = await isar.operarios.where().findAll();
+
+    return operario;
   }
 
   Future<void> addNewOperarios(List<Operario> operarios) async {
-    await ensureNoOtherInstance(); // Verificar que no haya otra instancia
-    await createLockfile();
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.operarios.putAll(operarios);

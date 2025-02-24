@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/materiales.dart';
+
 import '../../../utils/input_decorations.dart';
 import '../../providers/materials_provider.dart';
 
@@ -260,7 +261,61 @@ class MaterialesScreen extends ConsumerWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ))
+                                    )),
+                                    TextButton.icon(
+                                      onPressed: () async {
+                                        // Obtener la instancia de MaterialesDatasourceImpl
+                                        final materialesDatasource = ref
+                                            .read(materialesDatasourceProvider);
+                                        try {
+                                          // Importar materiales desde Excel
+                                          final materialesImportados =
+                                              await materialesDatasource
+                                                  .seleccionarArchivoExcel(
+                                                      'Data');
+                                          if (materialesImportados.isNotEmpty) {
+                                            // Notificar al usuario que la importación fue exitosa
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    'Se importaron ${materialesImportados.length} materiales correctamente.'),
+                                                backgroundColor: Colors.green,
+                                              ),
+                                            );
+
+                                            // Actualizar la lista de materiales en el provider
+                                            final materialNotifier = ref.read(
+                                                materialProvider.notifier);
+                                            await materialNotifier
+                                                .addMaterialesFromList(
+                                                    materialesImportados);
+                                          } else {
+                                            // Notificar al usuario que no se importó ningún material
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    'No se importaron materiales.'),
+                                                backgroundColor: Colors.orange,
+                                              ),
+                                            );
+                                          }
+                                        } catch (e) {
+                                          // Notificar al usuario que ocurrió un error
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  'Error al importar materiales: $e'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      icon: const Icon(Icons.upload),
+                                      label: const Text('Importar excel'),
+                                    ),
                                   ],
                                 ),
                               ),

@@ -10,7 +10,7 @@ class Tiempos {
   final String fecha;
   final String ntroquel;
   final String? operarios;
-  final int tiempo;
+  final double tiempo;
   @enumerated
   final Actividad actividad;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:troqueles_sw/presentation/widgets/forms/Bibliaco/texfields_widgtes.dart';
 import '../../../../domain/entities/operario.dart';
 import '../../../../domain/entities/tiempos.dart';
@@ -20,9 +21,10 @@ class FormTiempos extends ConsumerWidget {
     final size = MediaQuery.of(context).size.width;
     final selectedProceso = ref.watch(selectedProcesoProvider);
 
-    final TextEditingController dateController = TextEditingController();
     final TextEditingController timeController = TextEditingController();
     final selectedOpeer = ref.watch(selectedOperarioProvider);
+    DateTime now = DateTime.now();
+    String fromattedDate = DateFormat('yyyy-MM-dd').format(now);
 
     return Scaffold(
       appBar: AppBar(
@@ -52,20 +54,12 @@ class FormTiempos extends ConsumerWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Ingrese una fecha válida';
-                        }
-                        return null;
-                      },
-                      controller: dateController,
-                      enabled: true,
-                      decoration: InputDecorations.authInputDescoration(
-                        hintText: 'Seleccione la fecha',
-                        labelText: 'Fecha',
-                      ),
-                    ),
+
+                    CustomTextField(
+                        label: 'Fecha',
+                        value: fromattedDate,
+                        enabled: false),
+
                     const SizedBox(
                       height: 10,
                     ),
@@ -137,15 +131,13 @@ class FormTiempos extends ConsumerWidget {
                           color: Colors.white),
                       onPressed: () async {
                         if (keyForm.currentState!.validate()) {
-                         
-
                           final newtiempo = Tiempos(
-                              fecha: dateController.text,
-                              tiempo: int.parse(timeController.text),
+                              fecha: fromattedDate,
+                              tiempo: double.parse(timeController.text),
                               actividad: actividadSeleccionada!,
                               ntroquel: selectedProceso!.ntroquel,
                               operarios: selectedOpeer!.nombre);
-                        
+
                           await ref
                               .read(timeProvider.notifier)
                               .addTiempos(newtiempo);

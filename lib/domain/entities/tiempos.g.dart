@@ -41,7 +41,7 @@ const TiemposSchema = CollectionSchema(
     r'tiempo': PropertySchema(
       id: 4,
       name: r'tiempo',
-      type: IsarType.long,
+      type: IsarType.double,
     )
   },
   estimateSize: _tiemposEstimateSize,
@@ -85,7 +85,7 @@ void _tiemposSerialize(
   writer.writeString(offsets[1], object.fecha);
   writer.writeString(offsets[2], object.ntroquel);
   writer.writeString(offsets[3], object.operarios);
-  writer.writeLong(offsets[4], object.tiempo);
+  writer.writeDouble(offsets[4], object.tiempo);
 }
 
 Tiempos _tiemposDeserialize(
@@ -101,7 +101,7 @@ Tiempos _tiemposDeserialize(
     fecha: reader.readString(offsets[1]),
     ntroquel: reader.readString(offsets[2]),
     operarios: reader.readStringOrNull(offsets[3]),
-    tiempo: reader.readLong(offsets[4]),
+    tiempo: reader.readDouble(offsets[4]),
   );
   object.isarId = id;
   return object;
@@ -124,7 +124,7 @@ P _tiemposDeserializeProp<P>(
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -770,46 +770,54 @@ extension TiemposQueryFilter
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> tiempoEqualTo(
-      int value) {
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'tiempo',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> tiempoGreaterThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'tiempo',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> tiempoLessThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'tiempo',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> tiempoBetween(
-    int lower,
-    int upper, {
+    double lower,
+    double upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -818,6 +826,7 @@ extension TiemposQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -1034,7 +1043,7 @@ extension TiemposQueryProperty
     });
   }
 
-  QueryBuilder<Tiempos, int, QQueryOperations> tiempoProperty() {
+  QueryBuilder<Tiempos, double, QQueryOperations> tiempoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tiempo');
     });
