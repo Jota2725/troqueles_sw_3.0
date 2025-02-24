@@ -21,7 +21,7 @@ class SearchOperario extends ConsumerWidget {
 
     return SearchAnchor.bar(
       barHintText: 'Ingrese la ficha del Maestro Troquelero',
-      viewBackgroundColor: Colors.black,
+     
       suggestionsBuilder: (BuildContext context, SearchController controller) {
         final String input = controller.value.text.toLowerCase().trim();
 

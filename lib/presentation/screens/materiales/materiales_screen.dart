@@ -79,7 +79,7 @@ class MaterialesScreen extends ConsumerWidget {
                                       height: 20,
                                     ),
                                     DropdownButtonFormField(
-                                      dropdownColor: Colors.black,
+                                      
                                       items: getDropdownItems(),
                                       onChanged: (value) {
                                         unidadSeleccionada = value;
@@ -119,7 +119,7 @@ class MaterialesScreen extends ConsumerWidget {
                                       height: 20,
                                     ),
                                     DropdownButtonFormField(
-                                      dropdownColor: Colors.black,
+                                      
                                       items: getDropdownItemsTipo(),
                                       onChanged: (value) {
                                         tipoSeleccionado = value;
@@ -171,7 +171,7 @@ class MaterialesScreen extends ConsumerWidget {
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                backgroundColor: Colors.black,
+                                                
                                                 title:
                                                     Text("Confirmar creación"),
                                                 content: Column(

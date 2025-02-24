@@ -20,7 +20,7 @@ class SearchMaterials extends ConsumerWidget {
 
     return SearchAnchor.bar(
       barHintText: 'Buscar material por código',
-      viewBackgroundColor: Colors.black,
+      
       suggestionsBuilder: (BuildContext context, SearchController controller) {
         final String input = controller.value.text.toLowerCase().trim();
 

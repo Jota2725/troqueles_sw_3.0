@@ -66,7 +66,7 @@ class TroquelSearchDelegate extends SearchDelegate {
     return const Center(
       child: Icon(
         Icons.search,
-        color: Colors.black38,
+        
         size: 150,
       ),
     );

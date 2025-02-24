@@ -80,7 +80,7 @@ class FormTiempos extends ConsumerWidget {
                     //ACTIVIDAD
 
                     DropdownButtonFormField(
-                      dropdownColor: Colors.black,
+                      
                       items: getDropdownItemsActivity(),
                       onChanged: (value) {
                         actividadSeleccionada = value;

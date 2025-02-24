@@ -100,7 +100,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor: Colors.black,
+            
             title: const Text("Confirmar material agregado"),
             content: Text(
                 ' Se va a agregar a la lista el material  ${selectedMaterial.codigo} - ${selectedMaterial.descripcion}, con la cantidad consumida de ${cantidadController.text}'),
@@ -148,7 +148,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor: Colors.black,
+            
             title: const Text(
               "Confirmar",
               style: TextStyle(color: Colors.white),
@@ -207,7 +207,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              backgroundColor: Colors.black,
+              
               title: const Text('¿Sin materiales? '),
               content: const Text(
                   'Debe ingresar como minimo un material para poder finalizar el consumo'),
