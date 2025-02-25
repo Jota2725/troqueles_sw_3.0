@@ -135,6 +135,7 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
       final consumo = Consumo(
         cantidad: int.parse(cantidadController.text),
         nTroquel: widget.ntroquel,
+        planta: widget.planta,
         cliente: widget.cliente,
         tipo: widget.tipoTrabajo,
       );

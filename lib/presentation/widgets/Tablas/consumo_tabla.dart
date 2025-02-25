@@ -13,6 +13,7 @@ class ConsumosTabla extends ConsumerWidget {
     final consumos = ref.watch(consumoProvider);
 
     return SingleChildScrollView(
+      
       child: Column(
         children: [
           TablaConsumo(consumo: consumos, consumoNotifier: consumosNotifier)
@@ -47,6 +48,7 @@ class _TablaConsumoState extends State<TablaConsumo> {
           showEmptyRows: false,
           showFirstLastButtons: true,
           columns: const [
+            DataColumn(label: Text('Planta')),
             DataColumn(label: Text('Cliente')),
             DataColumn(label: Text('Ntroquel')),
             DataColumn(label: Text('Codigo')),
@@ -85,6 +87,7 @@ class _ConsumoDataSource extends DataTableSource {
   DataRow getRow(int index) {
     final consumo = consumos[index];
     return DataRow(cells: [
+      DataCell(Text(consumo.planta)),
       DataCell(Text(consumo.cliente)),
       DataCell(Text(consumo.nTroquel)),
       DataCell(Text(consumo.materiales
@@ -97,7 +100,7 @@ class _ConsumoDataSource extends DataTableSource {
           .map((material) => material.unidad.name)
           .join(','))),
       DataCell(Text(consumo.materiales
-          .map((material) => material.descripcion)
+          .map((material) => _truncarDescripcion(material.descripcion, 10)  )
           .join(','))),
       DataCell(Text(
           consumo.materiales.map((material) => material.tipo.name).join(','))),
@@ -113,3 +116,10 @@ class _ConsumoDataSource extends DataTableSource {
   @override
   int get selectedRowCount => 0;
 }
+
+String _truncarDescripcion(String descripcion, int maxChars) {
+    if (descripcion.length <= maxChars) {
+      return descripcion;
+    }
+    return '${descripcion.substring(0, maxChars)}...';
+  }

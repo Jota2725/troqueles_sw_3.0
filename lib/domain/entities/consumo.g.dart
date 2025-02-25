@@ -32,8 +32,13 @@ const ConsumoSchema = CollectionSchema(
       name: r'nTroquel',
       type: IsarType.string,
     ),
-    r'tipo': PropertySchema(
+    r'planta': PropertySchema(
       id: 3,
+      name: r'planta',
+      type: IsarType.string,
+    ),
+    r'tipo': PropertySchema(
+      id: 4,
       name: r'tipo',
       type: IsarType.string,
     )
@@ -68,6 +73,7 @@ int _consumoEstimateSize(
   var bytesCount = offsets.last;
   bytesCount += 3 + object.cliente.length * 3;
   bytesCount += 3 + object.nTroquel.length * 3;
+  bytesCount += 3 + object.planta.length * 3;
   bytesCount += 3 + object.tipo.length * 3;
   return bytesCount;
 }
@@ -81,7 +87,8 @@ void _consumoSerialize(
   writer.writeLong(offsets[0], object.cantidad);
   writer.writeString(offsets[1], object.cliente);
   writer.writeString(offsets[2], object.nTroquel);
-  writer.writeString(offsets[3], object.tipo);
+  writer.writeString(offsets[3], object.planta);
+  writer.writeString(offsets[4], object.tipo);
 }
 
 Consumo _consumoDeserialize(
@@ -94,7 +101,8 @@ Consumo _consumoDeserialize(
     cantidad: reader.readLong(offsets[0]),
     cliente: reader.readString(offsets[1]),
     nTroquel: reader.readString(offsets[2]),
-    tipo: reader.readString(offsets[3]),
+    planta: reader.readString(offsets[3]),
+    tipo: reader.readString(offsets[4]),
   );
   object.isarid = id;
   return object;
@@ -114,6 +122,8 @@ P _consumoDeserializeProp<P>(
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
+      return (reader.readString(offset)) as P;
+    case 4:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -594,6 +604,136 @@ extension ConsumoQueryFilter
     });
   }
 
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'planta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'planta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'planta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'planta',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'planta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'planta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'planta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'planta',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'planta',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterFilterCondition> plantaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'planta',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Consumo, Consumo, QAfterFilterCondition> tipoEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -826,6 +966,18 @@ extension ConsumoQuerySortBy on QueryBuilder<Consumo, Consumo, QSortBy> {
     });
   }
 
+  QueryBuilder<Consumo, Consumo, QAfterSortBy> sortByPlanta() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'planta', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterSortBy> sortByPlantaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'planta', Sort.desc);
+    });
+  }
+
   QueryBuilder<Consumo, Consumo, QAfterSortBy> sortByTipo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipo', Sort.asc);
@@ -889,6 +1041,18 @@ extension ConsumoQuerySortThenBy
     });
   }
 
+  QueryBuilder<Consumo, Consumo, QAfterSortBy> thenByPlanta() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'planta', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Consumo, Consumo, QAfterSortBy> thenByPlantaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'planta', Sort.desc);
+    });
+  }
+
   QueryBuilder<Consumo, Consumo, QAfterSortBy> thenByTipo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipo', Sort.asc);
@@ -924,6 +1088,13 @@ extension ConsumoQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Consumo, Consumo, QDistinct> distinctByPlanta(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'planta', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Consumo, Consumo, QDistinct> distinctByTipo(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -955,6 +1126,12 @@ extension ConsumoQueryProperty
   QueryBuilder<Consumo, String, QQueryOperations> nTroquelProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nTroquel');
+    });
+  }
+
+  QueryBuilder<Consumo, String, QQueryOperations> plantaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'planta');
     });
   }
 
