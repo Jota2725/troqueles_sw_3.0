@@ -6,6 +6,7 @@ import 'package:troqueles_sw/presentation/screens/Troqueles/bibliaco/bibliaco_pa
 import 'package:troqueles_sw/presentation/screens/consumos_tiempos/consumos_and_times.dart';
 import 'package:troqueles_sw/presentation/screens/home_screen.dart';
 import 'package:troqueles_sw/presentation/screens/tiempos/tiempos_screen.dart';
+import '../../../config/router/app_router.dart';
 import '../../../infrastructure/datasource/isar_datasource.dart';
 import '../../widgets/Tablas/completados_tabla.dart';
 import '../Troqueles/EnProceso/troquel_view_pages.dart';
@@ -14,7 +15,10 @@ import '../materiales/materiales_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   static const name = 'Navegation_Screen';
-  const NavigationScreen({super.key});
+  final UserType userType;
+
+  const NavigationScreen({super.key, required this.userType});
+
   @override
   State<NavigationScreen> createState() => _NavigationScreenState();
 }
@@ -57,6 +61,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               items: [
                 PaneItemHeader(header: const Text('Maquinas')),
                 PaneItem(
+                  enabled: widget.userType == UserType.operario ? false : true,
                   icon: const Icon(Icons.factory),
                   body: const BibliacoPages(
                     titulo: 'Troqueladora Ward',
@@ -69,29 +74,34 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   body: const BibliacoPages(
                       titulo: 'Troqueladora Flexo ward', hojaDeseada: 'FW'),
                   title: const Text('Flexo Ward'),
+                  enabled: widget.userType == UserType.operario ? false : true,
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
                   body: const BibliacoPages(
                       titulo: 'Holandeza', hojaDeseada: 'TW'),
                   title: const Text('Holandeza'),
+                  enabled: widget.userType == UserType.operario ? false : true,
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
                   body: const BibliacoPages(
                       titulo: 'JS Machine', hojaDeseada: 'JS'),
+                      enabled: widget.userType == UserType.operario ? false : true,
                   title: const Text('Js Machine'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
                   body: const BibliacoPages(
                       titulo: 'Mini Line', hojaDeseada: 'ML'),
+                      enabled: widget.userType == UserType.operario ? false : true,
                   title: const Text('Mini line'),
                 ),
                 PaneItem(
                   icon: const Icon(Icons.factory),
                   body:
                       const BibliacoPages(titulo: 'DonFang', hojaDeseada: 'DF'),
+                      enabled: widget.userType == UserType.operario ? false : true,
                   title: const Text('DongFang'),
                 ),
               ]),
@@ -99,16 +109,19 @@ class _NavigationScreenState extends State<NavigationScreen> {
             icon: const Icon(Icons.autorenew),
             body: const TroquelViewPages(),
             title: const Text('Troqueles en proceso'),
+            enabled: widget.userType == UserType.operario ? false : true,
           ),
           PaneItem(
             icon: const Icon(Icons.fact_check_outlined),
             body: const CompletadosTable(),
             title: const Text('Troqueles terminados'),
+            enabled: widget.userType == UserType.operario ? false : true,
           ),
           PaneItem(
             icon: const Icon(Icons.delete_forever),
             body: const Text(''),
             title: const Text('Troqueles Obsoletos'),
+            enabled: widget.userType == UserType.operario ? false : true,
           ),
           PaneItemHeader(header: const Text('Consumos  y materiales ')),
           PaneItem(
@@ -120,26 +133,31 @@ class _NavigationScreenState extends State<NavigationScreen> {
             icon: const Icon(Icons.document_scanner),
             body: const Text('General'),
             title: const Text('General'),
+            enabled: widget.userType == UserType.operario ? false : true,
           ),
           PaneItem(
             icon: const Icon(Icons.access_time_outlined),
             body: const TiemposScreen(),
             title: const Text('Tiempos'),
+            enabled: widget.userType == UserType.operario ? false : true,
           ),
           PaneItem(
             icon: const Icon(Icons.widgets),
             body: const MaterialesScreen(),
             title: const Text('Materiales'),
+            enabled: widget.userType == UserType.operario ? false : true,
           ),
           PaneItem(
             icon: const Icon(Icons.inventory),
             body: const ConsumoScreen(),
             title: const Text('Consumos de material'),
+            enabled: widget.userType == UserType.operario ? false : true,
           ),
           PaneItem(
             icon: const Icon(Icons.summarize),
             body: const Text('Resumen'),
             title: const Text('Resumen'),
+            enabled: widget.userType == UserType.operario ? false : true,
           ),
           PaneItemHeader(header: const Text('Accesibilidad')),
           PaneItem(
