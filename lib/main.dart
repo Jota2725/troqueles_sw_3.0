@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     final AppTheme appTheme = AppTheme();
 
     return FluentApp.router(
-      // Configuración del enrutador
+      // Configuración de Go router
       routerConfig: appRouter,
 
       // Configuración del tema

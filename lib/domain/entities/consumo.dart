@@ -1,7 +1,5 @@
 import 'package:isar/isar.dart';
-
 import 'materiales.dart';
-
 part 'consumo.g.dart';
 
 @collection

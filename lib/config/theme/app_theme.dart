@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 
 class AppTheme {
-  // Crear una paleta de acento personalizada para Fluent UI
+  // Paleta de acento personalizada para Fluent UI
   AccentColor get customAccentColor => AccentColor.swatch(const <String, Color>{
         'normal': Color(0xFF0BAFFE), // Color principal
         'lighter': Color(0xFF5FCFFF), // Más claro
@@ -11,6 +11,7 @@ class AppTheme {
         'darker': Color(0xFF065780), // Más oscuro
       });
 
+// Configuración del tema  de Fluent UI claro
   FluentThemeData getLightFluentTheme() => FluentThemeData(
         brightness: Brightness.light,
         accentColor: customAccentColor,
@@ -19,6 +20,7 @@ class AppTheme {
         dialogTheme: const ContentDialogThemeData(
           barrierColor: Color.fromARGB(255, 255, 255, 255),
         ),
+        // Tema del navegation Theme
         navigationPaneTheme: NavigationPaneThemeData(
           backgroundColor: const Color(0xFFF5F5F5),
           selectedIconColor: WidgetStateProperty.all(customAccentColor),
@@ -30,6 +32,7 @@ class AppTheme {
         ),
       );
 
+// Configuración del tema de Fluent UI oscuro
   FluentThemeData getDarkFluentTheme() => FluentThemeData(
         brightness: Brightness.dark,
         accentColor: customAccentColor,
@@ -49,6 +52,7 @@ class AppTheme {
         ),
       );
 
+//Configuracion del tema de Material 
   material.ThemeData getMaterialTheme(bool isDarkMode) => material.ThemeData(
         brightness:
             isDarkMode ? material.Brightness.dark : material.Brightness.light,
