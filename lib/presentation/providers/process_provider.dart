@@ -1,9 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
-
 import '../../domain/entities/proceso.dart';
-
 
 final selectedProcesoProvider = StateProvider<Proceso?>((ref) => null);
 
@@ -12,14 +9,10 @@ class TroquelNotifierInProceso extends StateNotifier<List<Proceso>> {
 
   TroquelNotifierInProceso(this._isarDatasource) : super([]);
 
-
-
-  final selectedProcesoProvider = StateProvider<Proceso?>((ref) => null);
-
-  // Inicializar y cargar troqueles por maquina
+  // Inicializar y cargar troqueles por máquina
   Future<void> loadTroquelesInProcces() async {
     final todosLosProcesos = await _isarDatasource.getAllTroquelesInProcess();
-    state =  todosLosProcesos.where((proceso) => proceso.estado != Estado.completado).toList();
+    state = todosLosProcesos.where((proceso) => proceso.estado != Estado.completado).toList();
   }
 
   // Agregar un nuevo troquel
@@ -33,13 +26,10 @@ class TroquelNotifierInProceso extends StateNotifier<List<Proceso>> {
     await loadTroquelesInProcces();
   }
 
-  Future<void> searchTroquelInProcess(
-    String proceso,
-  ) async {
+  Future<void> searchTroquelInProcess(String proceso) async {
     final result = await _isarDatasource.getTroquelInProcess(proceso);
     if (result != null) {
-      state = [result];
-      // Actualiza el estado con el troquel encontrado
+      state = [result]; // Actualiza el estado con el troquel encontrado
     } else {
       state = []; // Limpia el estado si no se encuentra el troquel
     }
@@ -57,14 +47,10 @@ class TroquelNotifierInProceso extends StateNotifier<List<Proceso>> {
     await loadTroquelesInProcces(); // Recargar los troqueles por máquina
   }
 
-//   Future<void> deleteAllTroquelesbyMachine() async {
-//     await _isarDatasource.deleteTroquelInProcees();
-//     await loadTroqueles(maquina);
-//   }
-// Future<void> loadTroquelesLibres(String maquina) async {
-//     final troquelesLibres = await _isarDatasource.getTroquelesLibres(maquina);
-//     state = troquelesLibres; // Actualizar el estado con los troqueles libres específicos de la máquina
-//   }
+  // Método para actualizar el orden de los procesos
+  void updateProcesosOrder(List<Proceso> nuevosProcesos) {
+    state = nuevosProcesos; // Actualiza el estado con la nueva lista ordenada
+  }
 }
 
 // Provider de TroquelNotifier

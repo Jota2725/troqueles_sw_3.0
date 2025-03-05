@@ -36,9 +36,11 @@ class ProcesosScreen extends ConsumerWidget {
                 onPressed: () => proceso.loadTroquelesInProcces()),
           ],
         ),
-        TablaEnProceso(
-          procesos: procesos,
-          pageController: pageController,
+        SingleChildScrollView(
+          child: TablaEnProceso(
+            procesos: procesos,
+            pageController: pageController,
+          ),
         ),
       ],
     );

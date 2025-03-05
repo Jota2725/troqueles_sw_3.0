@@ -30,7 +30,7 @@ class ConsumosAndTimes extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-                child: Container(
+                child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.5,
                     child: selectedProceso != null
                         ? ConsumosPage(
@@ -45,7 +45,7 @@ class ConsumosAndTimes extends ConsumerWidget {
                             style: TextStyle(color: Colors.white),
                           )))),
             Expanded(
-                child: Container(
+                child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.5,
               child: FormTiempos(ntroquel: selectedProceso?.ntroquel ?? ''),
             )),

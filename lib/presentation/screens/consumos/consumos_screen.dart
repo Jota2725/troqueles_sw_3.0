@@ -39,9 +39,9 @@ class _ConsumosScreenState extends ConsumerState<ConsumoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return const SingleChildScrollView(
         child: Column(
-      children: const [ConsumosTabla()],
+      children: [ConsumosTabla()],
     ));
   }
 }

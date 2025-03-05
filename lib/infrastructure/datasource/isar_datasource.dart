@@ -44,16 +44,6 @@ class IsarDatasource extends LocalStorageDatasource {
     return installDir;
   }
 
-  Future<bool> isAppInUse() async {
-    final lockfilep = File(lockfile);
-    return await lockfilep.exists();
-  }
-
-  Future<void> createLockfile() async {
-    final lockfilep = File(lockfile);
-    await lockfilep.writeAsString('locked', mode: FileMode.writeOnly);
-  }
-
   Future<void> deleteLockfile() async {
     final lockfilep = File(lockfile);
     if (await lockfilep.exists()) {
@@ -63,13 +53,6 @@ class IsarDatasource extends LocalStorageDatasource {
 
   Future<void> closeDB() async {
     await deleteLockfile();
-  }
-
-  Future<void> ensureNoOtherInstance() async {
-    final lockFilep = File(lockfile);
-    if (await lockFilep.exists()) {
-      throw Exception('La base de datos está en uso en otro computador.');
-    }
   }
 
   // -----------------------------------------CRUD DE TROQUELES ----------------------------------------------
