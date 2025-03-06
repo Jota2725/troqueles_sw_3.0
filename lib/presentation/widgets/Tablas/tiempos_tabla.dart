@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/tiempos.dart';
 import 'package:troqueles_sw/presentation/providers/timepos_provider.dart';
+import 'package:troqueles_sw/presentation/widgets/formularios/tiempos/editTimes/camposTime.dart';
 
 class TiemposTabla extends ConsumerWidget {
   const TiemposTabla({super.key});
@@ -36,9 +37,8 @@ class _TablaTiemposState extends State<TablaTiempos> {
       width: double.infinity,
       child: Material(
         child: PaginatedDataTable(
-            showEmptyRows: false,
-            showFirstLastButtons: true
-            ,
+          showEmptyRows: false,
+          showFirstLastButtons: true,
           columns: const [
             DataColumn(label: Text('Fecha')),
             DataColumn(label: Text('Numero Troquel')),
@@ -81,12 +81,22 @@ class _TimposDataSource extends DataTableSource {
         children: [
           IconButton(
             tooltip: 'Editar Troquel',
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return EditTiempos(
+                      tiempos: tiempo,
+                    );
+                  });
+            },
             icon: const Icon(Icons.edit),
           ),
           IconButton(
             tooltip: 'Eliminar Troquel',
-            onPressed: () {},
+            onPressed: () {
+              troquelNotifier.deleteTiempos(tiempo.isarId!);
+            },
             icon: const Icon(Icons.delete, color: Colors.red),
           ),
         ],

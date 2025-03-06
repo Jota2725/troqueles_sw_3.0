@@ -1,25 +1,19 @@
-
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/tiempos.dart';
 import '../../infrastructure/datasource/isar_datasource.dart';
 
-
-
-
 final timeProvider =
     StateNotifierProvider<TiemposNotifier, List<Tiempos>>((ref) {
   final isarDatasource = IsarDatasource();
-  return TiemposNotifier(   isarDatasource);
+  return TiemposNotifier(isarDatasource);
 });
 
 class TiemposNotifier extends StateNotifier<List<Tiempos>> {
   final IsarDatasource _isarDatasource;
   TiemposNotifier(this._isarDatasource) : super([]);
 
-
-   Future<void> loadTiempos() async {
+  Future<void> loadTiempos() async {
     state = await _isarDatasource.getAllTiempos();
   }
 
@@ -29,5 +23,13 @@ class TiemposNotifier extends StateNotifier<List<Tiempos>> {
     state = [...state, tiempo];
   }
 
-  
+  Future<void> updateTiempos(Tiempos tiempo) async {
+    await _isarDatasource.uptadeTime(tiempo);
+    loadTiempos();
+  }
+
+  Future<void> deleteTiempos(int id) async {
+    await _isarDatasource.deleteTiempos(id);
+    loadTiempos();
+  }
 }

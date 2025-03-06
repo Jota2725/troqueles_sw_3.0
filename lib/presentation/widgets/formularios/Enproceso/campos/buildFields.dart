@@ -47,14 +47,23 @@ class _ProcesoFieldsState extends State<ProcesoFields> {
           buildComboBox(
             label: 'Planta',
             selectedValue: widget.controller.selectedPlanta,
-            items: const ['CALI', 'BOGOTA', 'MEDELLIN', 'BARRANQUILLA', 'CORRUMED','PACKING','P.BOGOTA','R.DOMINICANA','COSTA RICA'],
+            items: const [
+              'CALI',
+              'BOGOTA',
+              'MEDELLIN',
+              'BARRANQUILLA',
+              'CORRUMED',
+              'PACKING',
+              'P.BOGOTA',
+              'R.DOMINICANA',
+              'COSTA RICA'
+            ],
             onChanged: (value) {
               setState(() {
                 widget.controller.selectedPlanta = value;
               });
             },
           ),
-          
           buildTextField('Cliente', 'cliente'),
         ]),
 
@@ -84,7 +93,7 @@ class _ProcesoFieldsState extends State<ProcesoFields> {
         ),
         const SizedBox(height: 10),
         // Campo de texto para "Cliente"
-        buildTextField('Observaciones','observaciones'),
+        buildTextField('Observaciones', 'observaciones'),
       ],
     );
   }
@@ -124,44 +133,47 @@ class _ProcesoFieldsState extends State<ProcesoFields> {
   }
 
   Widget buildComboBox({
-  required String label,
-  required String? selectedValue,
-  required List<String> items,
-  required ValueChanged<String?> onChanged,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-      SizedBox(
-        width: double.infinity, // Ocupa todo el ancho disponible
-        child: ComboBox<String>(
-          placeholder: Text(label),
-          value: selectedValue,
-          items: items
-              .map(
-                (item) => ComboBoxItem(
-                  value: item,
-                  child: Text(item),
-                ),
-              )
-              .toList(),
-          onChanged: onChanged,
+    required String label,
+    required String? selectedValue,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        SizedBox(
+          width: double.infinity, // Ocupa todo el ancho disponible
+          child: ComboBox<String>(
+            placeholder: Text(label),
+            value: selectedValue,
+            items: items
+                .map(
+                  (item) => ComboBoxItem(
+                    value: item,
+                    child: Text(item),
+                  ),
+                )
+                .toList(),
+            onChanged: onChanged,
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   Widget buildRow(List<Widget> children) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 20.0),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children
-          .expand((child) => [Expanded(child: child),const SizedBox(width: 10) ]) // Asegura que cada widget se expanda
-          .toList(),
-    ),
-  );
-}
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children
+            .expand((child) => [
+                  Expanded(child: child),
+                  const SizedBox(width: 10)
+                ]) // Asegura que cada widget se expanda
+            .toList(),
+      ),
+    );
+  }
 }

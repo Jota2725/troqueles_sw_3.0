@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:isar/isar.dart';
 import 'package:troqueles_sw/domain/datasource/local_storage_datasource.dart';
 import 'package:troqueles_sw/domain/entities/consumo.dart';
@@ -265,6 +266,7 @@ class IsarDatasource extends LocalStorageDatasource {
     });
   }
 
+//TIEMPOS CRUD
   Future<List<Tiempos>> getAllTiempos() async {
     final isar = await db;
     final tiempos = await isar.tiempos.where().findAll();
@@ -276,6 +278,27 @@ class IsarDatasource extends LocalStorageDatasource {
     final isar = await db;
     await isar.writeTxn(() async {
       await isar.tiempos.putAll(tiempos);
+    });
+  }
+
+  Future<void> uptadeTime(Tiempos tiempo) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      final updateTiempos = Tiempos(
+          operarios: tiempo.operarios,
+          fecha: tiempo.fecha,
+          ntroquel: tiempo.ntroquel,
+          tiempo: tiempo.tiempo,
+          actividad: tiempo.actividad)
+        ..isarId = tiempo.isarId;
+      await isar.tiempos.put(updateTiempos);
+    });
+  }
+
+  Future<void> deleteTiempos(int id) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.tiempos.delete(id);
     });
   }
 
