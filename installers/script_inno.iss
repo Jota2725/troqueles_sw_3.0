@@ -3,9 +3,10 @@
 
 #define MyAppName "Troqueles SW 1.0"
 #define MyAppVersion "1.0"
-#define MyAppPublisher "My Company, Inc."
-#define MyAppURL "https://www.example.com/"
+#define MyAppPublisher "Smurfit Westrock"
+#define MyAppURL "https://www.smurfitwestrock.com/"
 #define MyAppExeName "troqueles_sw.exe"
+
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -35,12 +36,11 @@ ArchitecturesAllowed=x64compatible
 ; meaning it should use the native 64-bit Program Files directory and
 ; the 64-bit view of the registry.
 ArchitecturesInstallIn64BitMode=x64compatible
-OutputDir=C:\Users\ronal\OneDrive\Escritorio\troqueles_sw\installers
+OutputDir= C:\Users\julia\OneDrive\Escritorio\Troqueles_sw\troqueles_sw\installers
 OutputBaseFilename=SetupTroqueles
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
@@ -49,12 +49,13 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\ronal\OneDrive\Escritorio\troqueles_sw\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\ronal\OneDrive\Escritorio\troqueles_sw\build\windows\x64\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\ronal\OneDrive\Escritorio\troqueles_sw\build\windows\x64\runner\Release\isar.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\ronal\OneDrive\Escritorio\troqueles_sw\build\windows\x64\runner\Release\isar_flutter_libs_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\ronal\OneDrive\Escritorio\troqueles_sw\build\windows\x64\runner\Release\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\julia\OneDrive\Escritorio\Troqueles_sw\troqueles_sw\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\julia\OneDrive\Escritorio\Troqueles_sw\troqueles_sw\build\windows\x64\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\julia\OneDrive\Escritorio\Troqueles_sw\troqueles_sw\build\windows\x64\runner\Release\isar.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\julia\OneDrive\Escritorio\Troqueles_sw\troqueles_sw\build\windows\x64\runner\Release\isar_flutter_libs_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\julia\OneDrive\Escritorio\Troqueles_sw\troqueles_sw\build\windows\x64\runner\Release\troqueles_sw.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -62,8 +63,6 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
-
 
 [Code]
 procedure InitializeWizard;
