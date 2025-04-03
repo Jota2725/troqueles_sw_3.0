@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:troqueles_sw/config/user_type.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -160,8 +161,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10,),
-                const Text('By Runyy 25/02/2025  ')
+                  const SizedBox(height: 10),
+                  const Text('By Runyy 25/02/2025')
                 ],
               ),
             ),
@@ -171,5 +172,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-enum UserType { operario, jefe }
