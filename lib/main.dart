@@ -26,9 +26,23 @@ class MyApp extends ConsumerWidget {
         brightness: accessibility.isHighContrast
             ? fluent.Brightness.dark
             : fluent.Brightness.light,
+        scaffoldBackgroundColor: accessibility.isHighContrast
+            ? Colors.black
+            : Colors.white, // Fondo negro en alto contraste
         typography: fluent.Typography.raw(
-          body: TextStyle(fontSize: accessibility.fontSize),
+          body: TextStyle(
+            fontSize: accessibility.fontSize,
+            color: accessibility.isHighContrast
+                ? Colors.yellow
+                : Colors.black, // Texto amarillo
+          ),
         ),
+        cardColor: accessibility.isHighContrast
+            ? Colors.black
+            : null, // Color de tarjetas
+        accentColor: accessibility.isHighContrast
+            ? fluent.Colors.yellow // Usa un color válido de Fluent
+            : fluent.Colors.blue,
       ),
       routeInformationProvider: _router.routeInformationProvider,
       routeInformationParser: _router.routeInformationParser,

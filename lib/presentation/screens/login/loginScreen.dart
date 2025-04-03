@@ -1,19 +1,22 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:troqueles_sw/config/user_type.dart';
+import 'package:troqueles_sw/presentation/screens/accessibility/accessibility_provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   bool _isJefeSelected = false;
+  bool _obscurePassword = true; // Estado para ocultar/mostrar la contraseña
   final String _jefePassword = "Abundancia2025*";
 
   @override
@@ -30,8 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final accessibility = ref.watch(accessibilityProvider);
+    final bool isHighContrast = accessibility.isHighContrast;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isHighContrast ? Colors.black : Colors.white,
       body: Row(
         children: [
           // Panel de Imagen
@@ -48,14 +54,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
                   child: Container(color: Colors.black.withOpacity(0.3)),
                 ),
-                const Center(
+                Center(
                   child: Text(
                     'Bienvenidos',
                     style: TextStyle(
                       fontSize: 80,
-                      color: Colors.white,
+                      color: isHighContrast ? Colors.yellow : Colors.white,
                       fontWeight: FontWeight.bold,
-                      shadows: [
+                      shadows: const [
                         Shadow(blurRadius: 10, color: Colors.black),
                       ],
                     ),
@@ -73,8 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Logo
-                  const Image(
-                    image: AssetImage('assets/Smurfit_Westrock_(logo).png'),
+                  Image.asset(
+                    'assets/Smurfit_Westrock_(logo).png',
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 20),
@@ -87,11 +93,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
+                          Text(
                             'Iniciar Sesión',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              color:
+                                  isHighContrast ? Colors.yellow : Colors.black,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -101,8 +109,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               _navigateToNavigationScreen(UserType.operario);
                             },
-                            child: const Text('Entrar como Operario',
-                                style: TextStyle(fontSize: 18)),
+                            child: Text(
+                              'Entrar como Operario',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: isHighContrast
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                            ),
                           ),
 
                           const SizedBox(height: 16),
@@ -112,8 +127,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               setState(() => _isJefeSelected = true);
                             },
-                            child: const Text('Entrar como Jefe',
-                                style: TextStyle(fontSize: 18)),
+                            child: Text(
+                              'Entrar como Jefe',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: isHighContrast
+                                    ? Colors.yellow
+                                    : Colors.black,
+                              ),
+                            ),
                           ),
 
                           // Campo de Contraseña
@@ -121,13 +143,52 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 20),
                             TextFormField(
                               controller: _passwordController,
-                              obscureText: true,
+                              obscureText: _obscurePassword,
                               decoration: InputDecoration(
                                 labelText: 'Contraseña',
+                                labelStyle: TextStyle(
+                                  color: isHighContrast
+                                      ? Colors.yellow
+                                      : Colors.black,
+                                ),
+                                filled: true,
+                                fillColor: isHighContrast
+                                    ? Colors.black
+                                    : Colors.white,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: isHighContrast
+                                        ? Colors.yellow
+                                        : Colors.grey,
+                                  ),
                                 ),
-                                prefixIcon: const Icon(Icons.lock),
+                                prefixIcon: Icon(
+                                  Icons.lock,
+                                  color: isHighContrast
+                                      ? Colors.yellow
+                                      : Colors.black,
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: isHighContrast
+                                        ? Colors.yellow
+                                        : Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword = !_obscurePassword;
+                                    });
+                                  },
+                                ),
+                              ),
+                              style: TextStyle(
+                                color: isHighContrast
+                                    ? Colors.yellow
+                                    : Colors.black,
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -144,17 +205,30 @@ class _LoginScreenState extends State<LoginScreen> {
                             // Botón Confirmar Jefe
                             ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
+                                backgroundColor: isHighContrast
+                                    ? Colors.yellow
+                                    : Colors.green,
                               ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   _navigateToNavigationScreen(UserType.jefe);
                                 }
                               },
-                              icon: const Icon(Icons.check),
-                              label: const Text('Ingresar como Jefe',
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.white)),
+                              icon: Icon(
+                                Icons.check,
+                                color: isHighContrast
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                              label: Text(
+                                'Ingresar como Jefe',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: isHighContrast
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
+                              ),
                             ),
                           ],
                         ],
@@ -162,7 +236,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text('By Runyy 25/02/2025')
+                  Text(
+                    'By Runyy 25/02/2025',
+                    style: TextStyle(
+                      color: isHighContrast ? Colors.yellow : Colors.black,
+                    ),
+                  ),
                 ],
               ),
             ),
