@@ -7,7 +7,7 @@ import '../../../domain/entities/operario.dart';
 import '../../providers/operario_provider.dart';
 import '../../providers/process_provider.dart';
 import '../../widgets/formularios/tiempos/form_tiempos.dart';
-import '../../widgets/widgets.dart';
+import '../../widgets/scaled_text.dart'; // << para aplicar ScaledText
 import '../Troqueles/consumos/consumos_page.dart';
 
 class ConsumosAndTimes extends ConsumerWidget {
@@ -16,39 +16,38 @@ class ConsumosAndTimes extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedProceso = ref.watch(selectedProcesoProvider);
-
     final procesos = ref.watch(troquelProviderInProceso);
 
     return Column(
       children: [
-        _TablaEnProceso(
-          procesos: procesos,
-        ),
-        const SizedBox(
-          height: 5,
-        ),
+        _TablaEnProceso(procesos: procesos),
+        const SizedBox(height: 5),
         Row(
           children: [
             Expanded(
-                child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    child: selectedProceso != null
-                        ? ConsumosPage(
-                            planta: selectedProceso.planta,
-                            cliente: selectedProceso.cliente,
-                            ntroquel: selectedProceso.ntroquel,
-                            tipoTrabajo: selectedProceso.maquina,
-                          )
-                        : const Center(
-                            child: Text(
-                            'Seleccione un proceso para mostrar los detalles.',
-                            style: TextStyle(color: Colors.white),
-                          )))),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: selectedProceso != null
+                    ? ConsumosPage(
+                        planta: selectedProceso.planta,
+                        cliente: selectedProceso.cliente,
+                        ntroquel: selectedProceso.ntroquel,
+                        tipoTrabajo: selectedProceso.maquina,
+                      )
+                    : const Center(
+                        child: ScaledText(
+                          'Seleccione un proceso para mostrar los detalles.',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+              ),
+            ),
             Expanded(
-                child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: FormTiempos(ntroquel: selectedProceso?.ntroquel ?? ''),
-            )),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: FormTiempos(ntroquel: selectedProceso?.ntroquel ?? ''),
+              ),
+            ),
           ],
         )
       ],
@@ -59,6 +58,7 @@ class ConsumosAndTimes extends ConsumerWidget {
 class _TablaEnProceso extends ConsumerStatefulWidget {
   const _TablaEnProceso({
     required this.procesos,
+    super.key,
   });
 
   final List<Proceso> procesos;
@@ -77,40 +77,26 @@ class _TablaEnProcesoState extends ConsumerState<_TablaEnProceso> {
   void initState() {
     super.initState();
     futureProceso = _cargarDatosProceso();
-
     futureTiempo = _cargarDatosOperario();
     futureMateriales = _cargarDatosMateriales();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  // Método para cargar los datos desde ISAR al iniciar la pantalla
   Future<List<Proceso>> _cargarDatosProceso() async {
     final procesoNotifier = ref.read(troquelProviderInProceso.notifier);
-    await procesoNotifier
-        .getAllTroquelesInProcess(); // Carga los troqueles por máquina
-    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    await procesoNotifier.getAllTroquelesInProcess();
     return procesoNotifier.state;
-    // Retorna el estado actualizado
   }
 
   Future<List<Operario>> _cargarDatosOperario() async {
-    final procesoNotifier = ref.read(operarioProvider.notifier);
-    await procesoNotifier.loadOperario(); // Carga los troqueles por máquina
-    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-    return procesoNotifier.state;
-    // Retorna el estado actualizado
+    final operarioNotifier = ref.read(operarioProvider.notifier);
+    await operarioNotifier.loadOperario();
+    return operarioNotifier.state;
   }
 
   Future<List<Materiales>> _cargarDatosMateriales() async {
-    final procesoNotifier = ref.read(materialProvider.notifier);
-    await procesoNotifier.loadMateriales(); // Carga los troqueles por máquina
-    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-    return procesoNotifier.state;
-    // Retorna el estado actualizado
+    final materialesNotifier = ref.read(materialProvider.notifier);
+    await materialesNotifier.loadMateriales();
+    return materialesNotifier.state;
   }
 
   @override
@@ -121,31 +107,21 @@ class _TablaEnProcesoState extends ConsumerState<_TablaEnProceso> {
       child: Material(
         child: SingleChildScrollView(
           child: DataTable(
-            columnSpacing: 15, // Reduce el espacio entre columnas
+            columnSpacing: 15,
             horizontalMargin: 5,
             dividerThickness: 1,
             sortColumnIndex: 0,
             sortAscending: true,
             columns: const <DataColumn>[
-              DataColumn(
-                  label: DataColums(icon: Icons.numbers, text: 'Troquel')),
-              DataColumn(
-                  label:
-                      DataColums(icon: Icons.calendar_today, text: 'Ingreso')),
-              DataColumn(
-                  label: DataColums(icon: Icons.date_range, text: 'Estimada')),
-              DataColumn(
-                  label: DataColums(icon: Icons.location_city, text: 'Planta')),
-              DataColumn(
-                  label: DataColums(icon: Icons.person, text: 'Cliente')),
-              DataColumn(
-                  label: DataColums(icon: Icons.settings, text: 'Máquina')),
-              DataColumn(
-                  label:
-                      DataColums(icon: Icons.engineering, text: 'Ingeniero')),
+              DataColumn(label: ScaledText('Troquel')),
+              DataColumn(label: ScaledText('Ingreso')),
+              DataColumn(label: ScaledText('Estimada')),
+              DataColumn(label: ScaledText('Planta')),
+              DataColumn(label: ScaledText('Cliente')),
+              DataColumn(label: ScaledText('Máquina')),
+              DataColumn(label: ScaledText('Ingeniero')),
             ],
             rows: widget.procesos.map<DataRow>((proceso) {
-              // Determinar color según el estado del proceso
               final rowColor = proceso.estado == Estado.enProceso
                   ? Colors.yellow.withOpacity(0.3)
                   : proceso.estado == Estado.suspendido
@@ -160,9 +136,6 @@ class _TablaEnProcesoState extends ConsumerState<_TablaEnProceso> {
                   });
                   if (isSelected == true) {
                     ref.read(selectedProcesoProvider.notifier).state = proceso;
-
-                    // Mostrar la información seleccionada en consola (o manejarla como desees)
-                    debugPrint('Información seleccionada: ${proceso.cliente}');
                   }
                 },
                 color: WidgetStateProperty.resolveWith<Color?>((states) {
@@ -172,43 +145,20 @@ class _TablaEnProcesoState extends ConsumerState<_TablaEnProceso> {
                   return rowColor;
                 }),
                 cells: <DataCell>[
-                  DataCell(Text(proceso.ntroquel)),
-                  DataCell(
-                      Text('${proceso.fechaIngreso.toLocal()}'.split(' ')[0])),
-                  DataCell(Text(
+                  DataCell(ScaledText(proceso.ntroquel)),
+                  DataCell(ScaledText(
+                      '${proceso.fechaIngreso.toLocal()}'.split(' ')[0])),
+                  DataCell(ScaledText(
                       '${proceso.fechaEstimada?.toLocal()}'.split(' ')[0])),
-                  DataCell(Text(proceso.planta)),
-                  DataCell(Text(proceso.cliente)),
-                  DataCell(Text(proceso.maquina)),
-                  DataCell(Text(proceso.ingeniero)),
+                  DataCell(ScaledText(proceso.planta)),
+                  DataCell(ScaledText(proceso.cliente)),
+                  DataCell(ScaledText(proceso.maquina)),
+                  DataCell(ScaledText(proceso.ingeniero)),
                 ],
               );
             }).toList(),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class WrapTextCell extends StatelessWidget {
-  final String text;
-
-  const WrapTextCell({
-    super.key,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 80,
-      child: Text(
-        text,
-        softWrap: true,
-        maxLines: null,
-        overflow: TextOverflow.visible,
-        style: const TextStyle(fontSize: 12),
       ),
     );
   }

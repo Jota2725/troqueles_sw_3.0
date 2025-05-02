@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/consumo.dart';
-
 import '../../providers/consumos_provider.dart';
 import '../../widgets/Tablas/consumo_tabla.dart';
+import '../../widgets/scaled_text.dart'; // Importar ScaledText
 
 class ConsumoScreen extends ConsumerStatefulWidget {
   const ConsumoScreen({super.key});
@@ -19,8 +19,7 @@ class _ConsumosScreenState extends ConsumerState<ConsumoScreen> {
   @override
   void initState() {
     super.initState();
-    futureConsumo =
-        _cargarDatosConsumo(); // Carga los datos al iniciar la pantalla
+    futureConsumo = _cargarDatosConsumo();
   }
 
   @override
@@ -28,22 +27,22 @@ class _ConsumosScreenState extends ConsumerState<ConsumoScreen> {
     super.dispose();
   }
 
-  // Método para cargar los datos desde ISAR al iniciar la pantalla
   Future<List<Consumo>> _cargarDatosConsumo() async {
     final consumoNotifier = ref.read(consumoProvider.notifier);
-    await consumoNotifier.loadConsumos(); // Carga los troqueles por máquina
-    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    await consumoNotifier.loadConsumos();
     return consumoNotifier.state;
-    // Retorna el estado actualizado
   }
 
   @override
   Widget build(BuildContext context) {
     return const SingleChildScrollView(
-        child: Column(
-      children: [ConsumosTabla()],
-    ));
+      child: Column(
+        children: [
+          // Puedes agregar un encabezado si deseas
+          // ScaledText('Consumos por máquina', style: TextStyle(fontWeight: FontWeight.bold)),
+          ConsumosTabla(),
+        ],
+      ),
+    );
   }
 }
-
-

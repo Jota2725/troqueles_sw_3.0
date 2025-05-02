@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:troqueles_sw/config/user_type.dart';
-import 'package:troqueles_sw/presentation/screens/accessibility/accessibility_provider.dart';
+import 'package:troqueles_sw/presentation/providers/theme_provider.dart';
+import 'package:troqueles_sw/presentation/widgets/scaled_text.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -16,7 +17,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   bool _isJefeSelected = false;
-  bool _obscurePassword = true; // Estado para ocultar/mostrar la contraseña
+  bool _obscurePassword = true;
   final String _jefePassword = "Abundancia2025*";
 
   @override
@@ -33,14 +34,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final accessibility = ref.watch(accessibilityProvider);
-    final bool isHighContrast = accessibility.isHighContrast;
+    final themeMode = ref.watch(themeModeCustomProvider);
+    final fontSize = ref.watch(fontSizeProvider);
+    final isHighContrast = themeMode == ThemeModeCustom.highContrast;
+    final isDark = themeMode == ThemeModeCustom.dark;
+
+    Color getTextColor() =>
+        isHighContrast ? Colors.yellow : (isDark ? Colors.white : Colors.black);
+    Color getBackgroundColor() =>
+        isHighContrast || isDark ? Colors.black : Colors.white;
+    Color getButtonColor() =>
+        isHighContrast ? Colors.yellow : (isDark ? Colors.blue : Colors.blue);
 
     return Scaffold(
-      backgroundColor: isHighContrast ? Colors.black : Colors.white,
+      backgroundColor: getBackgroundColor(),
       body: Row(
         children: [
-          // Panel de Imagen
           Expanded(
             flex: 2,
             child: Stack(
@@ -55,11 +64,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Container(color: Colors.black.withOpacity(0.3)),
                 ),
                 Center(
-                  child: Text(
+                  child: ScaledText(
                     'Bienvenidos',
                     style: TextStyle(
                       fontSize: 80,
-                      color: isHighContrast ? Colors.yellow : Colors.white,
+                      color: getTextColor(),
                       fontWeight: FontWeight.bold,
                       shadows: const [
                         Shadow(blurRadius: 10, color: Colors.black),
@@ -70,7 +79,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ],
             ),
           ),
-          // Panel de Login
           Expanded(
             flex: 1,
             child: Padding(
@@ -78,14 +86,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo
                   Image.asset(
                     'assets/Smurfit_Westrock_(logo).png',
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 20),
-
-                  // Card de Inicio de Sesión
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Form(
@@ -93,52 +98,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
+                          ScaledText(
                             'Iniciar Sesión',
                             style: TextStyle(
-                              fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color:
-                                  isHighContrast ? Colors.yellow : Colors.black,
+                              color: getTextColor(),
                             ),
                           ),
                           const SizedBox(height: 20),
-
-                          // Botón Operario
                           FilledButton(
                             onPressed: () {
                               _navigateToNavigationScreen(UserType.operario);
                             },
-                            child: Text(
+                            style: FilledButton.styleFrom(
+                                backgroundColor: getButtonColor()),
+                            child: ScaledText(
                               'Entrar como Operario',
                               style: TextStyle(
-                                fontSize: 18,
                                 color: isHighContrast
                                     ? Colors.black
                                     : Colors.white,
                               ),
                             ),
                           ),
-
                           const SizedBox(height: 16),
-
-                          // Botón Jefe
                           OutlinedButton(
                             onPressed: () {
                               setState(() => _isJefeSelected = true);
                             },
-                            child: Text(
+                            child: ScaledText(
                               'Entrar como Jefe',
                               style: TextStyle(
-                                fontSize: 18,
-                                color: isHighContrast
-                                    ? Colors.yellow
-                                    : Colors.black,
+                                color: getTextColor(),
                               ),
                             ),
                           ),
-
-                          // Campo de Contraseña
                           if (_isJefeSelected) ...[
                             const SizedBox(height: 20),
                             TextFormField(
@@ -146,37 +140,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               obscureText: _obscurePassword,
                               decoration: InputDecoration(
                                 labelText: 'Contraseña',
-                                labelStyle: TextStyle(
-                                  color: isHighContrast
-                                      ? Colors.yellow
-                                      : Colors.black,
-                                ),
+                                labelStyle: TextStyle(color: getTextColor()),
                                 filled: true,
-                                fillColor: isHighContrast
-                                    ? Colors.black
-                                    : Colors.white,
+                                fillColor: getBackgroundColor(),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color: isHighContrast
-                                        ? Colors.yellow
-                                        : Colors.grey,
-                                  ),
+                                  borderSide: BorderSide(color: getTextColor()),
                                 ),
                                 prefixIcon: Icon(
                                   Icons.lock,
-                                  color: isHighContrast
-                                      ? Colors.yellow
-                                      : Colors.black,
+                                  color: getTextColor(),
                                 ),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _obscurePassword
                                         ? Icons.visibility_off
                                         : Icons.visibility,
-                                    color: isHighContrast
-                                        ? Colors.yellow
-                                        : Colors.black,
+                                    color: getTextColor(),
                                   ),
                                   onPressed: () {
                                     setState(() {
@@ -185,11 +165,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   },
                                 ),
                               ),
-                              style: TextStyle(
-                                color: isHighContrast
-                                    ? Colors.yellow
-                                    : Colors.black,
-                              ),
+                              style: TextStyle(color: getTextColor()),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Ingrese la contraseña';
@@ -201,13 +177,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               },
                             ),
                             const SizedBox(height: 20),
-
-                            // Botón Confirmar Jefe
                             ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: isHighContrast
-                                    ? Colors.yellow
-                                    : Colors.green,
+                                backgroundColor: getButtonColor(),
                               ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
@@ -220,10 +192,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     ? Colors.black
                                     : Colors.white,
                               ),
-                              label: Text(
+                              label: ScaledText(
                                 'Ingresar como Jefe',
                                 style: TextStyle(
-                                  fontSize: 18,
                                   color: isHighContrast
                                       ? Colors.black
                                       : Colors.white,
@@ -236,11 +207,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text(
+                  ScaledText(
                     'By Runyy 25/02/2025',
-                    style: TextStyle(
-                      color: isHighContrast ? Colors.yellow : Colors.black,
-                    ),
+                    style: TextStyle(color: getTextColor()),
                   ),
                 ],
               ),

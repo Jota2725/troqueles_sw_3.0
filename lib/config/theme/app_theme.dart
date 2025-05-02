@@ -1,75 +1,96 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:troqueles_sw/presentation/providers/theme_provider.dart';
 
 class AppTheme {
-  // Paleta de acento personalizada para Fluent UI
+  // Paleta de acento
   AccentColor get customAccentColor => AccentColor.swatch(const <String, Color>{
-        'normal': Color(0xFF0BAFFE), // Color principal
-        'lighter': Color(0xFF5FCFFF), // Más claro
-        'light': Color(0xFF3EC0FF), // Claro
-        'dark': Color(0xFF087AB0), // Oscuro
-        'darker': Color(0xFF065780), // Más oscuro
+        'normal': Color(0xFF0BAFFE),
+        'lighter': Color(0xFF5FCFFF),
+        'light': Color(0xFF3EC0FF),
+        'dark': Color(0xFF087AB0),
+        'darker': Color(0xFF065780),
       });
 
-// Configuración del tema  de Fluent UI claro
-  FluentThemeData getLightFluentTheme() => FluentThemeData(
+  // === Fluent UI Themes ===
+
+  FluentThemeData getFluentTheme(ThemeModeCustom mode, double fontScale) {
+    switch (mode) {
+      case ThemeModeCustom.dark:
+        return _darkTheme(fontScale);
+      case ThemeModeCustom.highContrast:
+        return _highContrastTheme(fontScale);
+      default:
+        return _lightTheme(fontScale);
+    }
+  }
+
+  FluentThemeData _lightTheme(double scale) => FluentThemeData(
         brightness: Brightness.light,
         accentColor: customAccentColor,
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         iconTheme: const IconThemeData(color: Color(0xFF00205B)),
-        dialogTheme: const ContentDialogThemeData(
-          barrierColor: Color.fromARGB(255, 255, 255, 255),
-        ),
-        // Tema del navegation Theme
         navigationPaneTheme: NavigationPaneThemeData(
           backgroundColor: const Color(0xFFF5F5F5),
           selectedIconColor: WidgetStateProperty.all(customAccentColor),
-          selectedTextStyle:
-              WidgetStateProperty.all(TextStyle(color: customAccentColor)),
+          selectedTextStyle: WidgetStateProperty.all(
+            TextStyle(color: customAccentColor, fontSize: 16 * scale),
+          ),
           unselectedIconColor: WidgetStateProperty.all(const Color(0xFF00205B)),
           unselectedTextStyle: WidgetStateProperty.all(
-              const TextStyle(color: Color(0xFF00205B))),
+            TextStyle(color: const Color(0xFF00205B), fontSize: 14 * scale),
+          ),
         ),
       );
 
-// Configuración del tema de Fluent UI oscuro
-  FluentThemeData getDarkFluentTheme() => FluentThemeData(
+  FluentThemeData _darkTheme(double scale) => FluentThemeData(
         brightness: Brightness.dark,
         accentColor: customAccentColor,
-        scaffoldBackgroundColor: const Color.fromARGB(255, 0, 0, 0),
         iconTheme: const IconThemeData(color: Color(0xFF0BAFFE)),
-        dialogTheme: const ContentDialogThemeData(
-          barrierColor: Color.fromARGB(255, 0, 0, 0),
-        ),
         navigationPaneTheme: NavigationPaneThemeData(
-          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-          selectedIconColor: WidgetStateProperty.all(customAccentColor),
-          selectedTextStyle:
-              WidgetStateProperty.all(TextStyle(color: customAccentColor)),
-          unselectedIconColor: WidgetStateProperty.all(const Color(0xFFF5F5F5)),
+          selectedTextStyle: WidgetStateProperty.all(
+            TextStyle(color: customAccentColor, fontSize: 16 * scale),
+          ),
           unselectedTextStyle: WidgetStateProperty.all(
-              const TextStyle(color: Color(0xFFF5F5F5))),
+            TextStyle(color: const Color(0xFFF5F5F5), fontSize: 14 * scale),
+          ),
         ),
       );
 
-//Configuracion del tema de Material 
-  material.ThemeData getMaterialTheme(bool isDarkMode) => material.ThemeData(
-        brightness:
-            isDarkMode ? material.Brightness.dark : material.Brightness.light,
-        dialogTheme: const material.DialogTheme(
-          backgroundColor: material.Colors.white, // Fondo opaco
-          elevation: 10, // Sin transparencia
-        ),
-        cardColor: isDarkMode
-            ? const Color.fromARGB(255, 0, 0, 0)
-            : const Color(0xFFFFFFFF),
-        scaffoldBackgroundColor: isDarkMode
-            ? const Color.fromARGB(255, 0, 0, 0)
-            : const Color(0xFFF5F5F5),
-        colorScheme: material.ColorScheme.fromSwatch(
-          primarySwatch: material.Colors.blue,
-          brightness:
-              isDarkMode ? material.Brightness.dark : material.Brightness.light,
+  FluentThemeData _highContrastTheme(double scale) => FluentThemeData(
+        brightness: Brightness.dark,
+        accentColor: customAccentColor,
+        iconTheme: const IconThemeData(color: Color(0xFFFFFF00)),
+        navigationPaneTheme: NavigationPaneThemeData(
+          selectedTextStyle: WidgetStateProperty.all(
+            TextStyle(
+              color: const Color(0xFFFFFF00), // Amarillo fluorescente
+              fontSize: 18 * scale,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          unselectedTextStyle: WidgetStateProperty.all(
+            TextStyle(
+              color: const Color(0xFFFFFF00),
+              fontSize: 16 * scale,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       );
+
+  // === Material Theme ===
+
+  material.ThemeData getMaterialTheme(ThemeModeCustom mode, double fontScale) {
+    final isDark = mode != ThemeModeCustom.light;
+    final baseColor =
+        mode == ThemeModeCustom.highContrast ? material.Colors.yellow : null;
+    return material.ThemeData(
+      brightness: isDark ? material.Brightness.dark : material.Brightness.light,
+      textTheme: material.Typography().black.apply(
+            fontSizeFactor: fontScale,
+            bodyColor: baseColor,
+            displayColor: baseColor,
+          ),
+    );
+  }
 }

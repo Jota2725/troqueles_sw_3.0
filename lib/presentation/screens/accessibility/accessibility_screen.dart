@@ -1,101 +1,82 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:troqueles_sw/presentation/screens/accessibility/accessibility_provider.dart';
+import 'package:troqueles_sw/presentation/providers/theme_provider.dart';
 
-class AccessibilityScreen extends ConsumerStatefulWidget {
+class AccessibilityScreen extends ConsumerWidget {
   const AccessibilityScreen({super.key});
 
   @override
-  _AccessibilityScreenState createState() => _AccessibilityScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentMode = ref.watch(themeModeCustomProvider);
+    final fontSize = ref.watch(fontSizeProvider);
 
-class _AccessibilityScreenState extends ConsumerState<AccessibilityScreen> {
-  @override
-  Widget build(BuildContext context) {
-    final accessibility = ref.watch(accessibilityProvider);
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Accesibilidad')),
-      backgroundColor:
-          accessibility.isHighContrast ? Colors.black : Colors.white,
-      body: Padding(
+    return ScaffoldPage(
+      header: const PageHeader(title: Text('Accesibilidad')),
+      content: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Opciones de Accesibilidad",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color:
-                    accessibility.isHighContrast ? Colors.yellow : Colors.black,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Switch para Modo Alto Contraste
-            SwitchListTile(
-              title: Text(
-                "Modo Alto Contraste",
-                style: TextStyle(
-                  fontSize: accessibility.fontSize,
-                  color: accessibility.isHighContrast
-                      ? Colors.yellow
-                      : Colors.black,
-                ),
-              ),
-              value: accessibility.isHighContrast,
-              onChanged: (value) {
-                ref.read(accessibilityProvider.notifier).toggleHighContrast();
-                setState(() {}); // Asegura que la UI se actualice
-              },
-            ),
-            const SizedBox(height: 20),
-
-            // Ajuste de tamaño de fuente
-            Text(
-              "Tamaño de Fuente",
-              style: TextStyle(
-                fontSize: accessibility.fontSize,
-                color:
-                    accessibility.isHighContrast ? Colors.yellow : Colors.black,
-              ),
+              'Modo de tema:',
+              style: FluentTheme.of(context).typography.subtitle,
             ),
             const SizedBox(height: 10),
-
             Row(
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    ref.read(accessibilityProvider.notifier).decreaseFont();
-                    setState(() {}); // Actualiza la UI
-                  },
-                  child: const Text("A-"),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  "${accessibility.fontSize.toInt()} px",
-                  style: TextStyle(
-                    fontSize: accessibility.fontSize,
-                    color: accessibility.isHighContrast
-                        ? Colors.yellow
-                        : Colors.black,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    ref.read(accessibilityProvider.notifier).increaseFont();
-                    setState(() {}); // Actualiza la UI
-                  },
-                  child: const Text("A+"),
-                ),
+                _buildThemeRadio(context, ref, ThemeModeCustom.light, 'Claro'),
+                _buildThemeRadio(context, ref, ThemeModeCustom.dark, 'Oscuro'),
+                _buildThemeRadio(context, ref, ThemeModeCustom.highContrast,
+                    'Alto contraste'),
               ],
+            ),
+            const SizedBox(height: 30),
+            Text(
+              'Tamaño de fuente:',
+              style: FluentTheme.of(context).typography.subtitle,
+            ),
+            const SizedBox(height: 10),
+            Slider(
+              min: 12.0,
+              max: 24.0,
+              value: fontSize,
+              onChanged: (value) {
+                ref.read(fontSizeProvider.notifier).setFontSize(value);
+              },
+            ),
+            const SizedBox(height: 10),
+            Button(
+              onPressed: () {
+                ref.read(fontSizeProvider.notifier).setFontSize(16.0);
+              },
+              child: const Text('Restaurar tamaño predeterminado'),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildThemeRadio(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeModeCustom mode,
+    String label,
+  ) {
+    final currentMode = ref.watch(themeModeCustomProvider);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        RadioButton(
+          checked: currentMode == mode,
+          onChanged: (_) {
+            ref.read(themeModeCustomProvider.notifier).setTheme(mode);
+          },
+        ),
+        const SizedBox(width: 4),
+        Text(label),
+        const SizedBox(width: 20),
+      ],
     );
   }
 }
