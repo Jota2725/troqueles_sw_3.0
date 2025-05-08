@@ -67,7 +67,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: ScaledText(
                     'Bienvenidos',
                     style: TextStyle(
-                      fontSize: 80,
+                      fontSize: 120,
                       color: getTextColor(),
                       fontWeight: FontWeight.bold,
                       shadows: const [
@@ -174,6 +174,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   return 'Contraseña incorrecta';
                                 }
                                 return null;
+                              },
+                              onFieldSubmitted: (_) {
+                                if (_formKey.currentState!.validate()) {
+                                  _navigateToNavigationScreen(UserType.jefe);
+                                }
                               },
                             ),
                             const SizedBox(height: 20),

@@ -12,6 +12,7 @@ import 'package:troqueles_sw/presentation/screens/consumos/consumos_screen.dart'
 import 'package:troqueles_sw/presentation/screens/materiales/materiales_screen.dart';
 import 'package:troqueles_sw/presentation/screens/accessibility/accessibility_screen.dart';
 import 'package:troqueles_sw/presentation/widgets/Tablas/completados_tabla.dart';
+import 'package:go_router/go_router.dart';
 
 class NavigationScreen extends StatefulWidget {
   static const name = 'Navegation_Screen';
@@ -59,8 +60,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           PaneItemExpander(
             title: const Text('Bibliaco'),
             icon: const Icon(Icons.book_rounded),
-            body: const SizedBox
-                .shrink(), // 👈 Evita el error al proporcionar un body vacío
+            body: const SizedBox.shrink(), //
             items: [
               PaneItemHeader(header: const Text('Máquinas')),
               PaneItem(
@@ -171,6 +171,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
             icon: const Icon(Icons.settings),
             body: const Text('Ajustes'),
             title: const Text('Ajustes'),
+          ),
+          PaneItem(
+            icon: const Icon(Icons.logout),
+            title: const Text('Cerrar sesión'),
+            body: const Text(''),
+            onTap: () {
+              context.go(
+                  '/'); // Redirige correctamente a la pantalla de login usando GoRouter
+            },
           ),
           PaneItem(
             icon: const Icon(Icons.exit_to_app,
