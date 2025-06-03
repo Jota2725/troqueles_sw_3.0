@@ -7,60 +7,66 @@ import '../../infrastructure/datasource/isar_datasource.dart';
 class MaterialNotifier extends StateNotifier<List<Materiales>> {
   final IsarDatasource _isarDatasource;
 
-  MaterialNotifier(this._isarDatasource) : super([]);
+  MaterialNotifier(this._isarDatasource) : super([]) {
+    loadMateriales();
+  }
 
-
- Materiales? _selectedMaterial;
+  Materiales? _selectedMaterial;
   Materiales? get selectedMaterial => _selectedMaterial;
 
   final List<Materiales> _selectedMaterials = [];
-  List<Materiales> get selectedMaterials => List.unmodifiable(_selectedMaterials);
-  // Cargar todos los materiales
+  List<Materiales> get selectedMaterials =>
+      List.unmodifiable(_selectedMaterials);
+
+  // ✅ Cargar todos los materiales
   Future<void> loadMateriales() async {
     state = await _isarDatasource.gettAllMateriles();
   }
 
+  // ✅ Agregar material y recargar lista
   Future<void> addMateriales(Materiales material) async {
     await _isarDatasource.addNewMaterial([material]);
+    await loadMateriales();
   }
 
-   void setSelectedMaterial(Materiales material) {
+  // ✅ Agregar varios materiales y recargar
+  Future<void> addMaterialesFromList(List<Materiales> materiales) async {
+    try {
+      await _isarDatasource.addNewMaterial(materiales);
+      await loadMateriales();
+    } catch (e) {
+      print('Error al agregar materiales desde la lista: $e');
+    }
+  }
+
+  Future<void> deleteMaterial(Materiales material) async {
+    if (material.isarId != null) {
+      await _isarDatasource.deleteMaterialById(material.isarId!);
+      await loadMateriales();
+    }
+  }
+
+  void setSelectedMaterial(Materiales material) {
     _selectedMaterial = material;
-    state = List.from(state); // Asegura que el cambio se notifique.
+    state = List.from(state);
   }
 
   void addMaterialToSelected(Materiales material) {
     _selectedMaterials.add(material);
-    // Notificar cambios solo si necesitas mostrar la lista en la UI
     state = List.from(state);
   }
 
   void clearSelectedMaterials() {
     _selectedMaterials.clear();
-    state = List.from(state); // Notificar cambios.
+    state = List.from(state);
   }
 
-
-Future<void> addMaterialesFromList(List<Materiales> materiales) async {
-    try {
-      await _isarDatasource.addNewMaterial(materiales);
-      // Recargar la lista de materiales después de agregar nuevos
-      await loadMateriales();
-    } catch (e) {
-      // Manejar errores
-      print('Error al agregar materiales desde la lista: $e');
-    }
-  }
-  // Buscar materiales
   Future<void> searchMaterial(String query) async {
-    final result = await _isarDatasource.gettAllMateriles(); // Ajusta la lógica según tu base de datos
+    final result = await _isarDatasource.gettAllMateriles();
     state = result;
   }
 }
 
-
-
-// Proveedor de la lista de materiales
 final materialProvider =
     StateNotifierProvider<MaterialNotifier, List<Materiales>>((ref) {
   final isarDatasource = IsarDatasource();
@@ -68,10 +74,9 @@ final materialProvider =
 });
 
 // Proveedor para el material seleccionado
-final selectedMaterialProvider =
-    StateProvider<Materiales?>((ref) => null);
+final selectedMaterialProvider = StateProvider<Materiales?>((ref) => null);
 
-
+// Proveedor de datasource para importación desde Excel
 final materialesDatasourceProvider = Provider<MaterialesDatasource>((ref) {
   return MaterialesDatasourceImpl();
 });

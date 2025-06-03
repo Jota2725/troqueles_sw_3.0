@@ -94,6 +94,13 @@ class IsarDatasource extends LocalStorageDatasource {
     });
   }
 
+  Future<void> deleteMaterialById(int id) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.materiales.delete(id);
+    });
+  }
+
   // OBTENER TROQUEL POR ID
   @override
   Future<Troquel?> getTroquelByGicoAndMaquina(int gico, String maquina) async {

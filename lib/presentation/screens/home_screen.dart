@@ -14,7 +14,7 @@ class _MyhomeWidgetState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return const Image(
-      image: AssetImage('assets/ImageFondoSW.jpg'),
+      image: AssetImage('assets/Sustainability.png'),
       fit: BoxFit.cover,
     );
   }

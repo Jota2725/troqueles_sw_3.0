@@ -56,7 +56,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               fit: StackFit.expand,
               children: [
                 Image.asset(
-                  'assets/Pino.jpg',
+                  'assets/Swforestal.jpg',
                   fit: BoxFit.cover,
                 ),
                 BackdropFilter(
@@ -64,10 +64,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Container(color: Colors.black.withOpacity(0.3)),
                 ),
                 Center(
-                  child: ScaledText(
+                  child: Text(
                     'Bienvenidos',
                     style: TextStyle(
-                      fontSize: 120,
+                      fontSize: 90,
                       color: getTextColor(),
                       fontWeight: FontWeight.bold,
                       shadows: const [

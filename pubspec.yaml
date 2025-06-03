@@ -64,6 +64,7 @@ dev_dependencies:
   analyzer: ^5.13.0
   flutter_test:
     sdk: flutter
+  sqflite_common_ffi: ^2.3.5
   flutter_lints: ^4.0.0
   isar_generator: ^3.1.0+1
   build_runner: ^2.4.13
