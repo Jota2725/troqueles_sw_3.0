@@ -40,7 +40,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         ),
         title: Center(
           child: Text(
-            'SW TROQUELES 1.0 ',
+            'SW TROQUELES 2.0 ',
             style: TextStyle(fontSize: 30),
           ),
         ),
@@ -53,7 +53,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         items: [
           PaneItem(
             icon: const Icon(Icons.home),
-            body: const HomeScreen(),
+            body: HomeScreen(userType: widget.userType),
             title: const Text('Inicio'),
           ),
           PaneItemHeader(header: const Text('Troqueles')),

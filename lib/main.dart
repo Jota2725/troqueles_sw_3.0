@@ -5,10 +5,9 @@ import 'package:go_router/go_router.dart';
 
 import 'package:troqueles_sw/config/user_type.dart';
 import 'package:troqueles_sw/presentation/screens/login/loginScreen.dart';
-import 'package:troqueles_sw/presentation/screens/home_screen.dart';
 import 'package:troqueles_sw/presentation/screens/navigation/navigation_screen.dart';
 import 'package:troqueles_sw/presentation/screens/accessibility/accessibility_screen.dart';
-import 'package:troqueles_sw/presentation/providers/theme_provider.dart'; // << Importamos el nuevo provider
+import 'package:troqueles_sw/presentation/providers/theme_provider.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -42,9 +41,10 @@ class MyApp extends ConsumerWidget {
           typography: fluent.Typography.raw(
             body: TextStyle(fontSize: fontSize, color: Colors.white),
             title: TextStyle(
-                fontSize: fontSize + 6,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF0BAFFE)),
+              fontSize: fontSize + 6,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF0BAFFE),
+            ),
           ),
           cardColor: Colors.grey[900],
           accentColor: fluent.Colors.blue,
@@ -55,13 +55,15 @@ class MyApp extends ConsumerWidget {
           scaffoldBackgroundColor: Colors.black,
           typography: fluent.Typography.raw(
             body: TextStyle(
-                fontSize: fontSize,
-                color: Colors.yellow,
-                fontWeight: FontWeight.bold),
+              fontSize: fontSize,
+              color: Colors.yellow,
+              fontWeight: FontWeight.bold,
+            ),
             title: TextStyle(
-                fontSize: fontSize + 6,
-                fontWeight: FontWeight.bold,
-                color: Colors.yellow),
+              fontSize: fontSize + 6,
+              fontWeight: FontWeight.bold,
+              color: Colors.yellow,
+            ),
           ),
           cardColor: Colors.black,
           accentColor: fluent.Colors.yellow,
@@ -74,9 +76,10 @@ class MyApp extends ConsumerWidget {
           typography: fluent.Typography.raw(
             body: TextStyle(fontSize: fontSize, color: Colors.black),
             title: TextStyle(
-                fontSize: fontSize + 6,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF00205B)),
+              fontSize: fontSize + 6,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF00205B),
+            ),
           ),
           cardColor: Colors.white,
           accentColor: fluent.Colors.blue,
@@ -92,10 +95,6 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) => const LoginScreen(),
-    ),
-    GoRoute(
-      path: '/home',
-      builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
       path: '/navigation/jefe',

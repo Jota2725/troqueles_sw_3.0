@@ -13,6 +13,8 @@ class MaterialesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final materiales = ref.watch(materialProvider);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       body: Padding(
@@ -96,16 +98,19 @@ class MaterialesScreen extends ConsumerWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
+                  color: isDark ? Colors.grey.shade900 : Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const ScaledText(
+                    ScaledText(
                       'Lista de materiales',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: theme.textTheme.bodyLarge?.color,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Expanded(
@@ -118,16 +123,34 @@ class MaterialesScreen extends ConsumerWidget {
                               itemBuilder: (_, index) {
                                 final m = materiales[index];
                                 return Card(
+                                  color: isDark
+                                      ? Colors.grey.shade800
+                                      : Colors.grey.shade100,
                                   elevation: 2,
                                   child: ListTile(
-                                    title:
-                                        Text('${m.codigo} - ${m.descripcion}'),
+                                    title: Text(
+                                      '${m.codigo} - ${m.descripcion}',
+                                      style: TextStyle(
+                                        color: theme.textTheme.bodyLarge?.color,
+                                      ),
+                                    ),
                                     subtitle: Text(
-                                        'Tipo: ${m.tipo.name}, Unidad: ${m.unidad.name}'),
+                                      'Tipo: ${m.tipo.name}, Unidad: ${m.unidad.name}',
+                                      style: TextStyle(
+                                        color:
+                                            theme.textTheme.bodyMedium?.color,
+                                      ),
+                                    ),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text('Conv.: ${m.conversion}'),
+                                        Text(
+                                          'Conv.: ${m.conversion}',
+                                          style: TextStyle(
+                                            color: theme
+                                                .textTheme.bodySmall?.color,
+                                          ),
+                                        ),
                                         IconButton(
                                           icon: const Icon(Icons.edit,
                                               color: Colors.blue),
@@ -137,8 +160,7 @@ class MaterialesScreen extends ConsumerWidget {
                                               context: context,
                                               builder: (_) =>
                                                   EditarMaterialDialog(
-                                                material: m,
-                                              ),
+                                                      material: m),
                                             );
                                           },
                                         ),
