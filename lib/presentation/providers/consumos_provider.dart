@@ -9,17 +9,12 @@ final consumoProvider =
   return ConsumoNotifier(isarDatasource);
 });
 
-
-
-
-
-
 class ConsumoNotifier extends StateNotifier<List<Consumo>> {
   final IsarDatasource _isarDatasource;
 
   ConsumoNotifier(this._isarDatasource) : super([]);
 
-  // Cargar todos los consumos
+  // Cargar todos los consumos desde la base de datos
   Future<void> loadConsumos() async {
     state = await _isarDatasource.getAllConsumos();
   }
@@ -27,7 +22,23 @@ class ConsumoNotifier extends StateNotifier<List<Consumo>> {
   // Agregar un nuevo consumo
   Future<void> addConsumo(Consumo consumo) async {
     await _isarDatasource.addNewConsumo([consumo]);
-    // Actualizar la lista de consumos después de agregar
     state = [...state, consumo];
+  }
+
+  // Eliminar consumo por índice (solo en memoria)
+  void removeConsumo(int index) {
+    if (index >= 0 && index < state.length) {
+      final updatedList = [...state]..removeAt(index);
+      state = updatedList;
+    }
+  }
+
+  // Actualizar consumo por índice (solo en memoria)
+  void updateConsumo(int index, Consumo updatedConsumo) {
+    if (index >= 0 && index < state.length) {
+      final updatedList = [...state];
+      updatedList[index] = updatedConsumo;
+      state = updatedList;
+    }
   }
 }

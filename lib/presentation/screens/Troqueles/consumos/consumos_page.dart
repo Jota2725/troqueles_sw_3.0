@@ -30,7 +30,6 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
   final TextEditingController cantidadController = TextEditingController();
   final GlobalKey<FormState> keyForm = GlobalKey<FormState>();
 
-
   @override
   void dispose() {
     cantidadController.dispose();
@@ -57,7 +56,8 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ConsumosForm(
-                      keyForm: keyForm ,
+                      keyForm: keyForm,
+                      planta: widget.planta,
                       cantidadController: cantidadController,
                       selectedMaterial: selectedMaterial,
                       cliente: widget.cliente,
@@ -100,14 +100,13 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            
             title: const Text("Confirmar material agregado"),
             content: Text(
                 ' Se va a agregar a la lista el material  ${selectedMaterial.codigo} - ${selectedMaterial.descripcion}, con la cantidad consumida de ${cantidadController.text}'),
             actions: [
               TextButton(
                   onPressed: () {
-                  ref
+                    ref
                         .read(materialProvider.notifier)
                         .addMaterialToSelected(selectedMaterial);
                     print('Material Agregado  ${selectedMaterial.codigo} ');
@@ -149,7 +148,6 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            
             title: const Text(
               "Confirmar",
               style: TextStyle(color: Colors.white),
@@ -208,7 +206,6 @@ class _ConsumosPageState extends ConsumerState<ConsumosPage> {
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              
               title: const Text('¿Sin materiales? '),
               content: const Text(
                   'Debe ingresar como minimo un material para poder finalizar el consumo'),

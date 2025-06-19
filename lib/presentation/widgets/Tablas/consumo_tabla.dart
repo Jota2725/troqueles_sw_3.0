@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:troqueles_sw/domain/entities/consumo.dart';
-
 import '../../providers/consumos_provider.dart';
 
 class ConsumosTabla extends ConsumerWidget {
@@ -13,7 +13,6 @@ class ConsumosTabla extends ConsumerWidget {
     final consumos = ref.watch(consumoProvider);
 
     return SingleChildScrollView(
-      
       child: Column(
         children: [
           TablaConsumo(consumo: consumos, consumoNotifier: consumosNotifier)
@@ -26,6 +25,7 @@ class ConsumosTabla extends ConsumerWidget {
 class TablaConsumo extends StatefulWidget {
   final List<Consumo> consumo;
   final ConsumoNotifier consumoNotifier;
+
   const TablaConsumo({
     super.key,
     required this.consumo,
@@ -37,8 +37,6 @@ class TablaConsumo extends StatefulWidget {
 }
 
 class _TablaConsumoState extends State<TablaConsumo> {
-  // Índice de la fila expandida
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -48,6 +46,7 @@ class _TablaConsumoState extends State<TablaConsumo> {
           showEmptyRows: false,
           showFirstLastButtons: true,
           columns: const [
+            DataColumn(label: Text('Copiar')),
             DataColumn(label: Text('Planta')),
             DataColumn(label: Text('Cliente')),
             DataColumn(label: Text('Ntroquel')),
@@ -57,11 +56,13 @@ class _TablaConsumoState extends State<TablaConsumo> {
             DataColumn(label: Text('Unidad')),
             DataColumn(label: Text('Descripcion')),
             DataColumn(label: Text('Tipo')),
+            DataColumn(label: Text('Acciones')),
           ],
           source: _ConsumoDataSource(
             consumos: widget.consumo,
             context: context,
             consumoNotifier: widget.consumoNotifier,
+            refresh: () => setState(() {}),
           ),
           rowsPerPage: 15,
         ),
@@ -74,37 +75,166 @@ class _ConsumoDataSource extends DataTableSource {
   final List<Consumo> consumos;
   final BuildContext context;
   final ConsumoNotifier consumoNotifier;
+  final VoidCallback refresh;
 
   _ConsumoDataSource({
     required this.consumos,
     required this.context,
     required this.consumoNotifier,
+    required this.refresh,
   });
-
-// consumo.materiales.map((material) {
 
   @override
   DataRow getRow(int index) {
     final consumo = consumos[index];
+
+    final codigos =
+        consumo.materiales.map((m) => m.codigo.toString()).join(',');
+    final conversiones =
+        consumo.materiales.map((m) => m.conversion.toString()).join(',');
+    final unidades = consumo.materiales.map((m) => m.unidad.name).join(',');
+    final descripciones = consumo.materiales
+        .map((m) => _truncarDescripcion(m.descripcion, 10))
+        .join(',');
+    final tipos = consumo.materiales.map((m) => m.tipo.name).join(',');
+
+    final rowData = [
+      consumo.planta,
+      consumo.cliente,
+      consumo.nTroquel,
+      codigos,
+      consumo.cantidad.toString(),
+      conversiones,
+      unidades,
+      descripciones,
+      tipos,
+    ];
+
     return DataRow(cells: [
-      DataCell(Text(consumo.planta)),
-      DataCell(Text(consumo.cliente)),
-      DataCell(Text(consumo.nTroquel)),
-      DataCell(Text(consumo.materiales
-          .map((material) => material.codigo.toString())
-          .join(','))),
-      DataCell(Text(consumo.cantidad.toString())),
-      DataCell(Text(
-          consumo.materiales.map((material) => material.conversion).join(','))),
-      DataCell(Text(consumo.materiales
-          .map((material) => material.unidad.name)
-          .join(','))),
-      DataCell(Text(consumo.materiales
-          .map((material) => _truncarDescripcion(material.descripcion, 10)  )
-          .join(','))),
-      DataCell(Text(
-          consumo.materiales.map((material) => material.tipo.name).join(','))),
+      DataCell(
+        IconButton(
+          icon: const Icon(Icons.copy, size: 18),
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: rowData.join('\t')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Fila copiada al portapapeles')),
+            );
+          },
+        ),
+      ),
+      DataCell(Text(rowData[0])),
+      DataCell(Text(rowData[1])),
+      DataCell(Text(rowData[2])),
+      DataCell(Text(rowData[3])),
+      DataCell(Text(rowData[4])),
+      DataCell(Text(rowData[5])),
+      DataCell(Text(rowData[6])),
+      DataCell(Text(rowData[7])),
+      DataCell(Text(rowData[8])),
+      DataCell(Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.blue),
+            onPressed: () {
+              _editarConsumo(consumo, index);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () {
+              _confirmarEliminar(index);
+            },
+          ),
+        ],
+      )),
     ]);
+  }
+
+  void _editarConsumo(Consumo consumo, int index) {
+    final plantaCtrl = TextEditingController(text: consumo.planta);
+    final clienteCtrl = TextEditingController(text: consumo.cliente);
+    final cantidadCtrl =
+        TextEditingController(text: consumo.cantidad.toString());
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Editar consumo'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: plantaCtrl,
+              decoration: const InputDecoration(labelText: 'Planta'),
+            ),
+            TextField(
+              controller: clienteCtrl,
+              decoration: const InputDecoration(labelText: 'Cliente'),
+            ),
+            TextField(
+              controller: cantidadCtrl,
+              decoration: const InputDecoration(labelText: 'Cantidad'),
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancelar'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          ElevatedButton(
+            child: const Text('Guardar'),
+            onPressed: () {
+              final updated = Consumo(
+                planta: plantaCtrl.text,
+                cliente: clienteCtrl.text,
+                nTroquel: consumo.nTroquel,
+                tipo: consumo.tipo,
+                cantidad: int.tryParse(cantidadCtrl.text) ?? consumo.cantidad,
+                materiales: consumo.materiales,
+              );
+
+              consumoNotifier.updateConsumo(index, updated);
+              refresh();
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Consumo actualizado')),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmarEliminar(int index) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Confirmar eliminación'),
+        content: const Text(
+            '¿Deseas eliminar este consumo? Esta acción no se puede deshacer.'),
+        actions: [
+          TextButton(
+            child: const Text('Cancelar'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Eliminar'),
+            onPressed: () {
+              consumoNotifier.removeConsumo(index);
+              refresh();
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Consumo eliminado')),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -118,8 +248,8 @@ class _ConsumoDataSource extends DataTableSource {
 }
 
 String _truncarDescripcion(String descripcion, int maxChars) {
-    if (descripcion.length <= maxChars) {
-      return descripcion;
-    }
-    return '${descripcion.substring(0, maxChars)}...';
+  if (descripcion.length <= maxChars) {
+    return descripcion;
   }
+  return '${descripcion.substring(0, maxChars)}...';
+}

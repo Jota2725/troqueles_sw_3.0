@@ -9,11 +9,13 @@ class ConsumosForm extends StatelessWidget {
   const ConsumosForm(
       {super.key,
       this.selectedMaterial,
+      required this.planta,
       required this.cliente,
       required this.tipoTrabajo,
       required this.keyForm,
       required this.cantidadController});
 
+  final String planta;
   final String cliente;
   final String tipoTrabajo;
   final Materiales? selectedMaterial;
@@ -32,12 +34,17 @@ class ConsumosForm extends StatelessWidget {
           child: Column(
             children: [
               CustomTextField(
+                label: 'Planta',
+                value: planta,
+                enabled: false,
+              ),
+              CustomTextField(
                 label: 'Cliente',
                 value: cliente,
                 enabled: false,
               ),
               CustomTextField(
-                label: 'Cliente',
+                label: 'Máquina',
                 value: tipoTrabajo,
                 enabled: false,
               ),

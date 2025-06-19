@@ -26,7 +26,12 @@ final appRouter = GoRouter(
         GoRoute(
           path: 'home',
           name: HomeScreen.name,
-          builder: (context, state) => const HomeScreen(),
+          builder: (context, state) {
+            final userType = state.pathParameters['userType'] == 'jefe'
+                ? UserType.jefe
+                : UserType.operario;
+            return HomeScreen(userType: userType);
+          },
         ),
       ],
     ),
