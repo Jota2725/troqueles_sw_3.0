@@ -273,6 +273,25 @@ class IsarDatasource extends LocalStorageDatasource {
     });
   }
 
+  // Eliminar consumo por ID
+  Future<void> deleteConsumo(int id) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.consumos.delete(id);
+    });
+  }
+
+  Future<void> updateConsumo(Consumo updatedConsumo) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      // Primero se guarda el objeto Consumo
+      await isar.consumos.put(updatedConsumo);
+
+      // Luego se guarda el enlace con los materiales
+      await updatedConsumo.materiales.save();
+    });
+  }
+
 //TIEMPOS CRUD
   Future<List<Tiempos>> getAllTiempos() async {
     final isar = await db;

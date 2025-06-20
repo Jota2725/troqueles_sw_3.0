@@ -37,34 +37,51 @@ class TablaConsumo extends StatefulWidget {
 }
 
 class _TablaConsumoState extends State<TablaConsumo> {
+  final ScrollController _horizontalScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Material(
-        child: PaginatedDataTable(
-          showEmptyRows: false,
-          showFirstLastButtons: true,
-          columns: const [
-            DataColumn(label: Text('Copiar')),
-            DataColumn(label: Text('Planta')),
-            DataColumn(label: Text('Cliente')),
-            DataColumn(label: Text('Ntroquel')),
-            DataColumn(label: Text('Codigo')),
-            DataColumn(label: Text('Cantidad')),
-            DataColumn(label: Text('Conversion')),
-            DataColumn(label: Text('Unidad')),
-            DataColumn(label: Text('Descripcion')),
-            DataColumn(label: Text('Tipo')),
-            DataColumn(label: Text('Acciones')),
-          ],
-          source: _ConsumoDataSource(
-            consumos: widget.consumo,
-            context: context,
-            consumoNotifier: widget.consumoNotifier,
-            refresh: () => setState(() {}),
+    return Scrollbar(
+      controller: _horizontalScrollController,
+      thumbVisibility: true,
+      trackVisibility: true,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: _horizontalScrollController,
+        child: SizedBox(
+          width: 1600, // Asegura que todo el contenido se vea
+          child: Material(
+            child: PaginatedDataTable(
+              showEmptyRows: false,
+              showFirstLastButtons: true,
+              columns: const [
+                DataColumn(label: Text('Copiar')),
+                DataColumn(label: Text('Planta')),
+                DataColumn(label: Text('Cliente')),
+                DataColumn(label: Text('Ntroquel')),
+                DataColumn(label: Text('Codigo')),
+                DataColumn(label: Text('Cantidad')),
+                DataColumn(label: Text('Conversion')),
+                DataColumn(label: Text('Unidad')),
+                DataColumn(label: Text('Descripcion')),
+                DataColumn(label: Text('Tipo')),
+                DataColumn(label: Text('Acciones')),
+              ],
+              source: _ConsumoDataSource(
+                consumos: widget.consumo,
+                context: context,
+                consumoNotifier: widget.consumoNotifier,
+                refresh: () => setState(() {}),
+              ),
+              rowsPerPage: 15,
+            ),
           ),
-          rowsPerPage: 15,
         ),
       ),
     );
@@ -135,15 +152,11 @@ class _ConsumoDataSource extends DataTableSource {
         children: [
           IconButton(
             icon: const Icon(Icons.edit, color: Colors.blue),
-            onPressed: () {
-              _editarConsumo(consumo, index);
-            },
+            onPressed: () => _editarConsumo(consumo, index),
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () {
-              _confirmarEliminar(index);
-            },
+            onPressed: () => _confirmarEliminar(index),
           ),
         ],
       )),
@@ -164,13 +177,11 @@ class _ConsumoDataSource extends DataTableSource {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: plantaCtrl,
-              decoration: const InputDecoration(labelText: 'Planta'),
-            ),
+                controller: plantaCtrl,
+                decoration: const InputDecoration(labelText: 'Planta')),
             TextField(
-              controller: clienteCtrl,
-              decoration: const InputDecoration(labelText: 'Cliente'),
-            ),
+                controller: clienteCtrl,
+                decoration: const InputDecoration(labelText: 'Cliente')),
             TextField(
               controller: cantidadCtrl,
               decoration: const InputDecoration(labelText: 'Cantidad'),
@@ -192,8 +203,8 @@ class _ConsumoDataSource extends DataTableSource {
                 nTroquel: consumo.nTroquel,
                 tipo: consumo.tipo,
                 cantidad: int.tryParse(cantidadCtrl.text) ?? consumo.cantidad,
-                materiales: consumo.materiales,
               );
+              updated.materiales.addAll(consumo.materiales);
 
               consumoNotifier.updateConsumo(index, updated);
               refresh();
@@ -248,8 +259,6 @@ class _ConsumoDataSource extends DataTableSource {
 }
 
 String _truncarDescripcion(String descripcion, int maxChars) {
-  if (descripcion.length <= maxChars) {
-    return descripcion;
-  }
+  if (descripcion.length <= maxChars) return descripcion;
   return '${descripcion.substring(0, maxChars)}...';
 }
