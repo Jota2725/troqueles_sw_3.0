@@ -28,18 +28,23 @@ const TiemposSchema = CollectionSchema(
       name: r'fecha',
       type: IsarType.string,
     ),
-    r'ntroquel': PropertySchema(
+    r'ficha': PropertySchema(
       id: 2,
+      name: r'ficha',
+      type: IsarType.string,
+    ),
+    r'ntroquel': PropertySchema(
+      id: 3,
       name: r'ntroquel',
       type: IsarType.string,
     ),
     r'operarios': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'operarios',
       type: IsarType.string,
     ),
     r'tiempo': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'tiempo',
       type: IsarType.double,
     )
@@ -65,6 +70,12 @@ int _tiemposEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.fecha.length * 3;
+  {
+    final value = object.ficha;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.ntroquel.length * 3;
   {
     final value = object.operarios;
@@ -83,9 +94,10 @@ void _tiemposSerialize(
 ) {
   writer.writeByte(offsets[0], object.actividad.index);
   writer.writeString(offsets[1], object.fecha);
-  writer.writeString(offsets[2], object.ntroquel);
-  writer.writeString(offsets[3], object.operarios);
-  writer.writeDouble(offsets[4], object.tiempo);
+  writer.writeString(offsets[2], object.ficha);
+  writer.writeString(offsets[3], object.ntroquel);
+  writer.writeString(offsets[4], object.operarios);
+  writer.writeDouble(offsets[5], object.tiempo);
 }
 
 Tiempos _tiemposDeserialize(
@@ -99,9 +111,10 @@ Tiempos _tiemposDeserialize(
         _TiemposactividadValueEnumMap[reader.readByteOrNull(offsets[0])] ??
             Actividad.Dibujo,
     fecha: reader.readString(offsets[1]),
-    ntroquel: reader.readString(offsets[2]),
-    operarios: reader.readStringOrNull(offsets[3]),
-    tiempo: reader.readDouble(offsets[4]),
+    ficha: reader.readStringOrNull(offsets[2]),
+    ntroquel: reader.readString(offsets[3]),
+    operarios: reader.readStringOrNull(offsets[4]),
+    tiempo: reader.readDouble(offsets[5]),
   );
   object.isarId = id;
   return object;
@@ -120,10 +133,12 @@ P _tiemposDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
-    case 3:
       return (reader.readStringOrNull(offset)) as P;
+    case 3:
+      return (reader.readString(offset)) as P;
     case 4:
+      return (reader.readStringOrNull(offset)) as P;
+    case 5:
       return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -419,6 +434,152 @@ extension TiemposQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'fecha',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'ficha',
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'ficha',
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ficha',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'ficha',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'ficha',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'ficha',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'ficha',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'ficha',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'ficha',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'ficha',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ficha',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterFilterCondition> fichaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'ficha',
         value: '',
       ));
     });
@@ -863,6 +1024,18 @@ extension TiemposQuerySortBy on QueryBuilder<Tiempos, Tiempos, QSortBy> {
     });
   }
 
+  QueryBuilder<Tiempos, Tiempos, QAfterSortBy> sortByFicha() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ficha', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterSortBy> sortByFichaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ficha', Sort.desc);
+    });
+  }
+
   QueryBuilder<Tiempos, Tiempos, QAfterSortBy> sortByNtroquel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ntroquel', Sort.asc);
@@ -923,6 +1096,18 @@ extension TiemposQuerySortThenBy
   QueryBuilder<Tiempos, Tiempos, QAfterSortBy> thenByFechaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'fecha', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterSortBy> thenByFicha() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ficha', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Tiempos, Tiempos, QAfterSortBy> thenByFichaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ficha', Sort.desc);
     });
   }
 
@@ -990,6 +1175,13 @@ extension TiemposQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Tiempos, Tiempos, QDistinct> distinctByFicha(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'ficha', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Tiempos, Tiempos, QDistinct> distinctByNtroquel(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1028,6 +1220,12 @@ extension TiemposQueryProperty
   QueryBuilder<Tiempos, String, QQueryOperations> fechaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'fecha');
+    });
+  }
+
+  QueryBuilder<Tiempos, String?, QQueryOperations> fichaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'ficha');
     });
   }
 

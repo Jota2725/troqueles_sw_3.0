@@ -56,9 +56,7 @@ class FormTiempos extends ConsumerWidget {
                     ),
 
                     CustomTextField(
-                        label: 'Fecha',
-                        value: fromattedDate,
-                        enabled: false),
+                        label: 'Fecha', value: fromattedDate, enabled: false),
 
                     const SizedBox(
                       height: 10,
@@ -80,7 +78,6 @@ class FormTiempos extends ConsumerWidget {
                     //ACTIVIDAD
 
                     DropdownButtonFormField(
-                      
                       items: getDropdownItemsActivity(),
                       onChanged: (value) {
                         actividadSeleccionada = value;
@@ -131,16 +128,47 @@ class FormTiempos extends ConsumerWidget {
                           color: Colors.white),
                       onPressed: () async {
                         if (keyForm.currentState!.validate()) {
-                          final newtiempo = Tiempos(
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title:
+                                  const Text('¿Deseas registrar este tiempo?'),
+                              content: const Text(
+                                  'Este tiempo será añadido al troquel actual.\n'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: const Text('Cancelar'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  child: const Text('Registrar'),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirm == true) {
+                            final newtiempo = Tiempos(
                               fecha: fromattedDate,
                               tiempo: double.parse(timeController.text),
                               actividad: actividadSeleccionada!,
                               ntroquel: selectedProceso!.ntroquel,
-                              operarios: selectedOpeer!.nombre);
+                              operarios: selectedOpeer!.nombre,
+                              ficha: selectedOpeer.ficha.toString(),
+                            );
 
-                          await ref
-                              .read(timeProvider.notifier)
-                              .addTiempos(newtiempo);
+                            await ref
+                                .read(timeProvider.notifier)
+                                .addTiempos(newtiempo);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Tiempo registrado correctamente')),
+                            );
+                          }
                         }
                       },
                       label: const Text(

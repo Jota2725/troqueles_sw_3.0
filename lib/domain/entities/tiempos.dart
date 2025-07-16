@@ -10,6 +10,7 @@ class Tiempos {
   final String fecha;
   final String ntroquel;
   final String? operarios;
+  final String? ficha;
   final double tiempo;
   @enumerated
   final Actividad actividad;
@@ -19,6 +20,7 @@ class Tiempos {
       required this.ntroquel,
       required this.tiempo,
       this.operarios,
+      this.ficha,
       required this.actividad});
 }
 

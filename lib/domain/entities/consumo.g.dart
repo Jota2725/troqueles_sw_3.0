@@ -51,11 +51,10 @@ const ConsumoSchema = CollectionSchema(
   indexes: {},
   links: {
     r'materiales': LinkSchema(
-      id: 4077468437011297116,
+      id: 9174623488223896951,
       name: r'materiales',
       target: r'Materiales',
       single: false,
-      linkName: r'consumo',
     )
   },
   embeddedSchemas: {},

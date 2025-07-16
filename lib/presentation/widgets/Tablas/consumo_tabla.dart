@@ -110,9 +110,14 @@ class _ConsumoDataSource extends DataTableSource {
     final conversiones =
         consumo.materiales.map((m) => m.conversion.toString()).join(',');
     final unidades = consumo.materiales.map((m) => m.unidad.name).join(',');
-    final descripciones = consumo.materiales
+    final descripcionesCompletas =
+        consumo.materiales.map((m) => m.descripcion).join(',');
+
+// Esta variable sí la dejas para mostrar en la tabla visualmente
+    final descripcionesVisibles = consumo.materiales
         .map((m) => _truncarDescripcion(m.descripcion, 10))
         .join(',');
+
     final tipos = consumo.materiales.map((m) => m.tipo.name).join(',');
 
     final rowData = [
@@ -123,7 +128,7 @@ class _ConsumoDataSource extends DataTableSource {
       consumo.cantidad.toString(),
       conversiones,
       unidades,
-      descripciones,
+      descripcionesCompletas,
       tipos,
     ];
 
