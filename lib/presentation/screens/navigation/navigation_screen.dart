@@ -11,6 +11,8 @@ import 'package:troqueles_sw/presentation/screens/Troqueles/EnProceso/troquel_vi
 import 'package:troqueles_sw/presentation/screens/consumos/consumos_screen.dart';
 import 'package:troqueles_sw/presentation/screens/materiales/materiales_screen.dart';
 import 'package:troqueles_sw/presentation/screens/accessibility/accessibility_screen.dart';
+import 'package:troqueles_sw/presentation/screens/general/general_screen.dart';
+
 import 'package:troqueles_sw/presentation/widgets/Tablas/completados_tabla.dart';
 import 'package:go_router/go_router.dart';
 
@@ -134,7 +136,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
           PaneItem(
             enabled: widget.userType != UserType.operario,
             icon: const Icon(Icons.document_scanner),
-            body: const Text('General'),
+            body:
+                const GeneralInfoScreen(), // ✅ Aquí mostramos la pantalla correcta
             title: const Text('General'),
           ),
           PaneItem(

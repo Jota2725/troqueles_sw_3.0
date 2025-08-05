@@ -9,6 +9,7 @@ import 'package:troqueles_sw/domain/entities/troquel.dart';
 import '../../domain/entities/operario.dart';
 import '../../domain/entities/proceso.dart';
 import '../../domain/entities/tiempos.dart';
+import '../../domain/entities/general_info.dart';
 
 class IsarDatasource extends LocalStorageDatasource {
   late Future<Isar> db;
@@ -340,5 +341,81 @@ class IsarDatasource extends LocalStorageDatasource {
     await isar.writeTxn(() async {
       await isar.operarios.putAll(operarios);
     });
+  }
+
+  Future<List<GeneralInfo>> getResumenGeneral() async {
+    final isar = await db;
+
+    // Obtener todos los datos necesarios
+    final tiempos = await isar.tiempos.where().findAll();
+    final consumos = await isar.consumos.where().findAll();
+    final procesos = await isar.procesos.where().findAll();
+
+    final Map<String, GeneralInfo> resumen = {};
+
+    // Procesar tiempos
+    for (final tiempo in tiempos) {
+      final key = tiempo.ntroquel;
+
+      final proceso = procesos.firstWhere(
+        (p) => p.ntroquel == key,
+        orElse: () => Proceso(
+          ntroquel: key,
+          fechaIngreso: DateTime.now(),
+          planta: '',
+          cliente: '',
+          maquina: '',
+          ingeniero: '',
+          observaciones: '',
+          estado: Estado.pendiente,
+        ),
+      );
+
+      resumen[key] ??= GeneralInfo.fromProceso(
+        ntroquel: tiempo.ntroquel,
+        cliente: proceso.cliente,
+        planta: proceso.planta,
+      );
+
+      final actividad = tiempo.actividad;
+      final tiempoHoras = tiempo.tiempo;
+
+      resumen[key] = resumen[key]!.copyWith(
+        totalDibCal: resumen[key]!.totalDibCal +
+            (actividad == Actividad.Dibujo ||
+                    actividad == Actividad.Punteado ||
+                    actividad == Actividad.Calado
+                ? tiempoHoras
+                : 0),
+        totalEncEng: resumen[key]!.totalEncEng +
+            (actividad == Actividad.Encuchillado ||
+                    actividad == Actividad.Engomado
+                ? tiempoHoras
+                : 0),
+        totalTiempo: resumen[key]!.totalTiempo + tiempoHoras,
+      );
+    }
+
+    // Procesar consumos
+    for (final consumo in consumos) {
+      final key = consumo.nTroquel;
+
+      if (resumen.containsKey(key)) {
+        double cuchi = 0;
+        double escore = 0;
+
+        if (consumo.tipo.toLowerCase() == 'cuchillas') {
+          cuchi = consumo.cantidad.toDouble();
+        } else if (consumo.tipo.toLowerCase() == 'escores') {
+          escore = consumo.cantidad.toDouble();
+        }
+
+        resumen[key] = resumen[key]!.copyWith(
+          totalCuchiEsc: resumen[key]!.totalCuchiEsc + cuchi + escore,
+        );
+      }
+    }
+
+    return resumen.values.toList();
   }
 }
