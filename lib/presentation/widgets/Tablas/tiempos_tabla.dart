@@ -6,7 +6,23 @@ import 'package:troqueles_sw/presentation/widgets/formularios/tiempos/editTimes/
 import 'package:flutter/services.dart';
 
 class TiemposTabla extends ConsumerWidget {
+  // 🔹 Clave global para acceder al estado
+  static final GlobalKey<_TablaTiemposState> tablaKey =
+      GlobalKey<_TablaTiemposState>();
+
   const TiemposTabla({super.key});
+
+  // 🔹 Método estático para copiar desde fuera
+  static void copiarTodosDesdeFuera(BuildContext context) {
+    final state = tablaKey.currentState;
+    if (state != null) {
+      state.copiarTodosLosTiempos();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo copiar: tabla no encontrada')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,7 +31,11 @@ class TiemposTabla extends ConsumerWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          TablaTiempos(tiempos: tiempos, tiemposNotifier: tiemposNotifier)
+          TablaTiempos(
+            key: tablaKey, // 🔹 Asignamos la clave aquí
+            tiempos: tiempos,
+            tiemposNotifier: tiemposNotifier,
+          )
         ],
       ),
     );
@@ -25,13 +45,37 @@ class TiemposTabla extends ConsumerWidget {
 class TablaTiempos extends StatefulWidget {
   final List<Tiempos> tiempos;
   final TiemposNotifier tiemposNotifier;
-  const TablaTiempos(
-      {super.key, required this.tiempos, required this.tiemposNotifier});
+
+  const TablaTiempos({
+    super.key,
+    required this.tiempos,
+    required this.tiemposNotifier,
+  });
+
   @override
   State<TablaTiempos> createState() => _TablaTiemposState();
 }
 
 class _TablaTiemposState extends State<TablaTiempos> {
+  void copiarTodosLosTiempos() {
+    final filas = widget.tiempos.map((tiempo) {
+      return [
+        tiempo.fecha,
+        tiempo.ntroquel,
+        tiempo.operarios ?? '',
+        tiempo.ficha ?? '',
+        tiempo.tiempo.toString(),
+        tiempo.actividad.name,
+      ].join('\t');
+    }).join('\n');
+
+    Clipboard.setData(ClipboardData(text: filas));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text('Todos los tiempos copiados al portapapeles')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -51,9 +95,10 @@ class _TablaTiemposState extends State<TablaTiempos> {
             DataColumn(label: Text('Editar/Borrar')),
           ],
           source: _TimposDataSource(
-              tiempos: widget.tiempos,
-              context: context,
-              troquelNotifier: widget.tiemposNotifier),
+            tiempos: widget.tiempos,
+            context: context,
+            troquelNotifier: widget.tiemposNotifier,
+          ),
           rowsPerPage: 15,
         ),
       ),
@@ -66,17 +111,17 @@ class _TimposDataSource extends DataTableSource {
   final BuildContext context;
   final TiemposNotifier troquelNotifier;
 
-  _TimposDataSource(
-      {required this.tiempos,
-      required this.context,
-      required this.troquelNotifier});
+  _TimposDataSource({
+    required this.tiempos,
+    required this.context,
+    required this.troquelNotifier,
+  });
 
   @override
   DataRow getRow(int index) {
     final tiempo = tiempos[index];
 
     return DataRow(cells: [
-      // 👉 Botón de copiar primero
       DataCell(
         IconButton(
           icon: const Icon(Icons.copy),
@@ -96,14 +141,12 @@ class _TimposDataSource extends DataTableSource {
           },
         ),
       ),
-
       DataCell(Text(tiempo.fecha)),
       DataCell(Text(tiempo.ntroquel)),
       DataCell(Text(tiempo.operarios ?? '')),
       DataCell(Text(tiempo.ficha ?? '')),
       DataCell(Text('${tiempo.tiempo}')),
       DataCell(Text(tiempo.actividad.name)),
-
       DataCell(Row(
         children: [
           IconButton(
@@ -144,7 +187,6 @@ class _TimposDataSource extends DataTableSource {
               if (confirm == true) {
                 await troquelNotifier.deleteTiempos(tiempo.isarId!);
 
-                // Mensaje opcional de confirmación
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Tiempo eliminado'),

@@ -136,8 +136,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           PaneItem(
             enabled: widget.userType != UserType.operario,
             icon: const Icon(Icons.document_scanner),
-            body:
-                const GeneralInfoScreen(), // ✅ Aquí mostramos la pantalla correcta
+            body: const GeneralInfoScreen(),
             title: const Text('General'),
           ),
           PaneItem(

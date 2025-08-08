@@ -5,7 +5,23 @@ import 'package:troqueles_sw/domain/entities/consumo.dart';
 import '../../providers/consumos_provider.dart';
 
 class ConsumosTabla extends ConsumerWidget {
+  // 🔹 Clave global para acceder al estado de la tabla desde fuera
+  static final GlobalKey<_TablaConsumoState> tablaKey =
+      GlobalKey<_TablaConsumoState>();
+
   const ConsumosTabla({super.key});
+
+  // 🔹 Método estático para llamar desde cualquier parte
+  static void copiarTodosDesdeFuera(BuildContext context) {
+    final state = tablaKey.currentState;
+    if (state != null) {
+      state.copiarTodosLosConsumos();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo copiar: tabla no encontrada')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,7 +31,11 @@ class ConsumosTabla extends ConsumerWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          TablaConsumo(consumo: consumos, consumoNotifier: consumosNotifier)
+          TablaConsumo(
+            key: tablaKey, // 🔹 Se asigna la clave global aquí
+            consumo: consumos,
+            consumoNotifier: consumosNotifier,
+          )
         ],
       ),
     );
@@ -39,6 +59,38 @@ class TablaConsumo extends StatefulWidget {
 class _TablaConsumoState extends State<TablaConsumo> {
   final ScrollController _horizontalScrollController = ScrollController();
 
+  // 🔹 Copiar TODAS las filas de consumos
+  void copiarTodosLosConsumos() {
+    final filas = widget.consumo.map((consumo) {
+      final codigos =
+          consumo.materiales.map((m) => m.codigo.toString()).join(',');
+      final conversiones =
+          consumo.materiales.map((m) => m.conversion.toString()).join(',');
+      final unidades = consumo.materiales.map((m) => m.unidad.name).join(',');
+      final descripciones =
+          consumo.materiales.map((m) => m.descripcion).join(',');
+      final tipos = consumo.materiales.map((m) => m.tipo.name).join(',');
+
+      return [
+        consumo.planta,
+        consumo.cliente,
+        consumo.nTroquel,
+        codigos,
+        consumo.cantidad.toString(),
+        conversiones,
+        unidades,
+        descripciones,
+        tipos
+      ].join('\t');
+    }).join('\n');
+
+    Clipboard.setData(ClipboardData(text: filas));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text('Todos los consumos copiados al portapapeles')),
+    );
+  }
+
   @override
   void dispose() {
     _horizontalScrollController.dispose();
@@ -55,7 +107,7 @@ class _TablaConsumoState extends State<TablaConsumo> {
         scrollDirection: Axis.horizontal,
         controller: _horizontalScrollController,
         child: SizedBox(
-          width: 1600, // Asegura que todo el contenido se vea
+          width: 1600,
           child: Material(
             child: PaginatedDataTable(
               showEmptyRows: false,
@@ -112,11 +164,6 @@ class _ConsumoDataSource extends DataTableSource {
     final unidades = consumo.materiales.map((m) => m.unidad.name).join(',');
     final descripcionesCompletas =
         consumo.materiales.map((m) => m.descripcion).join(',');
-
-// Esta variable sí la dejas para mostrar en la tabla visualmente
-    final descripcionesVisibles = consumo.materiales
-        .map((m) => _truncarDescripcion(m.descripcion, 10))
-        .join(',');
 
     final tipos = consumo.materiales.map((m) => m.tipo.name).join(',');
 

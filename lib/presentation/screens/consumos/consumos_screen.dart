@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../domain/entities/consumo.dart';
 import '../../providers/consumos_provider.dart';
 import '../../widgets/Tablas/consumo_tabla.dart';
-import '../../widgets/scaled_text.dart'; // Importar ScaledText
 
 class ConsumoScreen extends ConsumerStatefulWidget {
   const ConsumoScreen({super.key});
@@ -14,7 +11,7 @@ class ConsumoScreen extends ConsumerStatefulWidget {
 }
 
 class _ConsumosScreenState extends ConsumerState<ConsumoScreen> {
-  late Future<List<Consumo>> futureConsumo;
+  late Future<void> futureConsumo;
 
   @override
   void initState() {
@@ -22,27 +19,36 @@ class _ConsumosScreenState extends ConsumerState<ConsumoScreen> {
     futureConsumo = _cargarDatosConsumo();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  Future<List<Consumo>> _cargarDatosConsumo() async {
-    final consumoNotifier = ref.read(consumoProvider.notifier);
-    await consumoNotifier.loadConsumos();
-    return consumoNotifier.state;
+  Future<void> _cargarDatosConsumo() async {
+    await ref.read(consumoProvider.notifier).loadConsumos();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      child: Column(
-        children: [
-          // Puedes agregar un encabezado si deseas
-          // ScaledText('Consumos por máquina', style: TextStyle(fontWeight: FontWeight.bold)),
-          ConsumosTabla(),
-        ],
-      ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Consumos por troquel',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.copy),
+                label: const Text('Copiar todo'),
+                onPressed: () {
+                  ConsumosTabla.copiarTodosDesdeFuera(
+                      context); // 🔹 Llama al método estático
+                },
+              ),
+            ],
+          ),
+        ),
+        const Expanded(child: ConsumosTabla()),
+      ],
     );
   }
 }
