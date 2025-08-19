@@ -3,18 +3,46 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/materiales.dart';
 import '../../providers/materials_provider.dart';
+import '../../providers/materiales_filters.dart';
 import '../../widgets/scaled_text.dart';
 import '../../widgets/formularios/materiales/material_form_dialog.dart';
 import '../../widgets/formularios/materiales/editar_material_dialog.dart';
 
-class MaterialesScreen extends ConsumerWidget {
+class MaterialesScreen extends ConsumerStatefulWidget {
   const MaterialesScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final materiales = ref.watch(materialProvider);
+  ConsumerState<MaterialesScreen> createState() => _MaterialesScreenState();
+}
+
+class _MaterialesScreenState extends ConsumerState<MaterialesScreen> {
+  late final TextEditingController _searchCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchCtrl = TextEditingController(
+      text: ref.read(materialSearchProvider),
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Lista **filtrada** con búsqueda + tipo
+    final materiales = ref.watch(filteredMaterialesProvider);
+
+    // Para UI/estilo
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+
+    // Valor actual del filtro Tipo (null = Todos)
+    final tipoSel = ref.watch(materialTipoFilterProvider);
 
     return Scaffold(
       body: Padding(
@@ -64,9 +92,8 @@ class MaterialesScreen extends ConsumerWidget {
                           backgroundColor: Colors.green,
                         ),
                       );
-                      final materialNotifier =
-                          ref.read(materialProvider.notifier);
-                      await materialNotifier
+                      await ref
+                          .read(materialProvider.notifier)
                           .addMaterialesFromList(materialesImportados);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -92,7 +119,73 @@ class MaterialesScreen extends ConsumerWidget {
 
             const SizedBox(height: 10),
 
-            /// Lista de materiales que ocupa todo el espacio restante
+            /// 🔎 Barra de búsqueda + filtro de tipo
+            Row(
+              children: [
+                // Buscador
+                Expanded(
+                  child: TextField(
+                    controller: _searchCtrl,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search),
+                      hintText: 'Buscar por código, descripción, unidad o tipo',
+                      border: const OutlineInputBorder(),
+                      isDense: true,
+                      suffixIcon: (_searchCtrl.text.isEmpty)
+                          ? null
+                          : IconButton(
+                              tooltip: 'Limpiar',
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchCtrl.clear();
+                                ref
+                                    .read(materialSearchProvider.notifier)
+                                    .state = '';
+                                setState(() {});
+                              },
+                            ),
+                    ),
+                    onChanged: (txt) {
+                      ref.read(materialSearchProvider.notifier).state = txt;
+                      setState(() {});
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Filtro por tipo
+                SizedBox(
+                  width: 260,
+                  child: DropdownButtonFormField<Tipo?>(
+                    value: tipoSel,
+                    decoration: const InputDecoration(
+                      labelText: 'Tipo de material',
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                    items: <DropdownMenuItem<Tipo?>>[
+                      const DropdownMenuItem<Tipo?>(
+                        value: null,
+                        child: Text('Todos'),
+                      ),
+                      ...Tipo.values.map(
+                        (t) => DropdownMenuItem<Tipo?>(
+                          value: t,
+                          child: Text(t.name),
+                        ),
+                      ),
+                    ],
+                    onChanged: (nuevo) {
+                      ref.read(materialTipoFilterProvider.notifier).state =
+                          nuevo;
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+
+            /// Lista de materiales (contenedor)
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -105,7 +198,7 @@ class MaterialesScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ScaledText(
-                      'Lista de materiales',
+                      'Lista de materiales (${materiales.length})',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -117,7 +210,8 @@ class MaterialesScreen extends ConsumerWidget {
                       child: materiales.isEmpty
                           ? const Center(
                               child:
-                                  ScaledText("No hay materiales registrados."))
+                                  ScaledText("No hay materiales registrados."),
+                            )
                           : ListView.builder(
                               itemCount: materiales.length,
                               itemBuilder: (_, index) {
@@ -201,6 +295,7 @@ class MaterialesScreen extends ConsumerWidget {
                                                   .read(
                                                       materialProvider.notifier)
                                                   .deleteMaterial(m);
+                                              if (!mounted) return;
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
