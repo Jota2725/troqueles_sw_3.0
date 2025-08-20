@@ -15,6 +15,7 @@ import 'package:troqueles_sw/presentation/screens/general/general_screen.dart';
 
 import 'package:troqueles_sw/presentation/widgets/Tablas/completados_tabla.dart';
 import 'package:go_router/go_router.dart';
+import 'package:troqueles_sw/presentation/screens/Resumen/resumen_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   static const name = 'Navegation_Screen';
@@ -160,7 +161,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           PaneItem(
             enabled: widget.userType != UserType.operario,
             icon: const Icon(Icons.summarize),
-            body: const Text('Resumen'),
+            body: const ResumenScreen(), // <-- aquí va nuestra pantalla
             title: const Text('Resumen'),
           ),
           PaneItemHeader(header: const Text('Accesibilidad')),

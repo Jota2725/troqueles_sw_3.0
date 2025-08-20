@@ -4,5 +4,5 @@ import 'package:troqueles_sw/domain/entities/general_info.dart';
 
 final generalProvider = FutureProvider<List<GeneralInfo>>((ref) async {
   final isar = IsarDatasource();
-  return await isar.getResumenGeneral();
+  return await isar.getResumenGeneral(); // Debe retornar List<GeneralInfo>
 });

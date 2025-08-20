@@ -37,6 +37,7 @@ class GeneralInfo {
     );
   }
 
+  // Útil si en IsarDatasource construyes desde Proceso
   factory GeneralInfo.fromProceso({
     required String ntroquel,
     required String cliente,
