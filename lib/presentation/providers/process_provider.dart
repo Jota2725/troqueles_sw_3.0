@@ -1,61 +1,80 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
-import '../../domain/entities/proceso.dart';
+import 'package:troqueles_sw/domain/entities/proceso.dart';
 
-final selectedProcesoProvider = StateProvider<Proceso?>((ref) => null);
+/// Notifier para manejar la lista de procesos (troqueles) en la BD,
+/// permitiendo cargar todos, filtrar por estado y CRUD básico.
+class ProcesoNotifier extends StateNotifier<List<Proceso>> {
+  final IsarDatasource _isar;
 
-class TroquelNotifierInProceso extends StateNotifier<List<Proceso>> {
-  final IsarDatasource _isarDatasource;
+  ProcesoNotifier(this._isar) : super(const []);
 
-  TroquelNotifierInProceso(this._isarDatasource) : super([]);
-
-  // Inicializar y cargar troqueles por máquina
-  Future<void> loadTroquelesInProcces() async {
-    final todosLosProcesos = await _isarDatasource.getAllTroquelesInProcess();
-    state = todosLosProcesos.where((proceso) => proceso.estado != Estado.completado).toList();
-  }
-
-  // Agregar un nuevo troquel
-  Future<void> addTroquelInProceso(Proceso proceso) async {
-    await _isarDatasource.addNewTroquelInProcess([proceso]);
-    await loadTroquelesInProcces(); // Recargar los troqueles por máquina
-  }
-
-  Future<void> getAllTroquelesInProcess() async {
-    await _isarDatasource.getAllTroquelesInProcess();
-    await loadTroquelesInProcces();
-  }
-
-  Future<void> searchTroquelInProcess(String proceso) async {
-    final result = await _isarDatasource.getTroquelInProcess(proceso);
-    if (result != null) {
-      state = [result]; // Actualiza el estado con el troquel encontrado
+  /// Cargar procesos por estado (opcional).
+  /// Si [estado] es null, trae TODOS los procesos.
+  Future<void> loadProcesos({Estado? estado}) async {
+    if (estado == null) {
+      state = await _isar.getAllTroquelesInProcess(); // todos los procesos
     } else {
-      state = []; // Limpia el estado si no se encuentra el troquel
+      state = await _isar.getTroquelesByEstado(estado);
     }
   }
 
-  // Actualizar un troquel existente
-  Future<void> updateTroquel(Proceso proceso) async {
-    await _isarDatasource.updatedTroquelInProcess(proceso);
-    await loadTroquelesInProcces(); // Recargar los troqueles por máquina
+  /// Azúcar sintáctico: cargar TODOS los procesos (cualquier estado).
+  Future<void> loadProcesosAll() => loadProcesos();
+
+  /// Crear un nuevo proceso.
+  Future<void> addProceso(Proceso p) async {
+    await _isar.addNewTroquelInProcess([p]);
+    await loadProcesosAll();
   }
 
-  // Eliminar un troquel por ID
-  Future<void> deleteTroquelInProcees(int id) async {
-    await _isarDatasource.deleteTroquelInProcees(id);
-    await loadTroquelesInProcces(); // Recargar los troqueles por máquina
+  /// Actualizar un proceso existente (requiere isarId en [p]).
+  Future<void> updateProceso(Proceso p) async {
+    await _isar.updatedTroquelInProcess(p);
+    await loadProcesosAll();
   }
 
-  // Método para actualizar el orden de los procesos
-  void updateProcesosOrder(List<Proceso> nuevosProcesos) {
-    state = nuevosProcesos; // Actualiza el estado con la nueva lista ordenada
+  /// Eliminar un proceso por su id de Isar.
+  Future<void> deleteProceso(int id) async {
+    await _isar.deleteTroquelInProcees(id);
+    await loadProcesosAll();
+  }
+
+  /// Upsert conveniente si no sabes si existe (usa updated en tu flujo actual).
+  Future<void> upsertProceso(Proceso p) async {
+    await _isar.updatedTroquelInProcess(p);
+    await loadProcesosAll();
+  }
+
+  /// Cambiar el estado de un proceso (por ejemplo, a completado).
+  Future<void> setEstado(Proceso p, Estado nuevoEstado) async {
+    final actualizado = Proceso(
+      ntroquel: p.ntroquel,
+      fechaIngreso: p.fechaIngreso,
+      fechaEstimada: p.fechaEstimada,
+      planta: p.planta,
+      cliente: p.cliente,
+      maquina: p.maquina,
+      ingeniero: p.ingeniero,
+      observaciones: p.observaciones,
+      estado: nuevoEstado,
+    )..isarId = p.isarId;
+
+    await _isar.updatedTroquelInProcess(actualizado);
+    await loadProcesosAll();
+  }
+
+  /// (Opcional) Buscar un proceso por N° de troquel.
+  Future<Proceso?> findByNTroquel(String ntroquel) async {
+    return await _isar.getTroquelInProcess(ntroquel);
   }
 }
 
-// Provider de TroquelNotifier
-final troquelProviderInProceso =
-    StateNotifierProvider<TroquelNotifierInProceso, List<Proceso>>((ref) {
-  final isarDatasource = IsarDatasource();
-  return TroquelNotifierInProceso(isarDatasource);
+/// Provider con lista de procesos
+final procesoProvider =
+    StateNotifierProvider<ProcesoNotifier, List<Proceso>>((ref) {
+  return ProcesoNotifier(IsarDatasource());
 });
+
+/// Provider para guardar el proceso/troquel seleccionado en la UI
+final selectedProcesoProvider = StateProvider<Proceso?>((_) => null);

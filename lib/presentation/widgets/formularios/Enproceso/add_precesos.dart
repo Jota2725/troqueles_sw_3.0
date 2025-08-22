@@ -26,42 +26,44 @@ class _AddProcesosState extends ConsumerState<AddProcesos> {
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
-      title: Text(widget.proceso == null
-          ? 'Agregar troquel en proceso'
-          : 'Editar troquel en proceso'),
+      title: Text(
+        widget.proceso == null
+            ? 'Agregar troquel en proceso'
+            : 'Editar troquel en proceso',
+      ),
       content: SingleChildScrollView(
-        child: ProcesoFields(
-          controller: formController,
-        ),
+        child: ProcesoFields(controller: formController),
       ),
       actions: [
         Button(
           style: const ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Color(0xFF141414))),
-          child: const Text(
-            'Cancelar',
-            style: TextStyle(color: Colors.white),
+            backgroundColor: WidgetStatePropertyAll(Color(0xFF141414)),
           ),
+          child: const Text('Cancelar', style: TextStyle(color: Colors.white)),
           onPressed: () => Navigator.pop(context),
         ),
         Button(
           style: const ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Color(0xFF0BAFFE))),
+            backgroundColor: WidgetStatePropertyAll(Color(0xFF0BAFFE)),
+          ),
           child: Text(widget.proceso == null ? 'Agregar' : 'Guardar'),
           onPressed: () async {
+            // Validar
             if (!formController.validateFields(context)) return;
 
             final nuevoProceso = formController.buildProceso();
-            final troquelNotifierInProceso =
-                ref.read(troquelProviderInProceso.notifier);
+            final procesoNotifier = ref.read(procesoProvider.notifier);
 
             if (widget.proceso == null) {
-              await troquelNotifierInProceso.addTroquelInProceso(nuevoProceso);
+              // ➜ Crear
+              await procesoNotifier.addProceso(nuevoProceso);
             } else {
+              // ➜ Actualizar
               nuevoProceso.isarId = widget.proceso!.isarId;
-              await troquelNotifierInProceso.updateTroquel(nuevoProceso);
+              await procesoNotifier.updateProceso(nuevoProceso);
             }
-            if ( mounted && Navigator.canPop(context)) {
+
+            if (mounted && Navigator.canPop(context)) {
               Navigator.pop(context);
             }
           },

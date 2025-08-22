@@ -1,109 +1,72 @@
 import 'package:flutter/material.dart';
 
-class TroquelSearchDelegate extends SearchDelegate {
-  final List<String> proceso; // Lista de troqueles para buscar
-  final void Function(String proceso) onSelected; // Acción al seleccionar un troquel
+class TroquelSearchDelegate extends SearchDelegate<String> {
+  final List<String> proceso;
+  final Function(String) onSelected;
 
-  TroquelSearchDelegate({required this.proceso, required this.onSelected});
+  TroquelSearchDelegate({
+    required this.proceso,
+    required this.onSelected,
+  });
 
   @override
-  String get searchFieldLabel => 'Buscar troquel';
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    // Botón para limpiar la búsqueda
+  List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        onPressed: () => query = '',
         icon: const Icon(Icons.clear),
-      )
+        onPressed: () {
+          query = '';
+        },
+      ),
     ];
   }
 
   @override
-  Widget? buildLeading(BuildContext context) {
-    // Botón para cerrar el SearchDelegate
+  Widget buildLeading(BuildContext context) {
     return IconButton(
-      onPressed: () {
-        close(context, null); // Cierra el SearchDelegate
-      },
       icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, ''); // cerramos sin devolver nada
+      },
     );
   }
 
   @override
   Widget buildResults(BuildContext context) {
-    // Mostrar resultados finales de búsqueda
     final results = proceso
-        .where((proceso) => proceso.toLowerCase().contains(query.toLowerCase()))
+        .where((p) => p.toLowerCase().contains(query.toLowerCase()))
         .toList();
-
-    if (results.isEmpty) {
-      return Center(
-        child: Text(
-          'No se encontraron resultados para "$query".',
-          style: const TextStyle(fontSize: 16),
-        ),
-      );
-    }
 
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (context, index) {
-        final proceso = results[index];
+        final item = results[index];
         return ListTile(
-          title: Text(proceso),
+          title: Text(item),
           onTap: () {
-            onSelected(proceso); // Llama a la función al seleccionar
-            close(context, null);
+            onSelected(item);
+            close(context, item); // devolvemos el valor seleccionado
           },
         );
       },
     );
   }
 
-  Widget _emptyContainer() {
-    return const Center(
-      child: Icon(
-        Icons.search,
-        
-        size: 150,
-      ),
-    );
-  }
-
   @override
   Widget buildSuggestions(BuildContext context) {
-    // Mostrar sugerencias mientras se escribe en el campo de búsqueda
-    if (query.isEmpty) {
-      return _emptyContainer();
-    }
-
     final suggestions = proceso
-        .where((proceso) => proceso.toLowerCase().contains(query.toLowerCase()))
+        .where((p) => p.toLowerCase().contains(query.toLowerCase()))
         .toList();
-
-        
-
-    if (suggestions.isEmpty) {
-      return Center(
-        child: Text(
-          'No hay sugerencias para "$query".',
-          style: const TextStyle(fontSize: 16),
-        ),
-      );
-    }
 
     return ListView.builder(
       itemCount: suggestions.length,
       itemBuilder: (context, index) {
-        final suggestion = suggestions[index];
+        final item = suggestions[index];
         return ListTile(
-          hoverColor: const Color(0xFF0BAFFE),  
-          title: Text(suggestion ),
+          title: Text(item),
           onTap: () {
-            query = suggestion; // Actualiza la búsqueda con el sugerido
-            showResults(context); // Muestra los resultados
+            onSelected(item);
+            close(context, item); // devolvemos el valor seleccionado
           },
         );
       },

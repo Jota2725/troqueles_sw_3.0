@@ -1,13 +1,15 @@
+// lib/presentation/screens/consumos_tiempos/consumos_and_times.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:troqueles_sw/domain/entities/proceso.dart';
 import 'package:troqueles_sw/presentation/providers/materials_provider.dart';
+import 'package:troqueles_sw/presentation/providers/process_provider.dart';
+import 'package:troqueles_sw/presentation/providers/operario_provider.dart';
+
 import '../../../domain/entities/materiales.dart';
 import '../../../domain/entities/operario.dart';
-import '../../providers/operario_provider.dart';
-import '../../providers/process_provider.dart';
 import '../../widgets/formularios/tiempos/form_tiempos.dart';
-import '../../widgets/scaled_text.dart';
 import '../Troqueles/consumos/consumos_page.dart';
 
 class ConsumosAndTimes extends ConsumerStatefulWidget {
@@ -28,11 +30,14 @@ class _ConsumosAndTimesState extends ConsumerState<ConsumosAndTimes> {
   }
 
   Future<void> _loadData() async {
-    final procesoNotifier = ref.read(troquelProviderInProceso.notifier);
-    await procesoNotifier.getAllTroquelesInProcess();
+    // 👉 Trae TODOS los procesos (sin filtrar por estado)
+    final procesoNotifier = ref.read(procesoProvider.notifier);
+    await procesoNotifier.loadProcesosAll();
     setState(() {
-      procesos = procesoNotifier.state;
+      procesos = ref.read(procesoProvider);
     });
+
+    // Cargar operarios y materiales (tal como lo tenías)
     await ref.read(operarioProvider.notifier).loadOperario();
     await ref.read(materialProvider.notifier).loadMateriales();
   }
@@ -48,8 +53,10 @@ class _ConsumosAndTimesState extends ConsumerState<ConsumosAndTimes> {
           child: Autocomplete<Proceso>(
             displayStringForOption: (p) => p.ntroquel,
             optionsBuilder: (TextEditingValue value) {
-              return procesos.where((p) =>
-                  p.ntroquel.toLowerCase().contains(value.text.toLowerCase()));
+              final query = value.text.toLowerCase();
+              return procesos.where(
+                (p) => p.ntroquel.toLowerCase().contains(query),
+              );
             },
             onSelected: (Proceso proceso) {
               setState(() => selectedProceso = proceso);
@@ -76,6 +83,7 @@ class _ConsumosAndTimesState extends ConsumerState<ConsumosAndTimes> {
         Expanded(
           child: Row(
             children: [
+              // -------- CONSUMOS --------
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
@@ -93,6 +101,7 @@ class _ConsumosAndTimesState extends ConsumerState<ConsumosAndTimes> {
                   ),
                 ),
               ),
+              // -------- TIEMPOS --------
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
