@@ -2,52 +2,38 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
 
-/// Notifier para manejar la lista de procesos (troqueles) en la BD,
-/// permitiendo cargar todos, filtrar por estado y CRUD básico.
+/// Notifier para manejar TODOS los procesos (sin limitarse a un estado).
 class ProcesoNotifier extends StateNotifier<List<Proceso>> {
   final IsarDatasource _isar;
 
   ProcesoNotifier(this._isar) : super(const []);
 
-  /// Cargar procesos por estado (opcional).
-  /// Si [estado] es null, trae TODOS los procesos.
+  /// Cargar procesos por estado (opcional). Si [estado] es null => TODOS.
   Future<void> loadProcesos({Estado? estado}) async {
     if (estado == null) {
-      state = await _isar.getAllTroquelesInProcess(); // todos los procesos
+      state = await _isar.getAllTroquelesInProcess();
     } else {
       state = await _isar.getTroquelesByEstado(estado);
     }
   }
 
-  /// Azúcar sintáctico: cargar TODOS los procesos (cualquier estado).
-  Future<void> loadProcesosAll() => loadProcesos();
+  /// Azúcar: cargar únicamente los "enProceso".
+  Future<void> loadEnProceso() => loadProcesos(estado: Estado.enProceso);
 
-  /// Crear un nuevo proceso.
+  /// Crear (agregar) un proceso nuevo.
   Future<void> addProceso(Proceso p) async {
     await _isar.addNewTroquelInProcess([p]);
-    await loadProcesosAll();
+    await loadEnProceso(); // mantener la vista filtrada
   }
 
-  /// Actualizar un proceso existente (requiere isarId en [p]).
+  /// Actualizar un proceso completo (editar campos).
   Future<void> updateProceso(Proceso p) async {
     await _isar.updatedTroquelInProcess(p);
-    await loadProcesosAll();
+    await loadEnProceso();
   }
 
-  /// Eliminar un proceso por su id de Isar.
-  Future<void> deleteProceso(int id) async {
-    await _isar.deleteTroquelInProcees(id);
-    await loadProcesosAll();
-  }
-
-  /// Upsert conveniente si no sabes si existe (usa updated en tu flujo actual).
-  Future<void> upsertProceso(Proceso p) async {
-    await _isar.updatedTroquelInProcess(p);
-    await loadProcesosAll();
-  }
-
-  /// Cambiar el estado de un proceso (por ejemplo, a completado).
-  Future<void> setEstado(Proceso p, Estado nuevoEstado) async {
+  /// Actualizar SOLO el estado y refrescar la lista "enProceso".
+  Future<void> updateEstado(Proceso p, Estado nuevo) async {
     final actualizado = Proceso(
       ntroquel: p.ntroquel,
       fechaIngreso: p.fechaIngreso,
@@ -57,16 +43,23 @@ class ProcesoNotifier extends StateNotifier<List<Proceso>> {
       maquina: p.maquina,
       ingeniero: p.ingeniero,
       observaciones: p.observaciones,
-      estado: nuevoEstado,
+      estado: nuevo,
     )..isarId = p.isarId;
 
     await _isar.updatedTroquelInProcess(actualizado);
-    await loadProcesosAll();
+    await loadEnProceso();
   }
 
-  /// (Opcional) Buscar un proceso por N° de troquel.
-  Future<Proceso?> findByNTroquel(String ntroquel) async {
-    return await _isar.getTroquelInProcess(ntroquel);
+  /// Eliminar un proceso por id.
+  Future<void> deleteProceso(int id) async {
+    await _isar.deleteTroquelInProcees(id);
+    await loadEnProceso();
+  }
+
+  /// Búsqueda por N° troquel (útil para el buscador).
+  Future<void> searchByNumero(String numero) async {
+    final todos = await _isar.getAllTroquelesInProcess();
+    state = todos.where((p) => p.ntroquel.contains(numero)).toList();
   }
 }
 
@@ -76,5 +69,5 @@ final procesoProvider =
   return ProcesoNotifier(IsarDatasource());
 });
 
-/// Provider para guardar el proceso/troquel seleccionado en la UI
+/// Proceso/troquel actualmente seleccionado en la UI
 final selectedProcesoProvider = StateProvider<Proceso?>((_) => null);

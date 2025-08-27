@@ -51,7 +51,7 @@ class _EditTiemposState extends ConsumerState<EditTiempos> {
                 final timeProvidern = ref.read(timeProvider.notifier);
 
                 nuevoTiempos.isarId = widget.tiempos.isarId;
-                await timeProvidern.updateTiempos(nuevoTiempos);
+                await timeProvidern.updateTiempo(nuevoTiempos);
                 Navigator.pop(context);
               }),
         ]);

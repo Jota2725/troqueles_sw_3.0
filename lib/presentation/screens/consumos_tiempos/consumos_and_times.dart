@@ -7,10 +7,9 @@ import 'package:troqueles_sw/presentation/providers/materials_provider.dart';
 import 'package:troqueles_sw/presentation/providers/process_provider.dart';
 import 'package:troqueles_sw/presentation/providers/operario_provider.dart';
 
-import '../../../domain/entities/materiales.dart';
-import '../../../domain/entities/operario.dart';
 import '../../widgets/formularios/tiempos/form_tiempos.dart';
 import '../Troqueles/consumos/consumos_page.dart';
+import 'package:troqueles_sw/presentation/providers/sync_provider.dart';
 
 class ConsumosAndTimes extends ConsumerStatefulWidget {
   const ConsumosAndTimes({super.key});
@@ -30,14 +29,12 @@ class _ConsumosAndTimesState extends ConsumerState<ConsumosAndTimes> {
   }
 
   Future<void> _loadData() async {
-    // 👉 Trae TODOS los procesos (sin filtrar por estado)
-    final procesoNotifier = ref.read(procesoProvider.notifier);
-    await procesoNotifier.loadProcesosAll();
+    // Trae TODOS los procesos (sin filtrar por estado)
+    await ref.read(procesoProvider.notifier).loadProcesos(); // <— ahora “todos”
     setState(() {
       procesos = ref.read(procesoProvider);
     });
 
-    // Cargar operarios y materiales (tal como lo tenías)
     await ref.read(operarioProvider.notifier).loadOperario();
     await ref.read(materialProvider.notifier).loadMateriales();
   }
@@ -45,38 +42,71 @@ class _ConsumosAndTimesState extends ConsumerState<ConsumosAndTimes> {
   @override
   Widget build(BuildContext context) {
     final selected = ref.watch(selectedProcesoProvider);
+    final syncing = ref.watch(syncControllerProvider);
 
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(16),
-          child: Autocomplete<Proceso>(
-            displayStringForOption: (p) => p.ntroquel,
-            optionsBuilder: (TextEditingValue value) {
-              final query = value.text.toLowerCase();
-              return procesos.where(
-                (p) => p.ntroquel.toLowerCase().contains(query),
-              );
-            },
-            onSelected: (Proceso proceso) {
-              setState(() => selectedProceso = proceso);
-              ref.read(selectedProcesoProvider.notifier).state = proceso;
-            },
-            fieldViewBuilder:
-                (context, controller, focusNode, onFieldSubmitted) {
-              return Material(
-                color: Colors.transparent,
-                child: TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  decoration: const InputDecoration(
-                    labelText: 'Seleccione un troquel',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                  ),
+          child: Row(
+            children: [
+              // Autocomplete de troquel
+              Expanded(
+                child: Autocomplete<Proceso>(
+                  displayStringForOption: (p) => p.ntroquel,
+                  optionsBuilder: (TextEditingValue value) {
+                    final q = value.text.toLowerCase();
+                    return procesos.where(
+                      (p) => p.ntroquel.toLowerCase().contains(q),
+                    );
+                  },
+                  onSelected: (Proceso proceso) {
+                    setState(() => selectedProceso = proceso);
+                    ref.read(selectedProcesoProvider.notifier).state = proceso;
+                  },
+                  fieldViewBuilder:
+                      (context, controller, focusNode, onFieldSubmitted) {
+                    return Material(
+                      color: Colors.transparent,
+                      child: TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        decoration: const InputDecoration(
+                          labelText: 'Seleccione un troquel',
+                          prefixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+              const SizedBox(width: 12),
+
+              // 👉 Botón "Sincronizar ahora"
+              ElevatedButton.icon(
+                onPressed: syncing
+                    ? null
+                    : () async {
+                        await ref
+                            .read(syncControllerProvider.notifier)
+                            .syncNow();
+                        // Actualiza la lista local por si cambió
+                        setState(() {
+                          procesos = ref.read(procesoProvider);
+                        });
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Sincronización completada'),
+                            ),
+                          );
+                        }
+                      },
+                icon: Icon(syncing ? Icons.sync : Icons.cloud_sync),
+                label: Text(syncing ? 'Sincronizando…' : 'Sincronizar'),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 5),

@@ -113,7 +113,7 @@ class _MaterialesScreenState extends ConsumerState<MaterialesScreen> {
                   }
                 },
                 icon: const Icon(Icons.upload),
-                label: const ScaledText('Importar Excel'),
+                label: const ScaledText(''),
               ),
             ),
 

@@ -162,7 +162,7 @@ class FormTiempos extends ConsumerWidget {
 
                             await ref
                                 .read(timeProvider.notifier)
-                                .addTiempos(newtiempo);
+                                .addTiempo(newtiempo);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content:

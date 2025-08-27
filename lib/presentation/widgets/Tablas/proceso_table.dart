@@ -5,8 +5,6 @@ import 'package:troqueles_sw/domain/entities/proceso.dart';
 import '../../providers/completados_provider.dart';
 import '../../providers/process_provider.dart';
 import '../widgets.dart';
-
-// Ajusta esta ruta si tu archivo se llama diferente o está en otra carpeta:
 import '../formularios/Enproceso/add_precesos.dart';
 
 class TablaEnProceso extends ConsumerWidget {
@@ -16,11 +14,13 @@ class TablaEnProceso extends ConsumerWidget {
     required this.pageController,
   });
 
-  final PageController? pageController;
   final List<Proceso> procesos;
+  final PageController? pageController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final procesoNotifier = ref.watch(procesoProvider.notifier);
+
     return SingleChildScrollView(
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 100,
@@ -65,12 +65,11 @@ class TablaEnProceso extends ConsumerWidget {
                         : Colors.green.withOpacity(0.3);
 
                 return DataRow(
-                  color: WidgetStateProperty.resolveWith<Color?>((states) {
-                    if (states.contains(WidgetState.selected)) {
-                      return Colors.blue.withOpacity(0.3);
-                    }
-                    return rowColor;
-                  }),
+                  color: WidgetStateProperty.resolveWith<Color?>(
+                    (states) => states.contains(WidgetState.selected)
+                        ? Colors.blue.withOpacity(0.3)
+                        : rowColor,
+                  ),
                   cells: <DataCell>[
                     DataCell(Text(proceso.ntroquel)),
                     DataCell(Text(
@@ -83,51 +82,37 @@ class TablaEnProceso extends ConsumerWidget {
                     DataCell(Text(proceso.ingeniero)),
                     DataCell(Text(proceso.observaciones)),
                     DataCell(
-                      _EstadoDropdownCell(
+                      DropdownCell(
                         proceso: proceso,
-                        onCompleted: () async {
-                          // 1) Marca completado (actualiza en Isar)
-                          await ref
-                              .read(troquelProviderCompletados.notifier)
-                              .addProcesoCompletado(proceso);
+                        currentValue: proceso.estado,
+                        onChanged: (newEstado) async {
+                          if (newEstado == null) return;
 
-                          // 2) Guarda para la pantalla de agregar siguiente (como tenías)
-                          ref.read(selectedTroquelProvider.notifier).state = {
-                            'numeroTroquel': proceso.ntroquel,
-                            'cliente': proceso.cliente,
-                            'maquina': proceso.maquina,
-                          };
+                          // 1) Actualiza el estado en BD y refresca la lista filtrada
+                          await procesoNotifier.updateEstado(
+                              proceso, newEstado);
 
-                          // 3) Si la planta es CALI, avanza de página
-                          if (proceso.planta == "CALI") {
-                            pageController?.nextPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          }
+                          // 2) Si quedó como completado, refresca el provider de completados
+                          if (newEstado == Estado.completado) {
+                            await ref
+                                .read(troquelProviderCompletados.notifier)
+                                .loadTroquelesCompletados();
 
-                          // 4) Refresca lista de “en proceso”
-                          await ref.read(procesoProvider.notifier).loadProcesos(
-                                estado: Estado.enProceso,
+                            // Guarda selección para la otra pantalla
+                            ref.read(selectedTroquelProvider.notifier).state = {
+                              'numeroTroquel': proceso.ntroquel,
+                              'cliente': proceso.cliente,
+                              'maquina': proceso.maquina,
+                            };
+
+                            // Si la planta es CALI, navega a la siguiente página
+                            if (proceso.planta == "CALI") {
+                              pageController?.nextPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
                               );
-                        },
-                        onChangedOther: (nuevoEstado) async {
-                          // Para cambios a otros estados, actualiza el proceso
-                          final actualizado = Proceso(
-                            ntroquel: proceso.ntroquel,
-                            fechaIngreso: proceso.fechaIngreso,
-                            fechaEstimada: proceso.fechaEstimada,
-                            planta: proceso.planta,
-                            cliente: proceso.cliente,
-                            maquina: proceso.maquina,
-                            ingeniero: proceso.ingeniero,
-                            observaciones: proceso.observaciones,
-                            estado: nuevoEstado,
-                          )..isarId = proceso.isarId;
-
-                          await ref
-                              .read(procesoProvider.notifier)
-                              .updateProceso(actualizado);
+                            }
+                          }
                         },
                       ),
                     ),
@@ -139,9 +124,8 @@ class TablaEnProceso extends ConsumerWidget {
                             onPressed: () {
                               showDialog(
                                 context: context,
-                                builder: (BuildContext context) {
-                                  return AddProcesos(proceso: proceso);
-                                },
+                                builder: (BuildContext context) =>
+                                    AddProcesos(proceso: proceso),
                               );
                             },
                             icon: const Icon(Icons.edit),
@@ -149,8 +133,7 @@ class TablaEnProceso extends ConsumerWidget {
                           IconButton(
                             tooltip: 'Eliminar',
                             onPressed: () async {
-                              await ref
-                                  .read(procesoProvider.notifier)
+                              await procesoNotifier
                                   .deleteProceso(proceso.isarId!);
                             },
                             icon: const Icon(Icons.delete, color: Colors.red),
@@ -169,37 +152,33 @@ class TablaEnProceso extends ConsumerWidget {
   }
 }
 
-/// Dropdown especializado para manejar el cambio de estado
-class _EstadoDropdownCell extends StatelessWidget {
+class DropdownCell extends StatelessWidget {
+  final Estado currentValue;
   final Proceso proceso;
-  final Future<void> Function() onCompleted;
-  final Future<void> Function(Estado nuevoEstado) onChangedOther;
+  final ValueChanged<Estado?> onChanged;
+  final VoidCallback? onComplete;
 
-  const _EstadoDropdownCell({
+  const DropdownCell({
     super.key,
+    required this.currentValue,
+    required this.onChanged,
     required this.proceso,
-    required this.onCompleted,
-    required this.onChangedOther,
+    this.onComplete,
   });
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<Estado>(
-      value: proceso.estado,
-      items: Estado.values.map<DropdownMenuItem<Estado>>((Estado estado) {
-        return DropdownMenuItem<Estado>(
-          value: estado,
-          child: Text(estado.name, style: const TextStyle(fontSize: 12)),
-        );
-      }).toList(),
-      onChanged: (newEstado) async {
-        if (newEstado == null) return;
-
-        if (newEstado == Estado.completado) {
-          await onCompleted();
-        } else {
-          await onChangedOther(newEstado);
-        }
+      value: currentValue,
+      items: Estado.values
+          .map((estado) => DropdownMenuItem<Estado>(
+                value: estado,
+                child: Text(estado.name, style: const TextStyle(fontSize: 12)),
+              ))
+          .toList(),
+      onChanged: (newEstado) {
+        onChanged(newEstado);
+        if (newEstado == Estado.completado) onComplete?.call();
       },
       underline: Container(height: 1, color: Colors.grey),
       isExpanded: true,
