@@ -1,33 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/operario.dart';
-import '../../infrastructure/datasource/isar_datasource.dart';
+import 'package:troqueles_sw/infrastructure/datasource/sqlite/sqlite_datasource.dart';
 
 final operarioProvider =
     StateNotifierProvider<OperarioNotifier, List<Operario>>((ref) {
-  final isarDatasource = IsarDatasource();
-  return OperarioNotifier(isarDatasource);
+  return OperarioNotifier(SqliteDatasource.instance);
 });
 
 class OperarioNotifier extends StateNotifier<List<Operario>> {
-  final IsarDatasource _isarDatasource;
+  final SqliteDatasource _sqlite;
 
   Operario? _selectedOperario;
   Operario? get selectedOperario => _selectedOperario;
 
-  OperarioNotifier(this._isarDatasource) : super([]);
+  OperarioNotifier(this._sqlite) : super([]);
 
-  /// 🔹 Cargar operarios desde la base de datos
   Future<void> loadOperario() async {
-    final operarios = await _isarDatasource.getAllOperarios();
-    state = operarios; // ✅ Se actualiza la lista en Riverpod
+    state = await _sqlite.getAllOperarios();
   }
 
-  /// 🔹 Agregar nuevo operario y actualizar la lista
   Future<void> addNewOperarios(Operario operario) async {
-    await _isarDatasource.addNewOperarios([operario]);
-    await loadOperario(); // ✅ Recargar lista después de agregar
+    await _sqlite.addNewOperarios([operario]);
+    await loadOperario();
   }
 }
 
-// 🔹 Proveedor de operario seleccionado
 final selectedOperarioProvider = StateProvider<Operario?>((ref) => null);

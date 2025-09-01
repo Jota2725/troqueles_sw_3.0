@@ -9,7 +9,6 @@ import 'package:troqueles_sw/presentation/providers/operario_provider.dart';
 
 import '../../widgets/formularios/tiempos/form_tiempos.dart';
 import '../Troqueles/consumos/consumos_page.dart';
-import 'package:troqueles_sw/presentation/providers/sync_provider.dart';
 
 class ConsumosAndTimes extends ConsumerStatefulWidget {
   const ConsumosAndTimes({super.key});
@@ -30,11 +29,12 @@ class _ConsumosAndTimesState extends ConsumerState<ConsumosAndTimes> {
 
   Future<void> _loadData() async {
     // Trae TODOS los procesos (sin filtrar por estado)
-    await ref.read(procesoProvider.notifier).loadProcesos(); // <— ahora “todos”
+    await ref.read(procesoProvider.notifier).loadProcesos();
     setState(() {
       procesos = ref.read(procesoProvider);
     });
 
+    // Cargar operarios y materiales
     await ref.read(operarioProvider.notifier).loadOperario();
     await ref.read(materialProvider.notifier).loadMateriales();
   }
@@ -42,7 +42,6 @@ class _ConsumosAndTimesState extends ConsumerState<ConsumosAndTimes> {
   @override
   Widget build(BuildContext context) {
     final selected = ref.watch(selectedProcesoProvider);
-    final syncing = ref.watch(syncControllerProvider);
 
     return Column(
       children: [
@@ -83,28 +82,18 @@ class _ConsumosAndTimesState extends ConsumerState<ConsumosAndTimes> {
               ),
               const SizedBox(width: 12),
 
-              // 👉 Botón "Sincronizar ahora"
+              // Botón Refrescar (recarga procesos, materiales y operarios)
               ElevatedButton.icon(
-                onPressed: syncing
-                    ? null
-                    : () async {
-                        await ref
-                            .read(syncControllerProvider.notifier)
-                            .syncNow();
-                        // Actualiza la lista local por si cambió
-                        setState(() {
-                          procesos = ref.read(procesoProvider);
-                        });
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Sincronización completada'),
-                            ),
-                          );
-                        }
-                      },
-                icon: Icon(syncing ? Icons.sync : Icons.cloud_sync),
-                label: Text(syncing ? 'Sincronizando…' : 'Sincronizar'),
+                onPressed: () async {
+                  await _loadData();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Datos recargados')),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Refrescar'),
               ),
             ],
           ),

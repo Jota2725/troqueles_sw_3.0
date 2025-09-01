@@ -48,79 +48,109 @@ class SqliteDb {
   static Future<void> _createSchema(Database db) async {
     // ---------- Tablas base ----------
     await db.execute('''
-      CREATE TABLE procesos (
-        id            INTEGER PRIMARY KEY AUTOINCREMENT,
-        ntroquel      TEXT NOT NULL,
-        fechaIngreso  TEXT NOT NULL,        -- ISO 8601
-        fechaEstimada TEXT,                 -- ISO 8601
-        planta        TEXT NOT NULL,
-        cliente       TEXT NOT NULL,
-        maquina       TEXT NOT NULL,
-        ingeniero     TEXT NOT NULL,
-        observaciones TEXT NOT NULL,
-        estado        TEXT NOT NULL         -- 'suspendido' | 'enProceso' | 'completado' | 'pendiente'
-      );
-    ''');
+        CREATE TABLE procesos (
+          id            INTEGER PRIMARY KEY AUTOINCREMENT,
+          ntroquel      TEXT NOT NULL,
+          fechaIngreso  TEXT NOT NULL,        -- ISO 8601
+          fechaEstimada TEXT,                 -- ISO 8601
+          planta        TEXT NOT NULL,
+          cliente       TEXT NOT NULL,
+          maquina       TEXT NOT NULL,
+          ingeniero     TEXT NOT NULL,
+          observaciones TEXT NOT NULL,
+          estado        TEXT NOT NULL         -- 'suspendido' | 'enProceso' | 'completado' | 'pendiente'
+        );
+      ''');
 
     await db.execute('''
-      CREATE INDEX idx_procesos_ntroquel ON procesos(ntroquel);
-    ''');
+        CREATE INDEX idx_procesos_ntroquel ON procesos(ntroquel);
+      ''');
 
     await db.execute('''
-      CREATE TABLE tiempos (
-        id        INTEGER PRIMARY KEY AUTOINCREMENT,
-        fecha     TEXT NOT NULL,           -- ISO (string)
-        ntroquel  TEXT NOT NULL,
-        operarios TEXT,
-        ficha     TEXT,
-        tiempo    REAL NOT NULL,
-        actividad TEXT NOT NULL            -- enum name
-      );
-    ''');
+        CREATE TABLE tiempos (
+          id        INTEGER PRIMARY KEY AUTOINCREMENT,
+          fecha     TEXT NOT NULL,           -- ISO (string)
+          ntroquel  TEXT NOT NULL,
+          operarios TEXT,
+          ficha     TEXT,
+          tiempo    REAL NOT NULL,
+          actividad TEXT NOT NULL            -- enum name
+        );
+      ''');
 
     await db.execute('''
-      CREATE INDEX idx_tiempos_ntroquel ON tiempos(ntroquel);
-    ''');
+        CREATE INDEX idx_tiempos_ntroquel ON tiempos(ntroquel);
+      ''');
 
     await db.execute('''
-      CREATE TABLE materiales (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
-        codigo      INTEGER NOT NULL UNIQUE,
-        unidad      TEXT NOT NULL,         -- enum name
-        descripcion TEXT NOT NULL,
-        tipo        TEXT NOT NULL,         -- enum name
-        conversion  REAL NOT NULL
-      );
-    ''');
+        CREATE TABLE materiales (
+          id          INTEGER PRIMARY KEY AUTOINCREMENT,
+          codigo      INTEGER NOT NULL UNIQUE,
+          unidad      TEXT NOT NULL,         -- enum name
+          descripcion TEXT NOT NULL,
+          tipo        TEXT NOT NULL,         -- enum name
+          conversion  REAL NOT NULL
+        );
+      ''');
 
     await db.execute('''
-      CREATE TABLE consumos (
-        id        INTEGER PRIMARY KEY AUTOINCREMENT,
-        planta    TEXT NOT NULL,
-        nTroquel  TEXT NOT NULL,
-        cliente   TEXT NOT NULL,
-        tipo      TEXT NOT NULL,           -- texto libre (cuchillas, escores, etc.)
-        cantidad  INTEGER NOT NULL
-      );
-    ''');
+        CREATE TABLE consumos (
+          id        INTEGER PRIMARY KEY AUTOINCREMENT,
+          planta    TEXT NOT NULL,
+          nTroquel  TEXT NOT NULL,
+          cliente   TEXT NOT NULL,
+          tipo      TEXT NOT NULL,           -- texto libre (cuchillas, escores, etc.)
+          cantidad  INTEGER NOT NULL
+        );
+      ''');
 
     // Relación N:M consumo <-> materiales (por código)
     await db.execute('''
-      CREATE TABLE consumo_material (
-        consumo_id  INTEGER NOT NULL,
-        material_id INTEGER NOT NULL,
-        PRIMARY KEY (consumo_id, material_id),
-        FOREIGN KEY(consumo_id) REFERENCES consumos(id) ON DELETE CASCADE,
-        FOREIGN KEY(material_id) REFERENCES materiales(id) ON DELETE CASCADE
-      );
-    ''');
+        CREATE TABLE consumo_material (
+          consumo_id  INTEGER NOT NULL,
+          material_id INTEGER NOT NULL,
+          PRIMARY KEY (consumo_id, material_id),
+          FOREIGN KEY(consumo_id) REFERENCES consumos(id) ON DELETE CASCADE,
+          FOREIGN KEY(material_id) REFERENCES materiales(id) ON DELETE CASCADE
+        );
+      ''');
 
     await db.execute('''
-      CREATE TABLE operarios (
-        id     INTEGER PRIMARY KEY AUTOINCREMENT,
-        ficha  INTEGER NOT NULL,
-        nombre TEXT NOT NULL
-      );
-    ''');
+        CREATE TABLE operarios (
+          id     INTEGER PRIMARY KEY AUTOINCREMENT,
+          ficha  INTEGER NOT NULL,
+          nombre TEXT NOT NULL
+        );
+      ''');
+    await db.execute('''
+        CREATE INDEX idx_operarios_ficha ON operarios(ficha);
+      ''');
+
+    // ---------- Catálogo de troqueles ----------
+    await db.execute('''
+  CREATE TABLE IF NOT EXISTS troqueles (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    nota        TEXT,
+    ubicacion   TEXT,
+    gico        INTEGER NOT NULL,
+    referencia  TEXT NOT NULL,
+    cliente     TEXT NOT NULL,
+    no_cad      TEXT,
+    maquina     TEXT NOT NULL,
+    clave       TEXT,
+    alto        TEXT,
+    largo       TEXT,
+    ancho       TEXT,
+    cabida      TEXT,
+    estilo      TEXT,
+    descripcion TEXT,
+    sector      TEXT
+  );
+''');
+
+    await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_troqueles_maquina ON troqueles(maquina);');
+    await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_troqueles_gico_maquina ON troqueles(gico, maquina);');
   }
 }

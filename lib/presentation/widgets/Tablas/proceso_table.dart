@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/entities/proceso.dart';
-
 import '../../providers/completados_provider.dart';
 import '../../providers/process_provider.dart';
+import '../../providers/selection_provider.dart';
+
 import '../widgets.dart';
 import '../formularios/Enproceso/add_precesos.dart';
 

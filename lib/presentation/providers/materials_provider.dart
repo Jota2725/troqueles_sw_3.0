@@ -2,12 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:troqueles_sw/domain/datasource/materiales.datasource.dart';
 import 'package:troqueles_sw/domain/entities/materiales.dart';
 import 'package:troqueles_sw/infrastructure/datasource/materiales_datasource.dart';
-import '../../infrastructure/datasource/isar_datasource.dart';
+import 'package:troqueles_sw/infrastructure/datasource/sqlite/sqlite_datasource.dart';
 
 class MaterialNotifier extends StateNotifier<List<Materiales>> {
-  final IsarDatasource _isarDatasource;
+  final SqliteDatasource _sqlite;
 
-  MaterialNotifier(this._isarDatasource) : super([]) {
+  MaterialNotifier(this._sqlite) : super([]) {
     loadMateriales();
   }
 
@@ -18,30 +18,23 @@ class MaterialNotifier extends StateNotifier<List<Materiales>> {
   List<Materiales> get selectedMaterials =>
       List.unmodifiable(_selectedMaterials);
 
-  // ✅ Cargar todos los materiales
   Future<void> loadMateriales() async {
-    state = await _isarDatasource.gettAllMateriles();
+    state = await _sqlite.gettAllMateriles();
   }
 
-  // ✅ Agregar material y recargar lista
   Future<void> addMateriales(Materiales material) async {
-    await _isarDatasource.addNewMaterial([material]);
+    await _sqlite.addNewMaterial([material]);
     await loadMateriales();
   }
 
-  // ✅ Agregar varios materiales y recargar
   Future<void> addMaterialesFromList(List<Materiales> materiales) async {
-    try {
-      await _isarDatasource.addNewMaterial(materiales);
-      await loadMateriales();
-    } catch (e) {
-      print('Error al agregar materiales desde la lista: $e');
-    }
+    await _sqlite.addNewMaterial(materiales);
+    await loadMateriales();
   }
 
   Future<void> deleteMaterial(Materiales material) async {
     if (material.isarId != null) {
-      await _isarDatasource.deleteMaterialById(material.isarId!);
+      await _sqlite.deleteMaterialById(material.isarId!);
       await loadMateriales();
     }
   }
@@ -62,21 +55,18 @@ class MaterialNotifier extends StateNotifier<List<Materiales>> {
   }
 
   Future<void> searchMaterial(String query) async {
-    final result = await _isarDatasource.gettAllMateriles();
-    state = result;
+    final result = await _sqlite.gettAllMateriles();
+    state = result; // (si luego añades filtro por query, lo aplicas aquí)
   }
 }
 
 final materialProvider =
     StateNotifierProvider<MaterialNotifier, List<Materiales>>((ref) {
-  final isarDatasource = IsarDatasource();
-  return MaterialNotifier(isarDatasource);
+  return MaterialNotifier(SqliteDatasource.instance);
 });
 
-// Proveedor para el material seleccionado
 final selectedMaterialProvider = StateProvider<Materiales?>((ref) => null);
 
-// Proveedor de datasource para importación desde Excel
 final materialesDatasourceProvider = Provider<MaterialesDatasource>((ref) {
   return MaterialesDatasourceImpl();
 });

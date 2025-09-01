@@ -9,7 +9,17 @@ import 'package:troqueles_sw/presentation/screens/navigation/navigation_screen.d
 import 'package:troqueles_sw/presentation/screens/accessibility/accessibility_screen.dart';
 import 'package:troqueles_sw/presentation/providers/theme_provider.dart';
 
-void main() {
+// <-- SQLite
+import 'package:troqueles_sw/infrastructure/datasource/sqlite/sqlite_db.dart';
+
+import 'package:troqueles_sw/infrastructure/migration/migrate_isar_to_sqlite.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SqliteDb.init();
+
+  await IsarToSqliteMigrator.migrate();
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -88,7 +98,7 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-// Define el router de la aplicación
+// Router
 final GoRouter _router = GoRouter(
   initialLocation: '/',
   routes: [

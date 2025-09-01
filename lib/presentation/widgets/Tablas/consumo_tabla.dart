@@ -1,137 +1,82 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart';
-import 'package:troqueles_sw/domain/entities/consumo.dart';
-import '../../providers/consumos_provider.dart';
+import 'package:troqueles_sw/presentation/providers/consumos_provider_table.dart'
+    show consumoTablaProvider;
 
-class ConsumosTabla extends ConsumerWidget {
-  // 🔹 Clave global para acceder al estado de la tabla desde fuera
-  static final GlobalKey<_TablaConsumoState> tablaKey =
-      GlobalKey<_TablaConsumoState>();
-
+class ConsumosTabla extends ConsumerStatefulWidget {
   const ConsumosTabla({super.key});
 
-  // 🔹 Método estático para llamar desde cualquier parte
-  static void copiarTodosDesdeFuera(BuildContext context) {
-    final state = tablaKey.currentState;
-    if (state != null) {
-      state.copiarTodosLosConsumos();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se pudo copiar: tabla no encontrada')),
-      );
-    }
-  }
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final consumosNotifier = ref.watch(consumoProvider.notifier);
-    final consumos = ref.watch(consumoProvider);
-
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          TablaConsumo(
-            key: tablaKey, // 🔹 Se asigna la clave global aquí
-            consumo: consumos,
-            consumoNotifier: consumosNotifier,
-          )
-        ],
-      ),
-    );
-  }
+  ConsumerState<ConsumosTabla> createState() => _ConsumosTablaState();
 }
 
-class TablaConsumo extends StatefulWidget {
-  final List<Consumo> consumo;
-  final ConsumoNotifier consumoNotifier;
-
-  const TablaConsumo({
-    super.key,
-    required this.consumo,
-    required this.consumoNotifier,
-  });
+class _ConsumosTablaState extends ConsumerState<ConsumosTabla> {
+  final _hCtrl = ScrollController();
+  final _vCtrl = ScrollController();
 
   @override
-  State<TablaConsumo> createState() => _TablaConsumoState();
-}
-
-class _TablaConsumoState extends State<TablaConsumo> {
-  final ScrollController _horizontalScrollController = ScrollController();
-
-  // 🔹 Copiar TODAS las filas de consumos
-  void copiarTodosLosConsumos() {
-    final filas = widget.consumo.map((consumo) {
-      final codigos =
-          consumo.materiales.map((m) => m.codigo.toString()).join(',');
-      final conversiones =
-          consumo.materiales.map((m) => m.conversion.toString()).join(',');
-      final unidades = consumo.materiales.map((m) => m.unidad.name).join(',');
-      final descripciones =
-          consumo.materiales.map((m) => m.descripcion).join(',');
-      final tipos = consumo.materiales.map((m) => m.tipo.name).join(',');
-
-      return [
-        consumo.planta,
-        consumo.cliente,
-        consumo.nTroquel,
-        codigos,
-        consumo.cantidad.toString(),
-        conversiones,
-        unidades,
-        descripciones,
-        tipos
-      ].join('\t');
-    }).join('\n');
-
-    Clipboard.setData(ClipboardData(text: filas));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content: Text('Todos los consumos copiados al portapapeles')),
+  void initState() {
+    super.initState();
+    // Carga inicial de la tabla plana
+    Future.microtask(
+      () => ref.read(consumoTablaProvider.notifier).refresh(),
     );
   }
 
   @override
   void dispose() {
-    _horizontalScrollController.dispose();
+    _hCtrl.dispose();
+    _vCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      controller: _horizontalScrollController,
-      thumbVisibility: true,
-      trackVisibility: true,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        controller: _horizontalScrollController,
-        child: SizedBox(
-          width: 1600,
-          child: Material(
-            child: PaginatedDataTable(
-              showEmptyRows: false,
-              showFirstLastButtons: true,
-              columns: const [
-                DataColumn(label: Text('Copiar')),
-                DataColumn(label: Text('Planta')),
-                DataColumn(label: Text('Cliente')),
-                DataColumn(label: Text('Ntroquel')),
-                DataColumn(label: Text('Codigo')),
-                DataColumn(label: Text('Cantidad')),
-                DataColumn(label: Text('Conversion')),
-                DataColumn(label: Text('Unidad')),
-                DataColumn(label: Text('Descripcion')),
-                DataColumn(label: Text('Tipo')),
-                DataColumn(label: Text('Acciones')),
-              ],
-              source: _ConsumoDataSource(
-                consumos: widget.consumo,
-                context: context,
-                consumoNotifier: widget.consumoNotifier,
-                refresh: () => setState(() {}),
+    final rows = ref.watch(consumoTablaProvider);
+
+    // Asegurar un número válido de filas por página
+    final int rowsPerPage =
+        rows.isEmpty ? 1 : math.min(rows.length, 10); // 1..10
+
+    // Tabla material dentro de scroll vertical + horizontal,
+    // y con ancho mínimo para que no colapse.
+    return Material(
+      // Material es importante para PaginatedDataTable (tema/paddings)
+      type: MaterialType.transparency,
+      child: Scrollbar(
+        controller: _vCtrl,
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          controller: _vCtrl,
+          scrollDirection: Axis.vertical,
+          child: Scrollbar(
+            controller: _hCtrl,
+            thumbVisibility: true,
+            notificationPredicate: (notif) =>
+                notif.metrics.axis == Axis.horizontal,
+            child: SingleChildScrollView(
+              controller: _hCtrl,
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: math.max(1200, MediaQuery.of(context).size.width - 48),
+                child: PaginatedDataTable(
+                  showFirstLastButtons: true,
+                  columns: const [
+                    DataColumn(label: Text('Planta')),
+                    DataColumn(label: Text('Cliente')),
+                    DataColumn(label: Text('N° Troquel')),
+                    DataColumn(label: Text('Código')),
+                    DataColumn(label: Text('Cantidad')),
+                    DataColumn(label: Text('Conversión')),
+                    DataColumn(label: Text('Unidad')),
+                    DataColumn(label: Text('Descripción')),
+                    DataColumn(label: Text('Tipo')),
+                  ],
+                  source: _ConsumoPlanoSource(rows),
+                  rowsPerPage: rowsPerPage,
+                ),
               ),
-              rowsPerPage: 15,
             ),
           ),
         ),
@@ -140,177 +85,33 @@ class _TablaConsumoState extends State<TablaConsumo> {
   }
 }
 
-class _ConsumoDataSource extends DataTableSource {
-  final List<Consumo> consumos;
-  final BuildContext context;
-  final ConsumoNotifier consumoNotifier;
-  final VoidCallback refresh;
-
-  _ConsumoDataSource({
-    required this.consumos,
-    required this.context,
-    required this.consumoNotifier,
-    required this.refresh,
-  });
+class _ConsumoPlanoSource extends DataTableSource {
+  final List<Map<String, dynamic>> rows;
+  _ConsumoPlanoSource(this.rows);
 
   @override
-  DataRow getRow(int index) {
-    final consumo = consumos[index];
-
-    final codigos =
-        consumo.materiales.map((m) => m.codigo.toString()).join(',');
-    final conversiones =
-        consumo.materiales.map((m) => m.conversion.toString()).join(',');
-    final unidades = consumo.materiales.map((m) => m.unidad.name).join(',');
-    final descripcionesCompletas =
-        consumo.materiales.map((m) => m.descripcion).join(',');
-
-    final tipos = consumo.materiales.map((m) => m.tipo.name).join(',');
-
-    final rowData = [
-      consumo.planta,
-      consumo.cliente,
-      consumo.nTroquel,
-      codigos,
-      consumo.cantidad.toString(),
-      conversiones,
-      unidades,
-      descripcionesCompletas,
-      tipos,
-    ];
+  DataRow? getRow(int index) {
+    if (index < 0 || index >= rows.length) return null;
+    final r = rows[index];
+    String s(String k) => (r[k] ?? '').toString();
 
     return DataRow(cells: [
-      DataCell(
-        IconButton(
-          icon: const Icon(Icons.copy, size: 18),
-          onPressed: () {
-            Clipboard.setData(ClipboardData(text: rowData.join('\t')));
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Fila copiada al portapapeles')),
-            );
-          },
-        ),
-      ),
-      DataCell(Text(rowData[0])),
-      DataCell(Text(rowData[1])),
-      DataCell(Text(rowData[2])),
-      DataCell(Text(rowData[3])),
-      DataCell(Text(rowData[4])),
-      DataCell(Text(rowData[5])),
-      DataCell(Text(rowData[6])),
-      DataCell(Text(rowData[7])),
-      DataCell(Text(rowData[8])),
-      DataCell(Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.blue),
-            onPressed: () => _editarConsumo(consumo, index),
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () => _confirmarEliminar(index),
-          ),
-        ],
-      )),
+      DataCell(Text(s('planta'))),
+      DataCell(Text(s('cliente'))),
+      DataCell(Text(s('ntroquel'))),
+      DataCell(Text(s('codigo'))),
+      DataCell(Text(s('cantidad'))),
+      DataCell(Text(s('conversion'))),
+      DataCell(Text(s('unidad'))),
+      DataCell(Text(s('descripcion'))),
+      DataCell(Text(s('tipo'))),
     ]);
   }
 
-  void _editarConsumo(Consumo consumo, int index) {
-    final plantaCtrl = TextEditingController(text: consumo.planta);
-    final clienteCtrl = TextEditingController(text: consumo.cliente);
-    final cantidadCtrl =
-        TextEditingController(text: consumo.cantidad.toString());
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Editar consumo'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-                controller: plantaCtrl,
-                decoration: const InputDecoration(labelText: 'Planta')),
-            TextField(
-                controller: clienteCtrl,
-                decoration: const InputDecoration(labelText: 'Cliente')),
-            TextField(
-              controller: cantidadCtrl,
-              decoration: const InputDecoration(labelText: 'Cantidad'),
-              keyboardType: TextInputType.number,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text('Cancelar'),
-            onPressed: () => Navigator.pop(context),
-          ),
-          ElevatedButton(
-            child: const Text('Guardar'),
-            onPressed: () {
-              final updated = Consumo(
-                planta: plantaCtrl.text,
-                cliente: clienteCtrl.text,
-                nTroquel: consumo.nTroquel,
-                tipo: consumo.tipo,
-                cantidad: int.tryParse(cantidadCtrl.text) ?? consumo.cantidad,
-              );
-              updated.materiales.addAll(consumo.materiales);
-
-              consumoNotifier.updateConsumo(index, updated);
-              refresh();
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Consumo actualizado')),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _confirmarEliminar(int index) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Confirmar eliminación'),
-        content: const Text(
-            '¿Deseas eliminar este consumo? Esta acción no se puede deshacer.'),
-        actions: [
-          TextButton(
-            child: const Text('Cancelar'),
-            onPressed: () => Navigator.pop(context),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Eliminar'),
-            onPressed: () {
-              consumoNotifier.removeConsumo(index);
-              refresh();
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Consumo eliminado')),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  int get rowCount => consumos.length;
-
   @override
   bool get isRowCountApproximate => false;
-
+  @override
+  int get rowCount => rows.length;
   @override
   int get selectedRowCount => 0;
-}
-
-String _truncarDescripcion(String descripcion, int maxChars) {
-  if (descripcion.length <= maxChars) return descripcion;
-  return '${descripcion.substring(0, maxChars)}...';
 }

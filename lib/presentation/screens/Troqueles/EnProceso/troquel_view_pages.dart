@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:troqueles_sw/domain/entities/proceso.dart';
-import 'package:troqueles_sw/infrastructure/datasource/isar_datasource.dart';
+import '../../../providers/selection_provider.dart';
 
-import '../../../providers/completados_provider.dart'; // contiene selectedTroquelProvider
-import '../../../providers/process_provider.dart'; // nuevo procesoProvider
+import '../../../providers/process_provider.dart'; // procesoProvider
 import '../../../widgets/search/troquel_search_delegate.dart';
 
 import '../../procesos/procesos_screen.dart';
@@ -22,13 +21,11 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
   late Future<List<Proceso>> futureProcesos;
   late PageController _pageController;
 
-  // (Opcional) todavía lo tienes instanciado aquí, pero ya no lo usamos directo en este widget
-  final IsarDatasource isar = IsarDatasource();
-
   @override
   void initState() {
     super.initState();
-    futureProcesos = _cargarDatosEnProceso(); // carga inicial
+    // Carga inicial: sólo procesos en estado enProceso
+    futureProcesos = _cargarDatosEnProceso();
     _pageController = PageController();
   }
 
@@ -103,7 +100,8 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text(
-                        'No se encontró el troquel seleccionado en la lista actual.'),
+                      'No se encontró el troquel seleccionado en la lista actual.',
+                    ),
                   ),
                 );
               }
@@ -122,7 +120,7 @@ class TroquelViewState extends ConsumerState<TroquelViewPages> {
             controller: _pageController,
             scrollDirection: Axis.horizontal,
             children: [
-              // Página 0: listado de procesos en proceso
+              // Página 0: listado de procesos en proceso (usa procesoProvider)
               ProcesosScreen(pageController: _pageController),
 
               // Página 1: agregar/editar usando el seleccionado

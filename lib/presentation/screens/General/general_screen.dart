@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
+
 import 'package:troqueles_sw/presentation/providers/general_provider.dart';
 import 'package:troqueles_sw/domain/entities/general_info.dart';
-import 'package:flutter/services.dart';
 
 void copyToClipboard(List<GeneralInfo> data) {
   final buffer = StringBuffer();
 
   for (var row in data) {
-    buffer.writeln('${row.planta}\t'
-        '${row.cliente}\t'
-        '${row.ntroquel}\t'
-        '${row.totalDibCal.toStringAsFixed(2)}\t'
-        '${row.totalEncEng.toStringAsFixed(2)}\t'
-        '${row.totalTiempo.toStringAsFixed(2)}\t'
-        '${row.totalCuchiEsc.toStringAsFixed(2)}');
+    buffer.writeln(
+      '${row.planta}\t'
+      '${row.cliente}\t'
+      '${row.ntroquel}\t'
+      '${row.totalDibCal.toStringAsFixed(2)}\t'
+      '${row.totalEncEng.toStringAsFixed(2)}\t'
+      '${row.totalTiempo.toStringAsFixed(2)}\t'
+      '${row.totalCuchiEsc.toStringAsFixed(2)}',
+    );
   }
 
   Clipboard.setData(ClipboardData(text: buffer.toString()));
@@ -28,15 +31,17 @@ class _GeneralInfoDataSource extends DataTableSource {
   DataRow getRow(int index) {
     if (index >= rows.length) return const DataRow(cells: []);
     final row = rows[index];
-    return DataRow(cells: [
-      DataCell(Text(row.planta)),
-      DataCell(Text(row.cliente)),
-      DataCell(Text(row.ntroquel)),
-      DataCell(Text(row.totalDibCal.toStringAsFixed(2))),
-      DataCell(Text(row.totalEncEng.toStringAsFixed(2))),
-      DataCell(Text(row.totalTiempo.toStringAsFixed(2))),
-      DataCell(Text(row.totalCuchiEsc.toStringAsFixed(2))),
-    ]);
+    return DataRow(
+      cells: [
+        DataCell(Text(row.planta)),
+        DataCell(Text(row.cliente)),
+        DataCell(Text(row.ntroquel)),
+        DataCell(Text(row.totalDibCal.toStringAsFixed(2))),
+        DataCell(Text(row.totalEncEng.toStringAsFixed(2))),
+        DataCell(Text(row.totalTiempo.toStringAsFixed(2))),
+        DataCell(Text(row.totalCuchiEsc.toStringAsFixed(2))),
+      ],
+    );
   }
 
   @override
@@ -58,6 +63,12 @@ class GeneralInfoScreen extends ConsumerWidget {
 
     return generalInfoAsync.when(
       data: (rows) {
+        // Evita errores cuando no hay filas.
+        final int rowCount = rows.length;
+        // PaginatedDataTable no acepta 0; si no hay datos, usamos 1 (no mostrará filas).
+        final int safeRowsPerPage =
+            rowCount == 0 ? 1 : (rowCount < 10 ? rowCount : 10);
+
         return Column(
           children: [
             Padding(
@@ -70,12 +81,24 @@ class GeneralInfoScreen extends ConsumerWidget {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   FilledButton(
-                    onPressed: () => copyToClipboard(rows),
+                    onPressed:
+                        rows.isEmpty ? null : () => copyToClipboard(rows),
                     child: const Text('Copiar'),
                   ),
                 ],
               ),
             ),
+            if (rows.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'No hay datos para mostrar.',
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                ),
+              ),
             Expanded(
               child: PaginatedDataTable(
                 columns: const [
@@ -88,7 +111,8 @@ class GeneralInfoScreen extends ConsumerWidget {
                   DataColumn(label: Text('Total Cuchi/Esc')),
                 ],
                 source: _GeneralInfoDataSource(rows),
-                rowsPerPage: 10,
+                // Valor seguro (nunca 0) para que el widget no lance asserts.
+                rowsPerPage: safeRowsPerPage,
               ),
             ),
           ],
