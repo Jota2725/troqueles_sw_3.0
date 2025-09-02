@@ -1,16 +1,19 @@
 ; Script de Inno Setup para instalación per-user (sin admin)
-; Asegúrate de compilar antes: flutter build windows --release
 
 #define MyAppName "Troqueles SW"
-#define MyAppVersion "2.0"
+#define MyAppVersion "2.0.0"
 #define MyAppPublisher "Smurfit Westrock"
 #define MyAppURL "https://www.smurfitwestrock.com/"
 #define MyAppExeName "troqueles_sw.exe"
 
-[Setup]
-; Mantén este AppId fijo entre versiones para upgrades correctos
-AppId={{A8412CCC-B34C-4FB5-BC70-7DF6F5B91CA7}}
+; --- Ajusta a tu build real ---
+#define BuildOutput "C:\Users\julia\Desktop\Troqueles_sw\troqueles_sw\build\windows\x64\runner\Release"
 
+; --- Ruta de tu DB semilla (opcional) ---
+#define SeedDbPath "C:\Users\julia\Desktop\Troqueles_sw\troqueles_sw\data\troqueles.db"
+
+[Setup]
+AppId={{A8412CCC-B34C-4FB5-BC70-7DF6F5B91CA7}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -18,15 +21,15 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 
-; SIN ADMIN
 PrivilegesRequired=lowest
-; Instala por usuario en AppData local (sin UAC)
 DefaultDirName={localappdata}\{#MyAppName}
-; Guarda la carpeta elegida para upgrades
 UsePreviousAppDir=yes
 DisableDirPage=no
 AllowRootDirectory=yes
+
+AppMutex=TroquelesSWMutex
 CloseApplications=yes
+RestartApplications=no
 
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
@@ -44,10 +47,19 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
+[Dirs]
+; Carpeta donde la app guardará la base
+Name: "{app}\data"
+
 [Files]
-; Copia TODO lo generado por Flutter en Release (incluye dlls, data/, icudtl.dat, plugins/)
-Source: "C:\Users\julia\OneDrive\Escritorio\Troqueles_sw\troqueles_sw\build\windows\x64\runner\Release\*"; \
-  DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Copia todo el build Release de Flutter (exe, dlls, data/, etc.)
+Source: "{#BuildOutput}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+; (OPCIONAL) Copiar la DB semilla:
+; - onlyifdoesntexist: no pisa una DB ya existente (upgrades seguros)
+; - uninsneveruninstall: NO borrar la DB al desinstalar (no perder datos)
+Source: "{#SeedDbPath}"; DestDir: "{app}\data"; DestName: "troqueles.db"; \
+  Flags: onlyifdoesntexist ignoreversion uninsneveruninstall
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -66,7 +78,9 @@ begin
   if CurStep = ssPostInstall then
   begin
     ConfigFile := ExpandConstant('{app}\config.ini');
-    ConfigText := 'InstallDir=' + ExpandConstant('{app}');
+    ConfigText :=
+      'InstallDir=' + ExpandConstant('{app}') + #13#10 +
+      'DbPath=' + ExpandConstant('{app}\data\troqueles.db');
     SaveStringToFile(ConfigFile, ConfigText, False);
   end;
 end;
